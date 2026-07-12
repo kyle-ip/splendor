@@ -2,8 +2,7 @@
 title: Gem Economy
 level: intermediate
 order: 22
-duration: 5 min
-quizIds: [q2]
+duration: 6 min
 ---
 
 Taking gems looks passive, but it is the core of tempo control.
@@ -26,11 +25,22 @@ Taking gems looks passive, but it is the core of tempo control.
 **Casual players**: You can ignore this and focus on your own path.  
 **Competitive players**: Denial weight is **high** in 2-player; in 3–4 player, only when "the opponent is 1 gem from a key card."
 
-## Board Example
+## Worked Spot
 
-Opponent has 2 sapphire bonuses. The only +2 sapphire Level 1 in the display costs 2 sapphire. Bank has 3 sapphire left.
+| Fact | Value |
+|------|-------|
+| Opponent bonuses | sapphire ×2 |
+| Key display card | Level 1 +1 sapphire, cost 2 sapphire after their bonuses |
+| Bank sapphire | 3 left |
+| Your hand | Near empty; you also want sapphire |
 
-You can't take 2 sapphire (needs bank ≥4). Take 1 sapphire plus other colors, or **buy/reserve** that card yourself.
+| Choice | Result |
+|--------|--------|
+| Take 2 sapphire | Illegal—bank has only 3 (<4) |
+| Take 1 sapphire + 2 other colors | Slows them a little; you still advance |
+| Buy or reserve the card | Stops their buy if you can use the card |
+
+**Conclusion:** When you cannot take 2 of a contested color, either **split-take** to slow them or **contest the card** itself—don't waste the turn hoping the bank refills.
 
 ## Value of Gold
 

@@ -5,7 +5,7 @@ order: 42
 duration: Anytime
 ---
 
-The three solo modes below are **house rules / fan variants** (not official Space Cowboys rules). Modes 1 and 2 follow custom write-ups; **Mode 3** follows the *Splendor Solo Automa* (Carolina Gamer) rulebook and component art in `extensions/solo`. Where the source is silent, rulings are marked **"Suggested ruling."**
+The three solo modes below are **house rules / fan variants** (not official Space Cowboys rules). Modes 1 and 2 follow custom write-ups; **Mode 3** follows the *Splendor Solo Automa* (Carolina Gamer) rulebook and component art in `references/solo`. Where the source is silent, rulings are marked **"Suggested ruling."**
 
 ---
 
@@ -71,7 +71,7 @@ When either side reaches ≥15 prestige, settle as a race; **both player and aut
 
 ## Solo Mode 3: Splendor Solo Automa (Card Automa)
 
-**Concept**: Full 2-player table layout plus an **Automa action deck**. The Automa does **not** buy at standard costs—it either "takes numbered gems" or "discards N chips from the bottom of its stack, then takes a specified display card." Source: *Splendor Solo Automa* (components in `extensions/solo`).
+**Concept**: Full 2-player table layout plus an **Automa action deck**. The Automa does **not** buy at standard costs—it either "takes numbered gems" or "discards N chips from the bottom of its stack, then takes a specified display card." Source: *Splendor Solo Automa* (components in `references/solo`).
 
 ![Automa action cards AI-1–AI-9](/assets/solo3/ai-cards-1-9.jpg)
 
@@ -214,5 +214,5 @@ Automa prestige = sum of its retained **point-bearing development cards** (no no
 ## Relation to Main Rules
 
 - The main tutorial assumes **multiplayer base Splendor**.  
-- All three solo write-ups live in this appendix; Mode 3 print files and original rules are in `extensions/solo/`.  
+- All three solo write-ups live in this appendix; Mode 3 print files and original rules are in `references/solo/`.  
 - Mode 1 trains cost planning; Mode 2 trains reading the row and endgame; Mode 3 trains tempo and reserving under Automa card pressure.

@@ -3,12 +3,9 @@ title: Setup
 level: intro
 order: 2
 duration: 5 min
-quizIds: []
 ---
 
 Correct setup avoids disputes. Adjust gem tokens and noble tiles by player count, then lay out the display.
-
-![Components and player-count setup](/assets/rules/2.jpg)
 
 ## Components
 

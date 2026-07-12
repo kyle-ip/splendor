@@ -5,7 +5,7 @@ order: 42
 duration: 随时查阅
 ---
 
-以下三种单人玩法为**房规 / 粉丝变体**（非 Space Cowboys 官方规则）。模式一、二按自创说明整理；**模式三**依据 `extensions/solo` 中的 *Splendor Solo Automa*（Carolina Gamer）规则书与道具图整理。凡原文未写明处，以「建议裁定」标出。
+以下三种单人玩法为**房规 / 粉丝变体**（非 Space Cowboys 官方规则）。模式一、二按自创说明整理；**模式三**依据 `references/solo` 中的 *Splendor Solo Automa*（Carolina Gamer）规则书与道具图整理。凡原文未写明处，以「建议裁定」标出。
 
 ---
 
@@ -71,7 +71,7 @@ duration: 随时查阅
 
 ## 单人模式三：Solo Automa（卡牌 Automa）
 
-**定位**：完整二人局桌面 + **Automa 行动牌组**。Automa **不按标准费用购买**，而是「拿指定编号宝石」或「弃置栈底若干筹码后取指定展示卡」。来源：*Splendor Solo Automa*（道具见 `extensions/solo`）。
+**定位**：完整二人局桌面 + **Automa 行动牌组**。Automa **不按标准费用购买**，而是「拿指定编号宝石」或「弃置栈底若干筹码后取指定展示卡」。来源：*Splendor Solo Automa*（道具见 `references/solo`）。
 
 ![Automa 行动牌 AI-1～AI-9](/assets/solo3/ai-cards-1-9.jpg)
 
@@ -214,5 +214,5 @@ Automa 声望 = 其所保留的**有点数发展卡**之和（无贵族）。
 ## 与主规则的关系
 
 - 主线教程默认**多人基础版**。  
-- 单人三种写法均在本附录；模式三打印件与规则原文在仓库 `extensions/solo/`。  
+- 单人三种写法均在本附录；模式三打印件与规则原文在仓库 `references/solo/`。  
 - 模式一练费用规划；模式二练读行与终局；模式三练在 Automa 抢卡压力下的节奏与保留。

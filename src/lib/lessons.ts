@@ -24,7 +24,6 @@ function parseLesson(path: string, raw: string, locale: Locale): Lesson | null {
     level: data.level as LessonLevel,
     order: data.order as number,
     duration: (data.duration as string) ?? '5 min',
-    quizIds: data.quizIds as string[] | undefined,
     content,
   };
 }

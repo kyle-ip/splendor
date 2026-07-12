@@ -3,12 +3,9 @@ title: 开局设置
 level: intro
 order: 2
 duration: 5 分钟
-quizIds: []
 ---
 
 按人数摆好指示物与贵族，再翻开展示行，就可以开始。
-
-![组件与人数设置](/assets/rules/2.jpg)
 
 ## 组件
 

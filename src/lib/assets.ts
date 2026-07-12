@@ -20,13 +20,6 @@ export const gems = {
   gold: `${assetBase}/gems/gold.png`,
 } as const;
 
-export const cardSamples = [
-  `${assetBase}/cards/sample-a.jpg`,
-  `${assetBase}/cards/sample-b.jpg`,
-  `${assetBase}/cards/sample-c.jpg`,
-  `${assetBase}/cards/sample-d.jpg`,
-];
-
 export const nobleSample = `${assetBase}/nobles/sample.jpg`;
 
 export const solo3 = {

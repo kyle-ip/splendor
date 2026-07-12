@@ -3,37 +3,38 @@ title: Endgame Rules
 level: basics
 order: 14
 duration: 3 min
-quizIds: [q6]
 ---
 
-Know how the endgame triggers so you don't lose at the finish line.
+Know how the endgame triggers so you don’t lose at the finish line.
 
 ## Trigger Condition
 
-When any player's prestige is **≥15** at the end of their turn, the endgame is marked immediately.
+When a player reaches **15 or more prestige points**, complete the **current round** so every player has taken the same number of turns. Then compare scores.
 
 ## Endgame Flow
 
-1. The triggering player has **already finished their turn**
-2. In order, players who have **not yet acted this round** each take one more turn
-3. After everyone has acted, compare prestige
+1. The player who reached 15 has already finished their turn.
+2. Continuing in turn order, each remaining player who has not yet acted this round takes one more turn.
+3. After everyone has acted equally, the player with the **most prestige** wins.
 
 ## Scoring
 
-- Prestige points printed on development cards
-- Each noble tile +3
-- Gems and bonuses themselves **do not** score
+- Prestige printed on development cards
+- Each noble tile **+3**
+- Tokens and bonuses themselves **do not** score
+
+## Ties
+
+If two or more players are tied for highest prestige, the winner is the one who has **purchased the fewest development cards**.
 
 ## Example
 
-In a four-player game, player A (third in turn order) reaches 15:
+In a four-player game (order A → B → C → D), player C reaches 15 at the end of their turn:
 
-- Fourth player D takes their normal turn
-- After the trigger, B and C—who already acted this round—**do not act again**
-- If D is fourth and hasn't acted yet, D still gets that final turn
-
-(In clockwise order: after the trigger, starting with the triggerer's **next** player, everyone who has **not yet acted this round** gets one more turn.)
+- Only D has not yet acted this round, so D takes one more turn
+- A and B already acted this round and do not act again
+- Then compare totals (including nobles); apply the tiebreak if needed
 
 ## Beginner Advice
 
-Near 15 points, prioritize actions that **buy scoring cards now**, not stockpiling gems.
+Near 15 points, prioritize actions that **add prestige now**, not stockpiling gems for a later purchase.

@@ -2,8 +2,7 @@
 title: Denial and Contention
 level: advanced
 order: 33
-duration: 5 min
-quizIds: [q4, q7]
+duration: 6 min
 ---
 
 Denial is a competitive tool, but it should not **maliciously stall** the game.
@@ -15,11 +14,23 @@ Denial is a competitive tool, but it should not **maliciously stall** the game.
 - Reserve the unique answer
 - Reach a noble first
 
-## Don't Overdo It
+## Worked Spot
 
-- Buying expensive cards **only** to block an opponent when they're useless to you
+| Fact | Value |
+|------|-------|
+| Opponent bonuses | emerald ×2, sapphire ×2 |
+| Noble on table | emerald ×3, sapphire ×3, onyx ×3 |
+| Display | Level 1 +1 emerald, cheap for you |
+
+If you can buy that emerald card **and** it helps your own path, do it. You slow their noble and strengthen yourself.
+
+If the card is useless to you and expensive, prefer taking the last sapphire tokens they need—or reserve only when you have a real buy plan.
+
+## Don’t Overdo It
+
+- Buying expensive cards **only** to block an opponent when they’re useless to you
 - Multiple turns with no constructive buys
-- Creating table disputes over "bad sportsmanship"
+- Creating table disputes over “bad sportsmanship”
 
 ## Efficient Denial
 
@@ -32,4 +43,4 @@ Prefer **two birds with one stone**: cards that help your engine or score while 
 
 ## Mindset
 
-When denied, stay calm and switch paths. The Splendor display changes every turn—there's often a Plan B.
+When denied, stay calm and switch paths. The Splendor display changes every turn—there’s often a Plan B.

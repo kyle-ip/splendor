@@ -15,8 +15,8 @@ Competitive skill and good table manners go together.
 
 ## Rules Disputes
 
-- Gem counts: standard rules keep **counts public**, not the color breakdown of each player's hand
-- Reserved cards: you may look at your own reserves anytime
+- Tokens: must stay **visible to everyone**, including colors—not only the total count
+- Reserved cards: opponents see how many you hold, not the faces; you may look at your own anytime
 - When disputed, check the rules quick-reference appendix or the official rulebook
 
 ## Post-Game Habits
@@ -29,4 +29,4 @@ After each game, spend 2 minutes noting (this site's **review template** helps):
 
 ## Path to Mastery
 
-Splendor mastery = zero rules mistakes + a stable engine + reading the table + endgame math. Play, review, and use this guide's tools for evaluation and quizzes.
+Splendor mastery = zero rules mistakes + a stable engine + reading the table + endgame math. Play, review, and use this guide's calculator, noble tracker, and card-value tool.

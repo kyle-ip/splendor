@@ -6,7 +6,6 @@ export interface LessonMeta {
   level: LessonLevel;
   order: number;
   duration: string;
-  quizIds?: string[];
 }
 
 export interface Lesson extends LessonMeta {
@@ -30,22 +29,6 @@ export interface NobleRequirement {
   requirements: Omit<GemCounts, 'gold'>;
 }
 
-export interface QuizOption {
-  id: string;
-  text: string;
-}
-
-export interface QuizQuestion {
-  id: string;
-  level: LessonLevel;
-  title: string;
-  scenario: string;
-  options: QuizOption[];
-  correctOptionId: string;
-  casualAdvice: string;
-  competitiveAdvice: string;
-}
-
 export interface SetupConfig {
   players: number;
   gemsPerColor: number;
@@ -55,7 +38,7 @@ export interface SetupConfig {
 
 export interface CardExample {
   id: string;
-  name: string;
+  name: { en: string; zh: string };
   points: number;
   bonus: keyof Omit<GemCounts, 'gold'>;
   cost: Omit<GemCounts, 'gold'>;

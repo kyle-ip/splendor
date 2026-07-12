@@ -1,6 +1,13 @@
-import type { CardExample, GemCounts } from '@/types';
+import type { GemCounts } from '@/types';
 
-export type SoloCard = CardExample & { level: 1 | 2 | 3 };
+export type SoloCard = {
+  id: string;
+  name: string;
+  level: 1 | 2 | 3;
+  points: number;
+  bonus: keyof Omit<GemCounts, 'gold'>;
+  cost: Omit<GemCounts, 'gold'>;
+};
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
 type Color = (typeof COLORS)[number];

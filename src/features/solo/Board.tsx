@@ -101,6 +101,7 @@ export function NobleTile({
   noble: NobleRequirement;
   spent?: boolean;
 }) {
+  const { t } = useI18n();
   const reqs = (
     ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const
   ).filter((c) => noble.requirements[c] > 0);
@@ -128,7 +129,7 @@ export function NobleTile({
         </div>
       </div>
       <p className="mt-auto text-[9px] font-serif text-splendor-muted truncate">
-        {noble.name}
+        {t('nobleLabel')} {noble.name}
       </p>
     </div>
   );

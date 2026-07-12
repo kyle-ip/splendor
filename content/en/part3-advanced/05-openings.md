@@ -2,7 +2,7 @@
 title: Opening Paths
 level: advanced
 order: 34
-duration: 5 min
+duration: 6 min
 ---
 
 The direction you choose in the first 2–3 turns often sets the skeleton of the whole game.
@@ -25,6 +25,22 @@ The direction you choose in the first 2–3 turns often sets the skeleton of the
 
 - First 2–3 bonus cards, then decide noble or points based on refills
 - Fits most games, especially 3–4 players
+
+## Worked Spot
+
+| Fact | Value |
+|------|-------|
+| Nobles | Two tiles both need sapphire×3 |
+| Level 1 display | Three cheap sapphire bonuses, one stray emerald |
+| Players | 3 |
+
+| Choice | Result |
+|--------|--------|
+| Noble sprint on sapphire | Fast if you win the race; contested by others |
+| Mono emerald | Weak—only one emerald card visible |
+| Hybrid | Take one sapphire + one other cheap bonus; reassess after refill |
+
+**Conclusion:** When a color is **crowded on nobles and Level 1**, sprint only if you can win the race; otherwise open hybrid and steal the path later.
 
 ## Dynamic Adjustment
 

@@ -7,7 +7,7 @@ import { useGemLabels } from '@/i18n/useGemLabels';
 import type { MessageKey } from '@/i18n/messages';
 
 export function CardEvaluator() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const labels = useGemLabels();
   const [weights, setWeights] = useState({
     points: 1,
@@ -108,7 +108,7 @@ export function CardEvaluator() {
                   className="gem-img shrink-0 mt-0.5"
                 />
                 <div>
-                  <p className="font-serif text-splendor-ink">{card.name}</p>
+                  <p className="font-serif text-splendor-ink">{card.name[locale]}</p>
                   <p className="text-xs text-splendor-muted mt-1 font-body">
                     {t('pointsLabel', { n: card.points })} · +1 {labels[card.bonus]} ·{' '}
                     {t('costLabel')}{' '}

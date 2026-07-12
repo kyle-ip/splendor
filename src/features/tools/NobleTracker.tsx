@@ -135,7 +135,9 @@ function NobleCard({
       }`}
     >
       <div className="flex justify-between items-center mb-2">
-        <span className="font-serif text-splendor-ink">{noble.name}</span>
+        <span className="font-serif text-splendor-ink">
+          {t('nobleLabel')} {noble.name}
+        </span>
         <span className="font-display text-sm text-splendor-accent">
           {t('prestigePlus3')}
         </span>

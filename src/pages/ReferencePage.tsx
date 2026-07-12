@@ -1,6 +1,7 @@
 import { getLessonById } from '@/lib/lessons';
 import { MarkdownContent } from '@/components/MarkdownContent';
 import { PageToc } from '@/components/PageToc';
+import { RulebookPages } from '@/features/reference/RulebookPages';
 import { useI18n } from '@/i18n/I18nProvider';
 import { extractToc } from '@/lib/toc';
 
@@ -13,6 +14,7 @@ export function ReferencePage({ lessonId }: { lessonId: string }) {
   }
 
   const showToc = extractToc(lesson.content).length >= 3;
+  const showRulebookPages = lessonId === 'appendix-rules-reference';
 
   return (
     <article className="animate-fade-up">
@@ -38,6 +40,7 @@ export function ReferencePage({ lessonId }: { lessonId: string }) {
             <PageToc markdown={lesson.content} minItems={3} />
           </div>
           <MarkdownContent content={lesson.content} />
+          {showRulebookPages && <RulebookPages />}
         </div>
 
         {showToc && (

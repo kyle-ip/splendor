@@ -12,7 +12,7 @@ Splendor is a light strategy board game for 2–4 players, about 30 minutes per 
 - **Collect gems**: Each turn, take gem tokens from the bank
 - **Buy development cards**: Pay gem costs to gain bonuses and prestige
 - **Attract nobles**: Meet color requirements to automatically gain 3 prestige
-- **Open information**: All players' bonuses, reserved cards, and gem counts are public
+- **Open information**: Bonuses, gem tokens (including colors), and how many cards each player has reserved are public; reserved card faces are not
 
 ## Victory Conditions
 

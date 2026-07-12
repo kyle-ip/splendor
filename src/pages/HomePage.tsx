@@ -30,7 +30,7 @@ export function HomePage() {
         <div className="grid md:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
           <div>
             <p className="font-serif text-[11px] tracking-[0.28em] uppercase text-splendor-muted mb-3">
-              Collect · Develop · Prosper
+              {t('homeEyebrow')}
             </p>
             <img
               src={promo.logo}

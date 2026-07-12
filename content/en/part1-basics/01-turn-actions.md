@@ -3,41 +3,42 @@ title: Turns and Actions
 level: basics
 order: 10
 duration: 5 min
-quizIds: [q2]
 ---
 
-Each turn you take **exactly one** of four actions.
+On your turn you must take **exactly one** of the four actions below. Play proceeds clockwise from the youngest player (or as agreed).
 
-## Action 1: Take 3 Different Gems
+## Action 1: Take 3 Different Tokens
 
-Take **1 token of each of 3 different colors** from the bank (3 tokens total).
+Take **one token of each of three different gem colors** from the bank (three tokens total).
 
-- You cannot take gold this way (gold comes only from reserving)
-- If a color has only 1 left, you may still take it, as long as you take 3 different colors
+- You cannot take gold this way. Gold comes only from reserving.
+- You may take a color even if only one token of that color remains, as long as you still take three different colors.
 
-## Action 2: Take 2 Gems of the Same Color
+## Action 2: Take 2 Tokens of the Same Color
 
-Take **2 tokens of one color**, provided:
-
-- That color has **at least 4** tokens in the bank
-- After taking, at least 2 of that color remain
+Take **two tokens of one gem color**, but only if **at least four** tokens of that color remain in the bank when you take them.
 
 ## Action 3: Reserve a Development Card
 
-Take one card from the display, or the top card of a level deck, and place it **face down** in your reserve (max 3 cards).
+Take one face-up development card from the display, or the top card of a level deck, and keep it in your hand (your reserve). You may hold **at most three** reserved cards.
 
-- Also take **1 gold** from the bank (if any remain)
-- Gold limit: you may hold at most **3 gold**
+- Also take **one gold** (joker) from the bank if any remain. If the gold supply is empty, you may still reserve—you simply get no gold.
+- Cards reserved from a deck are drawn without showing them to other players. You may look at your own reserved cards; opponents may not.
+- Reserved cards cannot be discarded. The only way to free a slot is to buy the card later.
 
 ## Action 4: Buy a Development Card
 
-Pay the cost of a development card with your gems. You may buy:
+Spend tokens to buy:
 
-- A card from the display
-- A card from your own reserve (remove it from your reserve when bought)
+- one face-up card from the display, or
+- one card from your own reserve (remove it from your reserve when you buy it)
 
-Your **bonuses** reduce the matching color costs. After buying, place the card face up in front of you—it counts toward bonuses and prestige.
+Your **bonuses** reduce the matching color costs. Place the purchased card face up in front of you; its bonus and prestige count immediately.
 
-## Hand Limit
+## Token Limit
 
-Your total gems (including gold) cannot exceed **10**. If you would go over, you cannot take gems, but you may still buy or reserve (when the rules allow).
+At the **end of your turn**, you may never hold more than **10 tokens** (including gold). If you have more, return tokens to the bank until you have exactly 10. You may return tokens you just took.
+
+Taking tokens when you already hold many is legal—as long as you return the excess before your turn ends. Buying and reserving remain available when you are at the limit.
+
+Your tokens must stay visible to all players at all times.

@@ -2,7 +2,7 @@
 title: Noble Planning
 level: intermediate
 order: 21
-duration: 5 min
+duration: 6 min
 ---
 
 Nobles are among Splendor's **most action-efficient** scoring plays (+3 prestige without spending a turn to buy points).
@@ -21,6 +21,22 @@ Target noble: emerald 3, sapphire 3, onyx 3
 
 Backward: you need at least +3 emerald, +3 sapphire, and +3 onyx bonuses.  
 Scan the Level 1 display and plan 2–3 key cheap cards—don't buy at random.
+
+## Worked Spot
+
+| Fact | Value |
+|------|-------|
+| Nobles on table | A needs emerald×3 sapphire×3 onyx×3; B needs ruby×3 diamond×3 onyx×3 |
+| Level 1 display | Two cheap emerald bonuses, one cheap ruby, no onyx |
+| Your bonuses | None yet |
+
+| Choice | Result |
+|--------|--------|
+| Chase A hard | Emerald is open, but onyx is missing—sprint may stall |
+| Soft toward B | Ruby is available; still need onyx later from refills |
+| Hybrid | Take one emerald + one ruby; wait one refill before locking a noble |
+
+**Conclusion:** Prefer the noble whose **missing colors already appear** in Level 1. If a color is absent, keep the path soft until the display refills.
 
 ## Casual vs Competitive
 

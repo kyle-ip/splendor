@@ -2,45 +2,47 @@
 title: Buying and Bonuses
 level: basics
 order: 11
-duration: 4 min
-quizIds: [q1]
+duration: 5 min
 ---
 
 Buying is the heart of Splendor: spend gem tokens to acquire development cards that grant **bonuses** and **prestige points**.
-
-> Official wording: cards grant **bonuses**. Those bonuses reduce future costs (a discount *effect*), but the component name is **bonus**.
-
-![Development cards and nobles](/assets/rules/3.jpg)
 
 ## Bonuses
 
 Each purchased development card grants a **one-color bonus** (gem icon in the **top-right**).
 
 - Bonuses are **never spent**; they apply on every future purchase
-- Official rule: each bonus of a color counts as one gem of that color toward cost
+- Each bonus of a color counts as one gem of that color toward cost
 - Example: cost 3 sapphire with 2 sapphire bonuses → pay only 1 sapphire token
 - If bonuses cover the full cost, you may take the card without spending tokens
-
-![How bonuses reduce cost](/assets/rules/4.jpg)
 
 ## Payment Rules
 
 1. Apply all available bonuses first
 2. Pay the remainder with matching-color gem tokens from your hand
-3. If short on a color, use a **gold token** (wild) for any one color
+3. If short on a color, use a **gold token** (joker) for any one missing gem
 4. All spent tokens return to the center supply
 
-## Purchase Example
+## Worked Example
 
-Cost: 2 ruby + 2 onyx  
-Your bonuses: 1 ruby  
-Tokens in hand: 1 ruby, 2 onyx, 1 gold  
+| | Ruby | Onyx | Gold |
+|--|------|------|------|
+| Card cost | 2 | 2 | — |
+| Your bonuses | 1 | 0 | — |
+| Tokens in hand | 1 | 2 | 1 |
 
-→ Pay: 1 ruby + 2 onyx (bonus covers 1 ruby)  
-→ If you had 0 ruby, 2 onyx, 1 gold: use 1 gold for the ruby shortfall
+**Pay:** 1 ruby + 2 onyx (the bonus covers 1 ruby).  
+**If you had 0 ruby:** spend 1 gold for the ruby shortfall, plus 2 onyx.
+
+## Decision Snapshot
+
+Display: a Level 1 card (+1 emerald, 0 prestige, cost 1 ruby + 1 sapphire) vs a Level 2 card (3 prestige, cost 3 ruby + 3 sapphire + 2 onyx). You have few bonuses.
+
+- **Build:** buy the Level 1—cheaper now, stronger next turns
+- **Score:** buy the Level 2 only if you can already afford it without emptying your engine path
 
 ## Key Takeaways
 
-- Prefer the official term **bonus**, not “permanent discount”
+- Prefer the official term **bonus** for the permanent gem on each card
 - Low-level cards (0–1 prestige) often build your bonus engine
 - High-level cards (4–5 prestige) are often for the endgame sprint
