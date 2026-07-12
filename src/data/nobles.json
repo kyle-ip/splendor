@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "贵族 A", "requirements": { "emerald": 3, "sapphire": 3, "ruby": 0, "diamond": 0, "onyx": 3 } },
+  { "id": 2, "name": "贵族 B", "requirements": { "emerald": 0, "sapphire": 3, "ruby": 3, "diamond": 3, "onyx": 0 } },
+  { "id": 3, "name": "贵族 C", "requirements": { "emerald": 3, "sapphire": 0, "ruby": 0, "diamond": 3, "onyx": 3 } },
+  { "id": 4, "name": "贵族 D", "requirements": { "emerald": 0, "sapphire": 0, "ruby": 3, "diamond": 3, "onyx": 3 } },
+  { "id": 5, "name": "贵族 E", "requirements": { "emerald": 3, "sapphire": 3, "ruby": 3, "diamond": 0, "onyx": 0 } },
+  { "id": 6, "name": "贵族 F", "requirements": { "emerald": 0, "sapphire": 3, "ruby": 0, "diamond": 3, "onyx": 3 } },
+  { "id": 7, "name": "贵族 G", "requirements": { "emerald": 3, "sapphire": 0, "ruby": 3, "diamond": 3, "onyx": 0 } },
+  { "id": 8, "name": "贵族 H", "requirements": { "emerald": 0, "sapphire": 0, "ruby": 0, "diamond": 3, "onyx": 3 } },
+  { "id": 9, "name": "贵族 I", "requirements": { "emerald": 3, "sapphire": 0, "ruby": 3, "diamond": 0, "onyx": 3 } },
+  { "id": 10, "name": "贵族 J", "requirements": { "emerald": 0, "sapphire": 3, "ruby": 3, "diamond": 0, "onyx": 3 } }
+]

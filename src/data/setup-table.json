@@ -1,0 +1,5 @@
+[
+  { "players": 2, "gemsPerColor": 4, "nobles": 3, "gold": 5 },
+  { "players": 3, "gemsPerColor": 5, "nobles": 4, "gold": 5 },
+  { "players": 4, "gemsPerColor": 7, "nobles": 5, "gold": 5 }
+]
