@@ -5,22 +5,22 @@ order: 1
 duration: 5 min
 ---
 
-Splendor is a light strategy board game for 2–4 players, about 30 minutes per game. Your goal is to buy development cards, attract nobles, and be the first to reach **15 prestige points**—or hold the highest score when the game ends.
+Splendor is a light strategy board game for 2–4 players, about 30 minutes per game. You buy development cards, attract nobles, and race to **15 prestige**—but the winner is whoever has the **highest prestige** after the round finishes with equal turns for everyone.
 
 ## Core Experience
 
 - **Collect gems**: Each turn, take gem tokens from the bank
 - **Buy development cards**: Pay gem costs to gain bonuses and prestige
 - **Attract nobles**: Meet color requirements to automatically gain 3 prestige
-- **Open information**: Bonuses, gem tokens (including colors), and how many cards each player has reserved are public; reserved card faces are not
+- **Open information**: Bonuses and gem tokens (including colors) must stay visible; reserved card faces are hidden
 
 ## Victory Conditions
 
 When any player has **≥15 prestige** at the end of their turn, the endgame begins:
 
-1. Players who have not yet acted this round each get **one more turn**, in order
-2. After everyone has finished, the player with the **highest prestige wins**
-3. On a tie, the player with fewer development cards wins; if still tied, share the victory
+1. Complete the **current round** so each player has taken the same number of turns
+2. The player with the **highest prestige wins** (count nobles)
+3. On a prestige tie, the player who purchased the **fewest development cards** wins. Official rules do not define a further tiebreak if card counts are also equal.
 
 ## Who It's For
 

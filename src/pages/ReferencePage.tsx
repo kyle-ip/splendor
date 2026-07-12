@@ -21,16 +21,16 @@ export function ReferencePage({ lessonId }: { lessonId: string }) {
       <div
         className={
           showToc
-            ? 'xl:grid xl:grid-cols-[minmax(0,1fr)_12rem] xl:gap-8 xl:items-start'
+            ? 'xl:grid xl:grid-cols-[minmax(0,1fr)_11rem] xl:gap-5 xl:items-start'
             : undefined
         }
       >
-        <div className="panel p-6 md:p-10 lg:p-12 min-w-0">
+        <div className="panel p-5 md:p-7 lg:p-8 min-w-0">
           <header className="mb-8 text-center">
-            <p className="font-display text-[10px] tracking-[0.35em] uppercase text-splendor-brass mb-2">
+            <p className="font-display text-[10px] tracking-[0.35em] uppercase text-splendor-accent mb-2">
               {t('appendix')}
             </p>
-            <h1 className="font-display text-3xl text-splendor-velvet tracking-wide">
+            <h1 className="font-display text-3xl text-splendor-velvet tracking-woodcut">
               {lesson.title}
             </h1>
             <div className="ornament-line my-5 mx-auto max-w-xs" />

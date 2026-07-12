@@ -14,39 +14,31 @@ export function SoloPracticeHubPage() {
         </p>
         <h1 className="page-title">{t('soloHubTitle')}</h1>
         <div className="ornament-line my-4" />
-        <p className="font-serif text-splendor-muted leading-relaxed max-w-3xl">
+        <p className="font-serif text-splendor-muted leading-relaxed max-w-2xl">
           {t('soloHubIntro')}
         </p>
         <Link
           to="/reference/solo"
-          className="inline-block mt-4 text-sm font-serif text-splendor-accent hover:underline"
+          className="inline-block mt-4 text-sm font-serif text-splendor-velvet hover:underline"
         >
           {t('soloHubRulesLink')} →
         </Link>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Link
-          to="/tools/solo/fixed"
-          className="panel p-5 hover:border-splendor-gold transition-colors block"
-        >
-          <h2 className="font-serif text-lg text-splendor-velvet">
-            {t('soloFixedTitle')}
-          </h2>
-          <p className="text-sm font-serif text-splendor-muted mt-2 leading-relaxed">
+      <div className="border-y border-splendor-line/35 py-1">
+        <Link to="/tools/solo/fixed" className="index-row !items-start py-4">
+          <span className="index-label text-lg">{t('soloFixedTitle')}</span>
+          <span className="toc-leader mt-3" aria-hidden />
+          <span className="index-desc max-w-[14rem] leading-relaxed">
             {t('soloFixedDesc')}
-          </p>
+          </span>
         </Link>
-        <Link
-          to="/tools/solo/dice"
-          className="panel p-5 hover:border-splendor-gold transition-colors block"
-        >
-          <h2 className="font-serif text-lg text-splendor-velvet">
-            {t('soloDiceTitle')}
-          </h2>
-          <p className="text-sm font-serif text-splendor-muted mt-2 leading-relaxed">
+        <Link to="/tools/solo/dice" className="index-row !items-start py-4">
+          <span className="index-label text-lg">{t('soloDiceTitle')}</span>
+          <span className="toc-leader mt-3" aria-hidden />
+          <span className="index-desc max-w-[14rem] leading-relaxed">
             {t('soloDiceDesc')}
-          </p>
+          </span>
         </Link>
       </div>
     </div>

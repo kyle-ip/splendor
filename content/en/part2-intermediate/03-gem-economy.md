@@ -2,7 +2,7 @@
 title: Gem Economy
 level: intermediate
 order: 22
-duration: 6 min
+duration: 8 min
 ---
 
 Taking gems looks passive, but it is the core of tempo control.
@@ -25,6 +25,30 @@ Taking gems looks passive, but it is the core of tempo control.
 **Casual players**: You can ignore this and focus on your own path.  
 **Competitive players**: Denial weight is **high** in 2-player; in 3–4 player, only when "the opponent is 1 gem from a key card."
 
+## Gold Keep / Spend
+
+Gold is a **tempo bridge**, not a score.
+
+| Keep gold when… | Spend gold when… |
+|-----------------|------------------|
+| You are 1 short on a buy that finishes a noble or key bonus | The buy is available *this turn* and waiting loses the card |
+| Bank colors are contested and you need flexibility | You already hold 2+ gold idle while cheaper pays exist |
+| You plan a Level 2/3 cash-in within 1–2 turns | Holding gold forces awkward 10-token discards |
+
+Rule of thumb: **1 gold is insurance; 3 unused gold is often wasted tempo.**
+
+## 10-Token Return Policy
+
+You may not hold more than **10** tokens **at the end of your turn**. Before a take that would break the cap, plan the return:
+
+| Prefer returning… | Avoid returning… |
+|-------------------|------------------|
+| Colors you just used / won’t need for 2+ turns | The exact colors for next turn’s buy |
+| Duplicates when your costs are rainbow | Last copy of a contested bank color you still need |
+| Extra gold only if a clean pay exists without it | Gold when the next buy still has a 1-gap |
+
+Never take “because the bank is full” into a forced discard of your key color.
+
 ## Worked Spot
 
 | Fact | Value |
@@ -42,6 +66,6 @@ Taking gems looks passive, but it is the core of tempo control.
 
 **Conclusion:** When you cannot take 2 of a contested color, either **split-take** to slow them or **contest the card** itself—don't waste the turn hoping the bank refills.
 
-## Value of Gold
+## Try it
 
-Gold = flexibility. Keep 1–2 gold for cost gaps, but don't hoard it unused for long.
+Practice a mid-engine pay in the [cost calculator](/tools/calculator?bonus=emerald:2,sapphire:1&hand=ruby:1,gold:1&cost=emerald:3,sapphire:2,ruby:2).

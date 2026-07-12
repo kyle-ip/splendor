@@ -2,7 +2,7 @@
 title: Opening Paths
 level: advanced
 order: 34
-duration: 6 min
+duration: 9 min
 ---
 
 The direction you choose in the first 2–3 turns often sets the skeleton of the whole game.
@@ -25,6 +25,38 @@ The direction you choose in the first 2–3 turns often sets the skeleton of the
 
 - First 2–3 bonus cards, then decide noble or points based on refills
 - Fits most games, especially 3–4 players
+
+## Sample Lines (T1–T5)
+
+These are **templates**, not scripts—adjust to the actual display.
+
+### Noble sprint (3/3/3 on emerald–ruby–onyx)
+
+| Turn | Action |
+|------|--------|
+| T1 | Take emerald + ruby + onyx (or buy a free/cheap matching bonus) |
+| T2 | Buy cheapest emerald or ruby on display |
+| T3 | Take missing color(s) or buy the second bonus |
+| T4 | Buy third color bonus / gold-bridge reserve if blocked |
+| T5 | Buy the last gap or take gems to finish the noble next turn |
+
+### Mono sapphire engine
+
+| Turn | Action |
+|------|--------|
+| T1 | Take sapphire-heavy mix (2 sapphire if legal and useful) |
+| T2–T3 | Buy two cheap +1 sapphire cards |
+| T4 | Take toward a Level 2 sapphire or flexible 2-pt |
+| T5 | Buy Level 2 if net cost is low; else third sapphire bonus |
+
+### Hybrid open
+
+| Turn | Action |
+|------|--------|
+| T1 | Take three colors that appear on **any** cheap Level 1 |
+| T2 | Buy the cheapest useful bonus |
+| T3 | Second cheap bonus in a **different** color |
+| T4–T5 | After refill: commit to noble sprint **or** mono depth—don’t stay forever undecided |
 
 ## Worked Spot
 

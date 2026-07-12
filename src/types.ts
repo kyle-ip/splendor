@@ -1,4 +1,10 @@
-export type LessonLevel = 'intro' | 'basics' | 'intermediate' | 'advanced' | 'reference';
+export type LessonLevel =
+  | 'intro'
+  | 'basics'
+  | 'intermediate'
+  | 'advanced'
+  | 'duel'
+  | 'reference';
 
 export interface LessonMeta {
   id: string;
@@ -25,7 +31,7 @@ export interface GemCounts {
 
 export interface NobleRequirement {
   id: number;
-  name: string;
+  name: { en: string; zh: string };
   requirements: Omit<GemCounts, 'gold'>;
 }
 

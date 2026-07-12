@@ -46,3 +46,7 @@ duration: 5 分钟
 - 发展卡给的是 **奖励**；它会让之后的购买更便宜
 - 低等级卡（0–1 声望）多用来攒奖励
 - 高等级卡（4–5 声望）多用来冲分
+
+## 动手试
+
+打开 [费用计算器](/tools/calculator?bonus=ruby:1&hand=ruby:1,onyx:2,gold:1&cost=ruby:2,onyx:2)，本课演算示例已预填。

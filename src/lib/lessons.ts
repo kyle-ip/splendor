@@ -108,6 +108,12 @@ export function getLevelInfo(
       path: '/learn/advanced',
       duration: t('levelAdvDuration'),
     },
+    duel: {
+      title: t('levelDuelTitle'),
+      description: t('levelDuelDesc'),
+      path: '/learn/duel',
+      duration: t('levelDuelDuration'),
+    },
     reference: {
       title: t('levelRefTitle'),
       description: t('levelRefDesc'),

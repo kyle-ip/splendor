@@ -21,9 +21,9 @@ export function LanguageSwitch() {
 
   return (
     <div
-      className="flex border border-splendor-line bg-white/50"
+      className="flex border-[1.5px] border-splendor-line bg-splendor-card/80"
       role="group"
-      aria-label="Language"
+      aria-label={t('languageLabel')}
     >
       {btn('en', t('langEn'))}
       {btn('zh', t('langZh'))}

@@ -1,8 +1,10 @@
+import { useSearchParams } from 'react-router-dom';
 import { CostCalculator } from '@/features/tools/CostCalculator';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export function CalculatorPage() {
   const { t } = useI18n();
+  const [searchParams] = useSearchParams();
   return (
     <div>
       <header className="mb-8 animate-fade-up">
@@ -12,7 +14,7 @@ export function CalculatorPage() {
         <h1 className="page-title">{t('calcTitle')}</h1>
         <div className="ornament-line my-4 max-w-sm" />
       </header>
-      <CostCalculator />
+      <CostCalculator key={searchParams.toString()} />
     </div>
   );
 }

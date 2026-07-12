@@ -1,12 +1,16 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { getLevelInfo } from '@/lib/lessons';
-import { promo, gems } from '@/lib/assets';
+import { promo } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
 import { LanguageSwitch } from '@/components/LanguageSwitch';
 import { ScrollProgress } from '@/components/PageTransition';
 import { PageEnter } from '@/components/PageEnter';
+import { DocumentTitle } from '@/components/DocumentTitle';
+import { InkRule, WoodcutMark } from '@/components/manuscript/WoodcutFrame';
 import type { LessonLevel } from '@/types';
+
+type NavItem = { to: string; label: string; roman?: string };
 
 export function Layout() {
   const { t } = useI18n();
@@ -18,11 +22,12 @@ export function Layout() {
         label: t('navTutorial'),
         items: [
           { to: '/', label: t('navHome') },
-          { to: '/learn/intro', label: t('navIntro') },
-          { to: '/learn/basics', label: t('navBasics') },
-          { to: '/learn/intermediate', label: t('navIntermediate') },
-          { to: '/learn/advanced', label: t('navAdvanced') },
-        ],
+          { to: '/learn/intro', label: t('navIntro'), roman: 'I' },
+          { to: '/learn/basics', label: t('navBasics'), roman: 'II' },
+          { to: '/learn/intermediate', label: t('navIntermediate'), roman: 'III' },
+          { to: '/learn/advanced', label: t('navAdvanced'), roman: 'IV' },
+          { to: '/learn/duel', label: t('navDuel'), roman: 'V' },
+        ] as NavItem[],
       },
       {
         label: t('navTools'),
@@ -32,7 +37,7 @@ export function Layout() {
           { to: '/tools/card-value', label: t('navCardValue') },
           { to: '/tools/replay', label: t('navReplay') },
           { to: '/tools/solo', label: t('navSoloPractice') },
-        ],
+        ] as NavItem[],
       },
       {
         label: t('navAppendix'),
@@ -40,7 +45,7 @@ export function Layout() {
           { to: '/reference/rules', label: t('navRules') },
           { to: '/reference/solo', label: t('navSolo') },
           { to: '/reference/expansions', label: t('navExpansions') },
-        ],
+        ] as NavItem[],
       },
     ],
     [t],
@@ -57,42 +62,38 @@ export function Layout() {
 
   const brandBlock = (
     <>
-      <NavLink to="/" className="block group" onClick={() => setMenuOpen(false)}>
-        <img
-          src={promo.logo}
-          alt="Splendor"
-          className="h-10 w-auto object-contain mb-2.5 group-hover:opacity-90 transition-opacity"
-        />
-        <p className="font-display text-base text-splendor-velvet tracking-[0.06em]">
-          Splendor
-        </p>
-        <p className="text-[11px] text-splendor-muted mt-1 tracking-wide font-serif">
-          {t('brandSubtitle')}
-        </p>
-      </NavLink>
-
-      <div className="mt-4">
-        <LanguageSwitch />
-      </div>
-
-      <div className="mt-4 flex gap-1 justify-center opacity-85">
-        {(Object.keys(gems) as (keyof typeof gems)[]).map((key) => (
+      <div className="flex items-start justify-between gap-2 mb-1">
+        <WoodcutMark className="text-splendor-ink/70 mt-0.5 shrink-0" />
+        <NavLink
+          to="/"
+          className="block group flex-1 min-w-0"
+          onClick={() => setMenuOpen(false)}
+        >
           <img
-            key={key}
-            src={gems[key]}
-            alt=""
-            className="w-7 h-7 object-contain"
+            src={promo.logo}
+            alt="Splendor"
+            className="h-9 w-auto object-contain mb-2 group-hover:opacity-90 transition-opacity"
           />
-        ))}
+          <p className="font-display text-base text-splendor-velvet tracking-woodcut">
+            Splendor
+          </p>
+          <p className="text-[11px] text-splendor-muted mt-1 tracking-[0.14em] uppercase font-serif">
+            {t('brandSubtitle')}
+          </p>
+        </NavLink>
       </div>
+
+      <InkRule className="my-4 max-w-full" />
+
+      <LanguageSwitch />
     </>
   );
 
   const navLinks = (
-    <nav className="p-3 overflow-y-auto md:max-h-[calc(100vh-12rem)]">
-      {navGroups.map((group) => (
-        <div key={group.label} className="mb-4">
-          <p className="px-3 mb-1 text-[10px] tracking-[0.22em] uppercase text-splendor-muted/80 font-serif">
+    <nav className="px-3 py-4 overflow-y-auto md:max-h-[calc(100vh-11rem)]">
+      {navGroups.map((group, gi) => (
+        <div key={group.label} className={gi > 0 ? 'mt-5 pt-4 border-t border-splendor-line/30' : 'mb-1'}>
+          <p className="px-3 mb-2 text-[10px] tracking-[0.22em] uppercase text-splendor-muted/80 font-serif text-center">
             {group.label}
           </p>
           {group.items.map((item) => (
@@ -105,7 +106,16 @@ export function Layout() {
                 `nav-link-vintage ${isActive ? 'active' : ''}`
               }
             >
-              {item.label}
+              {item.roman ? (
+                <span className="inline-flex items-baseline gap-2 min-w-0">
+                  <span className="font-display text-[11px] tracking-woodcut opacity-70 w-4 shrink-0">
+                    {item.roman}
+                  </span>
+                  <span className="truncate">{item.label}</span>
+                </span>
+              ) : (
+                item.label
+              )}
             </NavLink>
           ))}
         </div>
@@ -115,22 +125,24 @@ export function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row relative z-0">
+      <DocumentTitle />
       <ScrollProgress />
 
-      <header className="md:hidden sticky top-0 z-30 sidebar-ledger border-b border-splendor-line/70 px-4 py-3 flex items-center justify-between gap-3">
+      <header className="md:hidden sticky top-0 z-30 sidebar-ledger border-b-2 border-splendor-line/80 px-4 py-3 flex items-center justify-between gap-3">
         <NavLink to="/" className="flex items-center gap-2 min-w-0">
+          <WoodcutMark className="text-splendor-ink/70 shrink-0" />
           <img
             src={promo.logo}
             alt="Splendor"
             className="h-8 w-auto object-contain"
           />
-          <span className="font-display text-sm text-splendor-velvet truncate">
+          <span className="font-display text-sm text-splendor-velvet tracking-woodcut truncate">
             Splendor
           </span>
         </NavLink>
         <button
           type="button"
-          className="px-3 py-1.5 border border-splendor-line bg-white/70 font-serif text-xs tracking-wide text-splendor-ink"
+          className="btn-outline !px-3 !py-1.5 text-xs"
           aria-expanded={menuOpen}
           aria-controls="mobile-nav"
           onClick={() => setMenuOpen((o) => !o)}
@@ -142,7 +154,7 @@ export function Layout() {
       {menuOpen && (
         <button
           type="button"
-          className="md:hidden fixed inset-0 z-30 bg-black/35"
+          className="md:hidden fixed inset-0 z-30 bg-black/40"
           aria-label={t('closeMenu')}
           onClick={() => setMenuOpen(false)}
         />
@@ -150,29 +162,31 @@ export function Layout() {
 
       <aside
         id="mobile-nav"
-        className={`sidebar-ledger md:w-[17rem] md:fixed md:h-full flex-shrink-0 z-40 border-b md:border-b-0
-          max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:w-[17rem] max-md:shadow-xl
+        className={`sidebar-ledger md:w-[15.5rem] md:fixed md:h-full flex-shrink-0 z-40 border-b md:border-b-0
+          max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:w-[15.5rem]
           max-md:transition-transform max-md:duration-200
           ${menuOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'}
           md:translate-x-0`}
       >
-        <div className="p-5 border-b border-splendor-line/70 hidden md:block">
+        <div className="p-5 border-b border-splendor-line/50 hidden md:block">
           {brandBlock}
         </div>
-        <div className="p-5 border-b border-splendor-line/70 md:hidden">
+        <div className="p-5 border-b border-splendor-line/50 md:hidden">
           {brandBlock}
         </div>
         {navLinks}
       </aside>
 
-      <main className="flex-1 md:ml-[17rem] relative z-0">
-        <div className="max-w-4xl xl:max-w-6xl mx-auto px-5 md:px-8 py-10 md:py-14">
-          <PageEnter>
-            <Outlet />
-          </PageEnter>
+      <main className="flex-1 md:ml-[15.5rem] relative z-0">
+        <div className="px-2 md:px-4 py-5 md:py-8">
+          <div className="ledger-sheet max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10">
+            <PageEnter>
+              <Outlet />
+            </PageEnter>
+          </div>
         </div>
-        <footer className="max-w-4xl xl:max-w-6xl mx-auto px-5 md:px-8 pb-12">
-          <div className="ornament-line mb-6" />
+        <footer className="max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 pb-10">
+          <InkRule className="mb-6 max-w-xs" />
           <div className="text-[11px] text-splendor-muted/80 font-serif leading-relaxed space-y-2">
             <p>{t('footerArt')}</p>
             <p>
@@ -180,7 +194,7 @@ export function Layout() {
                 href="https://boardgamearena.com/gamepanel?game=splendor"
                 target="_blank"
                 rel="noreferrer"
-                className="text-splendor-velvet underline decoration-splendor-gold/50 hover:decoration-splendor-velvet transition-colors"
+                className="text-splendor-velvet underline decoration-splendor-ink/30 hover:decoration-splendor-velvet transition-colors"
               >
                 {t('bgaPlay')}
               </a>
@@ -198,12 +212,12 @@ export function LevelHeader({ level }: { level: LessonLevel }) {
   const { locale, t } = useI18n();
   const info = getLevelInfo(locale, t)[level];
   return (
-    <header className="mb-10">
+    <header className="mb-10 text-center md:text-left">
       <p className="text-[11px] tracking-[0.28em] uppercase text-splendor-muted font-serif mb-2">
         {t('chapterIndex')}
       </p>
       <h1 className="page-title">{info.title}</h1>
-      <div className="ornament-line my-5" />
+      <InkRule className="my-5 md:mx-0 mx-auto" />
       <p className="font-serif text-lg text-splendor-muted leading-relaxed">
         {info.description}
       </p>

@@ -30,7 +30,7 @@ Gold tokens are always **5**, regardless of player count.
 1. Place tokens by color in the bank (center of the table)
 2. Shuffle each level deck and **reveal 4 cards** face up per level
 3. Shuffle noble tiles; reveal players + 1 face up; remove the rest
-4. Starting player: usually the youngest (or as agreed)
+4. Starting player: the **youngest** player begins; play proceeds clockwise (groups may agree otherwise as a house rule)
 
 ## Setup Tips
 

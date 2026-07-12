@@ -1,7 +1,7 @@
 ---
 title: 规则速查
 level: reference
-order: 40
+order: 50
 duration: 随时查阅
 ---
 

@@ -5,18 +5,18 @@ export default {
     extend: {
       colors: {
         splendor: {
-          bg: '#efe6d2',
-          surface: '#f7f0e0',
-          card: '#fffaf0',
-          ink: '#1f1612',
-          muted: '#5c4a3a',
-          accent: '#8b6914',
-          gold: '#c4a35a',
-          brass: '#8a7040',
-          velvet: '#5c1f2e',
-          lapis: '#2a3f5f',
-          line: '#c9b896',
-          rule: '#a89068',
+          bg: '#ebe2d0',
+          surface: '#f4ecdc',
+          card: '#faf4e8',
+          ink: '#1a1410',
+          muted: '#4a3c30',
+          accent: '#6b4e1a',
+          gold: '#a8893e',
+          brass: '#7a6240',
+          velvet: '#4a1824',
+          lapis: '#243448',
+          line: '#3d3228',
+          rule: '#5c4a3a',
         },
         gem: {
           emerald: '#1f6b45',
@@ -33,19 +33,28 @@ export default {
         body: ['"EB Garamond"', '"Noto Serif SC"', 'Georgia', 'serif'],
       },
       boxShadow: {
-        soft: '0 8px 24px rgba(31, 24, 20, 0.05)',
+        soft: '0 4px 16px rgba(26, 20, 16, 0.08)',
+        press: 'inset 0 2px 4px rgba(26, 20, 16, 0.25)',
       },
       keyframes: {
         'fade-up': {
           '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        'ink-bloom': {
+          '0%': { opacity: '0', transform: 'scale(0.6)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
+        'ink-bloom': 'ink-bloom 0.45s cubic-bezier(0.22, 1, 0.36, 1) both',
       },
       transitionDuration: {
         250: '250ms',
+      },
+      letterSpacing: {
+        woodcut: '0.08em',
       },
     },
   },

@@ -1,24 +1,40 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import noblesData from '@/data/nobles.json';
 import type { NobleRequirement } from '@/types';
 import { gems, nobleSample } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useGemLabels } from '@/i18n/useGemLabels';
+import { hasAnyGem, readBonusParams } from '@/lib/toolQuery';
 
 const nobles = noblesData as NobleRequirement[];
 type DiscountKey = 'emerald' | 'sapphire' | 'ruby' | 'diamond' | 'onyx';
 
+const EMPTY_DISCOUNTS: Record<DiscountKey, number> = {
+  emerald: 0,
+  sapphire: 0,
+  ruby: 0,
+  diamond: 0,
+  onyx: 0,
+};
+
 export function NobleTracker() {
   const { t } = useI18n();
   const labels = useGemLabels();
-  const [discounts, setDiscounts] = useState<Record<DiscountKey, number>>({
-    emerald: 0,
-    sapphire: 0,
-    ruby: 0,
-    diamond: 0,
-    onyx: 0,
-  });
-
+  const [searchParams] = useSearchParams();
+  const seeded = useMemo(() => {
+    const bonuses = readBonusParams(searchParams);
+    if (!hasAnyGem(bonuses)) return { ...EMPTY_DISCOUNTS };
+    return {
+      emerald: bonuses.emerald,
+      sapphire: bonuses.sapphire,
+      ruby: bonuses.ruby,
+      diamond: bonuses.diamond,
+      onyx: bonuses.onyx,
+    };
+  }, [searchParams]);
+  const [discounts, setDiscounts] =
+    useState<Record<DiscountKey, number>>(seeded);
   const colors: DiscountKey[] = [
     'emerald',
     'sapphire',
@@ -125,7 +141,7 @@ function NobleCard({
   status: 'ready' | 'close';
   gaps?: number;
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const colors = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
 
   return (
@@ -136,7 +152,7 @@ function NobleCard({
     >
       <div className="flex justify-between items-center mb-2">
         <span className="font-serif text-splendor-ink">
-          {t('nobleLabel')} {noble.name}
+          {noble.name[locale] ?? noble.name.en}
         </span>
         <span className="font-display text-sm text-splendor-accent">
           {t('prestigePlus3')}

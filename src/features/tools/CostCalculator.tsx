@@ -1,24 +1,39 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { GemCounts } from '@/types';
 import { canAffordCard, EMPTY_GEMS } from '@/lib/gems';
 import { GemCounter } from '@/components/GemCounter';
 import { gems } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useGemLabels } from '@/i18n/useGemLabels';
+import {
+  hasAnyGem,
+  readBonusParams,
+  readCostParams,
+  readHandParams,
+} from '@/lib/toolQuery';
+
+function initialFromQuery(params: URLSearchParams) {
+  const bonuses = readBonusParams(params);
+  const hand = readHandParams(params);
+  const cost = readCostParams(params);
+  return {
+    discounts: hasAnyGem(bonuses) ? bonuses : { ...EMPTY_GEMS },
+    hand: hasAnyGem(hand) ? hand : { ...EMPTY_GEMS },
+    cost: hasAnyGem({ ...cost, gold: 0 })
+      ? cost
+      : { emerald: 0, sapphire: 0, ruby: 0, diamond: 0, onyx: 0 },
+  };
+}
 
 export function CostCalculator() {
   const { t } = useI18n();
   const labels = useGemLabels();
-  const [discounts, setDiscounts] = useState<GemCounts>({ ...EMPTY_GEMS });
-  const [hand, setHand] = useState<GemCounts>({ ...EMPTY_GEMS });
-  const [cost, setCost] = useState<Omit<GemCounts, 'gold'>>({
-    emerald: 0,
-    sapphire: 0,
-    ruby: 0,
-    diamond: 0,
-    onyx: 0,
-  });
-
+  const [searchParams] = useSearchParams();
+  const seeded = useMemo(() => initialFromQuery(searchParams), [searchParams]);
+  const [discounts, setDiscounts] = useState<GemCounts>(seeded.discounts);
+  const [hand, setHand] = useState<GemCounts>(seeded.hand);
+  const [cost, setCost] = useState(seeded.cost);
   const { canBuy, needed, shortfall } = canAffordCard(cost, discounts, hand);
   const costColors = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
 

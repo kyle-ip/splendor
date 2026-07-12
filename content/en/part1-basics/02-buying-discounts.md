@@ -46,3 +46,7 @@ Display: a Level 1 card (+1 emerald, 0 prestige, cost 1 ruby + 1 sapphire) vs a 
 - Prefer the official term **bonus** for the permanent gem on each card
 - Low-level cards (0–1 prestige) often build your bonus engine
 - High-level cards (4–5 prestige) are often for the endgame sprint
+
+## Try it
+
+Open the [cost calculator](/tools/calculator?bonus=ruby:1&hand=ruby:1,onyx:2,gold:1&cost=ruby:2,onyx:2) with this lesson’s worked example already filled in.

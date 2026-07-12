@@ -12,6 +12,7 @@ import { SetupWizard } from '@/features/tools/SetupWizard';
 import { promo } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
 import { extractToc } from '@/lib/toc';
+import { InkRule } from '@/components/manuscript/WoodcutFrame';
 import type { LessonLevel } from '@/types';
 
 export function LevelPage() {
@@ -31,35 +32,41 @@ export function LevelPage() {
       <LevelHeader level={lessonLevel} />
       {lessonLevel === 'intro' && (
         <div className="mb-10 animate-fade-up space-y-4">
-          <h2 className="section-title mb-4">{t('setupWizard')}</h2>
-          <div className="panel overflow-hidden">
-            <div className="bg-[#1a120e] p-3 md:p-4">
+          <h2 className="section-title-folio mb-2">{t('setupWizard')}</h2>
+          <InkRule className="mx-auto mb-4 max-w-[10rem]" />
+          <figure>
+            <div className="plate-window p-2 md:p-3">
               <img
                 src={promo.setup}
                 alt="Setup"
                 className="w-full h-auto object-contain mx-auto"
               />
             </div>
-          </div>
+          </figure>
           <SetupWizard />
         </div>
       )}
-      <div className="space-y-3 animate-fade-up stagger-1">
-        {levelLessons.map((lesson) => (
+      <div className="mb-6 animate-fade-up">
+        <h2 className="section-title-folio mb-2">{t('chapterIndex')}</h2>
+        <InkRule className="mx-auto mb-4 max-w-[10rem]" />
+      </div>
+      <nav
+        aria-label={t('chapterIndex')}
+        className="border-y border-splendor-line/35 py-1 animate-fade-up stagger-1"
+      >
+        {levelLessons.map((lesson, i) => (
           <Link
             key={lesson.id}
             to={`/learn/${lessonLevel}/${lesson.id}`}
-            className="flex justify-between items-center px-4 py-4 panel-soft hover:border-splendor-accent transition-all duration-300 hover:translate-x-1"
+            className="toc-row"
           >
-            <div>
-              <p className="font-serif text-splendor-ink">{lesson.title}</p>
-              <p className="text-xs text-splendor-muted mt-1 font-body">
-                {lesson.duration}
-              </p>
-            </div>
+            <span className="toc-roman">{String(i + 1).padStart(2, '0')}</span>
+            <span className="toc-title">{lesson.title}</span>
+            <span className="toc-leader" aria-hidden />
+            <span className="toc-meta">{lesson.duration}</span>
           </Link>
         ))}
-      </div>
+      </nav>
     </div>
   );
 }
@@ -94,16 +101,16 @@ export function LessonPage() {
       <div
         className={
           showToc
-            ? 'xl:grid xl:grid-cols-[minmax(0,1fr)_12rem] xl:gap-8 xl:items-start'
+            ? 'xl:grid xl:grid-cols-[minmax(0,1fr)_11rem] xl:gap-5 xl:items-start'
             : undefined
         }
       >
-        <div className="panel p-6 md:p-10 lg:p-12 min-w-0">
+        <div className="panel p-5 md:p-7 lg:p-8 min-w-0">
           <header className="mb-8 text-center">
             <p className="font-display text-[10px] tracking-[0.35em] uppercase text-splendor-accent mb-2">
               {t('manuscript')}
             </p>
-            <h1 className="font-display text-3xl text-splendor-velvet tracking-wide">
+            <h1 className="font-display text-3xl text-splendor-velvet tracking-woodcut">
               {lesson.title}
             </h1>
             <p className="text-sm text-splendor-muted mt-2 font-serif">

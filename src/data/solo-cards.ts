@@ -35,7 +35,7 @@ function card(
   };
 }
 
-/** Representative Level 1 pool (playable practice deck). */
+/** Full Level 1 pool (40/40). */
 export const LEVEL1_CARDS: SoloCard[] = [
   card('l1-e1', 1, 0, 'emerald', { ruby: 2, diamond: 1 }),
   card('l1-e2', 1, 0, 'emerald', { sapphire: 1, onyx: 2 }),
@@ -79,6 +79,7 @@ export const LEVEL1_CARDS: SoloCard[] = [
   card('l1-o8', 1, 0, 'onyx', { emerald: 1, sapphire: 1, ruby: 1, diamond: 1 }),
 ];
 
+/** Practice subset (20/30). Label this clearly in solo UI copy. */
 export const LEVEL2_CARDS: SoloCard[] = [
   card('l2-e1', 2, 1, 'emerald', { emerald: 2, sapphire: 2, onyx: 3 }),
   card('l2-e2', 2, 2, 'emerald', { sapphire: 3, diamond: 3 }),
@@ -102,6 +103,7 @@ export const LEVEL2_CARDS: SoloCard[] = [
   card('l2-o4', 2, 3, 'onyx', { onyx: 6 }),
 ];
 
+/** Practice subset (15/20). Label this clearly in solo UI copy. */
 export const LEVEL3_CARDS: SoloCard[] = [
   card('l3-e1', 3, 3, 'emerald', { sapphire: 3, ruby: 3, diamond: 3, onyx: 5 }),
   card('l3-e2', 3, 4, 'emerald', { emerald: 3, sapphire: 3, diamond: 3, onyx: 6 }),

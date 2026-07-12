@@ -5,7 +5,7 @@ order: 10
 duration: 5 min
 ---
 
-On your turn you must take **exactly one** of the four actions below. Play proceeds clockwise from the youngest player (or as agreed).
+On your turn you must take **exactly one** of the four actions below. The **youngest** player begins; play proceeds clockwise (groups may agree otherwise as a house rule).
 
 ## Action 1: Take 3 Different Tokens
 

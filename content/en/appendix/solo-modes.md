@@ -1,11 +1,11 @@
 ---
 title: Solo Modes
 level: reference
-order: 42
+order: 52
 duration: Anytime
 ---
 
-The three solo modes below are **house rules / fan variants** (not official Space Cowboys rules). Modes 1 and 2 follow custom write-ups; **Mode 3** follows the *Splendor Solo Automa* (Carolina Gamer) rulebook and component art in `references/solo`. Where the source is silent, rulings are marked **"Suggested ruling."**
+The three solo modes below are **house rules / fan variants** (not official Space Cowboys rules). Modes 1 and 2 follow custom write-ups; **Mode 3** follows the *Splendor Solo Automa* (Carolina Gamer) rulebook and component art in `references/solo-automa`. Where the source is silent, rulings are marked **"Suggested ruling."**
 
 ---
 
@@ -65,7 +65,7 @@ Player turn (standard four actions) → player noble check → automa action →
 
 When either side reaches ≥15 prestige, settle as a race; **both player and automa can attract nobles**.
 
-**Practice**: [Dice automa](/tools/solo/dice) (in-browser).
+**Practice**: [Dice automa](/tools/solo/dice) (in-browser). The browser decks use a **practice subset** (Level 1 full 40; Level 2 = 20/30; Level 3 = 15/20)—enough variety to learn the mode, not a full print run.
 
 ---
 
@@ -214,5 +214,11 @@ Automa prestige = sum of its retained **point-bearing development cards** (no no
 ## Relation to Main Rules
 
 - The main tutorial assumes **multiplayer base Splendor**.  
-- All three solo write-ups live in this appendix; Mode 3 print files and original rules are in `references/solo/`.  
+- All three solo write-ups live in this appendix; Mode 3 print files and original rules are in `references/solo-automa/`.  
 - Mode 1 trains cost planning; Mode 2 trains reading the row and endgame; Mode 3 trains tempo and reserving under Automa card pressure.
+
+| Mode | Skills from Parts 2–3 |
+|------|------------------------|
+| 1 Fixed fund | Gem economy, Level 1 engine, opportunity cost |
+| 2 Dice | Table reading, denial, endgame race |
+| 3 Card Automa | Tempo, reservation tactics, paced scoring |

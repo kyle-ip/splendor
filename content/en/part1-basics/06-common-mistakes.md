@@ -40,4 +40,4 @@ Bought or reserved cards are replaced immediately from that level’s deck. Scan
 - Nobles check bonus totals only; visit for +3
 - 15 prestige ends the round; highest score wins (fewest cards breaks ties)
 
-After this chapter, play a physical game and use the **purchase calculator** to verify costs.
+After this chapter, play a physical game and verify costs in the [purchase calculator](/tools/calculator).

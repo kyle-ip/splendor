@@ -1,29 +1,50 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { cardExamples } from '@/data/cardExamples';
 import { evaluateCard } from '@/lib/gems';
 import { gems } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useGemLabels } from '@/i18n/useGemLabels';
 import type { MessageKey } from '@/i18n/messages';
+import { readBonusParams, readWeightParam } from '@/lib/toolQuery';
 
 export function CardEvaluator() {
   const { locale, t } = useI18n();
   const labels = useGemLabels();
-  const [weights, setWeights] = useState({
-    points: 1,
-    bonus: 1.5,
-    costEfficiency: 1,
-    nobleFit: 2,
-  });
+  const [searchParams] = useSearchParams();
 
-  const [nobleNeeds, setNobleNeeds] = useState({
-    emerald: 0,
-    sapphire: 3,
-    ruby: 0,
-    diamond: 0,
-    onyx: 0,
-  });
+  const seeded = useMemo(() => {
+    const gaps = readBonusParams(searchParams);
+    const hasGaps = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'].some(
+      (k) => gaps[k as keyof typeof gaps] > 0,
+    );
+    return {
+      weights: {
+        points: readWeightParam(searchParams, 'points', 1),
+        bonus: readWeightParam(searchParams, 'bonusWeight', 1.5),
+        costEfficiency: readWeightParam(searchParams, 'cost', 1),
+        nobleFit: readWeightParam(searchParams, 'nobleFit', 2),
+      },
+      nobleNeeds: hasGaps
+        ? {
+            emerald: gaps.emerald,
+            sapphire: gaps.sapphire,
+            ruby: gaps.ruby,
+            diamond: gaps.diamond,
+            onyx: gaps.onyx,
+          }
+        : {
+            emerald: 0,
+            sapphire: 3,
+            ruby: 0,
+            diamond: 0,
+            onyx: 0,
+          },
+    };
+  }, [searchParams]);
 
+  const [weights, setWeights] = useState(seeded.weights);
+  const [nobleNeeds, setNobleNeeds] = useState(seeded.nobleNeeds);
   const colors = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
 
   const weightKeys: { key: keyof typeof weights; label: MessageKey }[] = [

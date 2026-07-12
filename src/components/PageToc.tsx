@@ -17,7 +17,7 @@ export function PageToc({ markdown, minItems = 3 }: PageTocProps) {
       aria-label={t('onThisPage')}
       className="xl:sticky xl:top-8 xl:max-h-[calc(100vh-4rem)] xl:overflow-y-auto"
     >
-      <div className="border border-splendor-line/80 bg-white/50 p-4">
+      <div className="panel-soft p-4">
         <p className="font-serif text-[11px] tracking-[0.2em] uppercase text-splendor-muted mb-3">
           {t('onThisPage')}
         </p>

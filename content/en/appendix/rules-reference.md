@@ -1,7 +1,7 @@
 ---
 title: Rules Quick Reference
 level: reference
-order: 40
+order: 50
 duration: Anytime
 ---
 

@@ -101,16 +101,18 @@ export function NobleTile({
   noble: NobleRequirement;
   spent?: boolean;
 }) {
-  const { t } = useI18n();
+  const { locale } = useI18n();
   const reqs = (
     ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const
   ).filter((c) => noble.requirements[c] > 0);
+  const label = noble.name[locale] ?? noble.name.en;
 
   return (
     <div
       className={`w-[4.5rem] h-[4.5rem] sm:w-[5.25rem] sm:h-[5.25rem] border border-splendor-line bg-[#f3ebe0] p-1.5 flex flex-col ${
         spent ? 'opacity-35 line-through' : ''
       }`}
+      title={label}
     >
       <div className="flex items-start gap-1">
         <span className="font-display text-sm text-splendor-velvet leading-none">
@@ -129,7 +131,7 @@ export function NobleTile({
         </div>
       </div>
       <p className="mt-auto text-[9px] font-serif text-splendor-muted truncate">
-        {t('nobleLabel')} {noble.name}
+        {label}
       </p>
     </div>
   );

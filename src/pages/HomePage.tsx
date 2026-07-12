@@ -2,12 +2,14 @@ import { Link } from 'react-router-dom';
 import { getLessons, getLevelInfo } from '@/lib/lessons';
 import { promo, gems } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
+import { InkRule, WoodcutFrame } from '@/components/manuscript/WoodcutFrame';
 
 const paths = [
-  { level: 'intro' as const, gem: gems.emerald, roman: 'I' },
-  { level: 'basics' as const, gem: gems.sapphire, roman: 'II' },
-  { level: 'intermediate' as const, gem: gems.ruby, roman: 'III' },
-  { level: 'advanced' as const, gem: gems.gold, roman: 'IV' },
+  { level: 'intro' as const, roman: 'I' },
+  { level: 'basics' as const, roman: 'II' },
+  { level: 'intermediate' as const, roman: 'III' },
+  { level: 'advanced' as const, roman: 'IV' },
+  { level: 'duel' as const, roman: 'V' },
 ];
 
 export function HomePage() {
@@ -25,129 +27,152 @@ export function HomePage() {
   } as const;
 
   return (
-    <div>
-      <header className="relative mb-16 animate-fade-up">
-        <div className="grid md:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
-          <div>
-            <p className="font-serif text-[11px] tracking-[0.28em] uppercase text-splendor-muted mb-3">
-              {t('homeEyebrow')}
-            </p>
-            <img
-              src={promo.logo}
-              alt="Splendor"
-              className="h-11 md:h-12 w-auto object-contain mb-4"
-            />
-            <h1 className="font-display text-4xl md:text-[3rem] text-splendor-velvet leading-[1.15] mb-3">
-              Splendor
-            </h1>
-            <div className="ornament-line my-6" />
-            <p className="font-body text-splendor-muted text-lg max-w-md leading-relaxed">
-              {t('homeTagline')}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/learn/intro" className="btn-gilt">
-                {t('startLearning')}
-              </Link>
-              <Link to="/tools/calculator" className="btn-outline">
-                {t('openTools')}
-              </Link>
-            </div>
+    <div className="max-w-2xl mx-auto">
+      {/* Title page */}
+      <header className="mb-14 animate-fade-up text-center">
+        <WoodcutFrame className="text-center">
+          <p className="font-serif text-[11px] tracking-[0.28em] uppercase text-splendor-muted mb-4">
+            {t('homeEyebrow')}
+          </p>
+          <img
+            src={promo.logo}
+            alt="Splendor"
+            className="h-12 md:h-14 w-auto object-contain mx-auto mb-3"
+          />
+          <h1 className="font-display text-4xl md:text-[3.15rem] text-splendor-velvet leading-[1.12] tracking-woodcut">
+            Splendor
+          </h1>
+          <InkRule className="my-5 mx-auto max-w-[12rem]" />
+          <p className="font-body text-splendor-muted text-lg max-w-md mx-auto leading-relaxed">
+            {t('homeTagline')}
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link to="/learn/intro" className="btn-gilt">
+              {t('startLearning')}
+            </Link>
+            <Link to="/tools/calculator" className="btn-outline">
+              {t('openTools')}
+            </Link>
           </div>
-          <div className="justify-self-center">
+        </WoodcutFrame>
+
+        <figure className="mt-8 mx-auto max-w-[16rem]">
+          <div className="plate-window p-3 md:p-4">
             <img
               src={promo.boxHero}
               alt="Splendor box"
-              className="w-52 md:w-64 drop-shadow-lg"
+              className="w-full h-auto object-contain mx-auto"
             />
           </div>
-        </div>
+          <figcaption className="folio-caption mt-3 tracking-[0.12em] uppercase">
+            Splendor
+          </figcaption>
+        </figure>
       </header>
 
-
-      <section className="mb-12 animate-fade-up stagger-1">
-        <h2 className="section-title mb-5">{t('componentsOverview')}</h2>
-        <div className="panel overflow-hidden">
-          <div className="bg-[#1a120e] p-3 md:p-4">
+      {/* Engraved plate */}
+      <section className="mb-14 animate-fade-up stagger-1">
+        <h2 className="section-title-folio mb-2">{t('componentsOverview')}</h2>
+        <InkRule className="mx-auto mb-6 max-w-[10rem]" />
+        <figure>
+          <div className="plate-window p-2 md:p-3">
             <img
               src={promo.setup}
               alt="Splendor setup"
               className="w-full h-auto object-contain mx-auto"
             />
           </div>
-          <p className="px-4 py-3 text-xs text-splendor-muted font-serif border-t border-splendor-line">
+          <figcaption className="folio-caption mt-3 px-2">
             {t('componentsCaption')}
-          </p>
-        </div>
-        <div className="mt-4 flex flex-wrap justify-center gap-3">
+          </figcaption>
+        </figure>
+        <ul className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-3 list-none p-0">
           {(Object.keys(gemLabels) as (keyof typeof gemLabels)[]).map((key) => (
-            <div key={key} className="flex flex-col items-center gap-1 px-2 py-2">
-              <img src={gems[key]} alt={gemLabels[key]} className="gem-img-lg" />
-              <span className="text-[11px] font-serif text-splendor-muted">
+            <li key={key} className="flex flex-col items-center gap-1">
+              <img src={gems[key]} alt={gemLabels[key]} className="gem-img" />
+              <span className="text-[10px] font-serif text-splendor-muted tracking-wide">
                 {gemLabels[key]}
               </span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
-      <section className="mb-12 animate-fade-up stagger-2">
-        <h2 className="section-title mb-5">{t('learningPath')}</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {paths.map(({ level, gem, roman }) => {
+      {/* Table of contents */}
+      <section className="mb-14 animate-fade-up stagger-2">
+        <h2 className="section-title-folio mb-2">{t('learningPath')}</h2>
+        <InkRule className="mx-auto mb-6 max-w-[10rem]" />
+        <nav aria-label={t('learningPath')} className="border-y border-splendor-line/35 py-1">
+          {paths.map(({ level, roman }) => {
             const info = levelInfo[level];
             const levelLessons = lessons.filter((l) => l.level === level);
 
             return (
-              <Link
-                key={level}
-                to={info.path}
-                className="panel-soft group p-5 transition-all duration-300 hover:border-splendor-gold hover:-translate-y-0.5 hover:shadow-soft"
-              >
-                <div className="flex items-start gap-3">
-                  <img src={gem} alt="" className="gem-img-lg shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline justify-between gap-2">
-                      <h3 className="font-serif text-lg text-splendor-ink group-hover:text-splendor-velvet transition-colors">
-                        {info.title}
-                      </h3>
-                      <span className="font-display text-xs text-splendor-accent">
-                        {roman}
-                      </span>
-                    </div>
-                    <p className="text-sm text-splendor-muted mt-1.5 leading-relaxed">
-                      {info.description}
-                    </p>
-                    <p className="text-xs text-splendor-muted/70 mt-3 font-serif">
-                      {info.duration} · {t('chaptersCount', { count: levelLessons.length })}
-                    </p>
-                  </div>
-                </div>
+              <Link key={level} to={info.path} className="toc-row">
+                <span className="toc-roman">{roman}</span>
+                <span className="toc-title">{info.title}</span>
+                <span className="toc-leader" aria-hidden />
+                <span className="toc-meta">
+                  {info.duration}
+                  <span className="block opacity-70">
+                    {t('chaptersCount', { count: levelLessons.length })}
+                  </span>
+                </span>
               </Link>
             );
           })}
-        </div>
+        </nav>
       </section>
 
-      <section className="mb-12 animate-fade-up stagger-2">
-        <h2 className="section-title mb-5">{t('bgaResources')}</h2>
-        <div className="panel-soft p-5 space-y-3">
-          <p className="text-sm text-splendor-muted font-body leading-relaxed">
-            {t('bgaNote')}
-          </p>
-          <a
-            href="https://boardgamearena.com/gamepanel?game=splendor"
-            target="_blank"
-            rel="noreferrer"
-            className="btn-gilt inline-flex"
-          >
-            {t('bgaPlay')}
-          </a>
-        </div>
+      {/* Quick start — early, like a primer note */}
+      <section className="mb-14 animate-fade-up stagger-2">
+        <h2 className="section-title-folio mb-2">{t('quickStart')}</h2>
+        <InkRule className="mx-auto mb-6 max-w-[10rem]" />
+        <ol className="space-y-3 text-splendor-ink/90 font-body list-none pl-0">
+          {[
+            { to: '/learn/intro', label: t('navIntro'), external: false },
+            { to: '/learn/basics', label: t('navBasics'), external: false },
+            { to: '/reference/rules', label: t('navRules'), external: false },
+            {
+              to: 'https://boardgamearena.com/gamepanel?game=splendor',
+              label: 'Board Game Arena',
+              external: true,
+            },
+          ].map((step, i) => (
+            <li
+              key={step.to}
+              className="flex gap-3 items-baseline border-b border-splendor-line/15 pb-3 last:border-0"
+            >
+              <span className="font-display text-sm text-splendor-ink/55 tracking-woodcut w-6 shrink-0">
+                {i + 1}.
+              </span>
+              {step.external ? (
+                <a
+                  href={step.to}
+                  className="text-splendor-velvet underline decoration-splendor-ink/25 hover:decoration-splendor-velvet"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {step.label}
+                </a>
+              ) : (
+                <Link
+                  to={step.to}
+                  className="text-splendor-velvet underline decoration-splendor-ink/25 hover:decoration-splendor-velvet"
+                >
+                  {step.label}
+                </Link>
+              )}
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section className="mb-12 animate-fade-up stagger-3">
-        <h2 className="section-title mb-5">{t('merchantTools')}</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+      {/* Tools index */}
+      <section className="mb-14 animate-fade-up stagger-3">
+        <h2 className="section-title-folio mb-2">{t('merchantTools')}</h2>
+        <InkRule className="mx-auto mb-6 max-w-[10rem]" />
+        <div className="border-y border-splendor-line/35 py-1">
           {[
             { to: '/tools/calculator', label: t('navCalculator'), desc: t('toolCalcDesc') },
             { to: '/tools/nobles', label: t('navNobles'), desc: t('toolNoblesDesc') },
@@ -155,58 +180,30 @@ export function HomePage() {
             { to: '/tools/replay', label: t('navReplay'), desc: t('toolReplayDesc') },
             { to: '/tools/solo', label: t('navSoloPractice'), desc: t('toolSoloDesc') },
           ].map((tool) => (
-            <Link
-              key={tool.to}
-              to={tool.to}
-              className="px-4 py-3 border border-splendor-line bg-white/70 hover:border-splendor-accent hover:bg-white transition-all"
-            >
-              <p className="font-serif text-splendor-velvet">{tool.label}</p>
-              <p className="text-xs text-splendor-muted mt-1">{tool.desc}</p>
+            <Link key={tool.to} to={tool.to} className="index-row">
+              <span className="index-label">{tool.label}</span>
+              <span className="toc-leader" aria-hidden />
+              <span className="index-desc">{tool.desc}</span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="animate-fade-up stagger-3 panel p-6 md:p-8">
-        <h2 className="font-serif text-xl text-splendor-velvet mb-4 text-center tracking-wide">
-          {t('quickStart')}
-        </h2>
-        <ol className="list-decimal list-inside space-y-2.5 text-splendor-ink/90 font-body">
-          <li>
-            <Link
-              to="/learn/intro"
-              className="text-splendor-velvet underline decoration-splendor-gold/50"
-            >
-              {t('navIntro')}
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/learn/basics"
-              className="text-splendor-velvet underline decoration-splendor-gold/50"
-            >
-              {t('navBasics')}
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/reference/rules"
-              className="text-splendor-velvet underline decoration-splendor-gold/50"
-            >
-              {t('navRules')}
-            </Link>
-          </li>
-          <li>
-            <a
-              href="https://boardgamearena.com/gamepanel?game=splendor"
-              className="text-splendor-velvet underline decoration-splendor-gold/50"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Board Game Arena
-            </a>
-          </li>
-        </ol>
+      {/* Colophon-style BGA note */}
+      <section className="animate-fade-up stagger-3 text-center">
+        <h2 className="section-title-folio mb-2">{t('bgaResources')}</h2>
+        <InkRule className="mx-auto mb-5 max-w-[10rem]" />
+        <p className="text-sm text-splendor-muted font-body leading-relaxed mb-5 max-w-md mx-auto">
+          {t('bgaNote')}
+        </p>
+        <a
+          href="https://boardgamearena.com/gamepanel?game=splendor"
+          target="_blank"
+          rel="noreferrer"
+          className="btn-gilt inline-flex"
+        >
+          {t('bgaPlay')}
+        </a>
       </section>
     </div>
   );
