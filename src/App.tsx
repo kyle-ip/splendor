@@ -22,6 +22,10 @@ export default function App() {
         <Route path="learn/:level" element={<LevelPage />} />
         <Route path="learn/:level/:lessonId" element={<LessonPage />} />
         <Route
+          path="reference/glossary"
+          element={<ReferencePage lessonId="appendix-glossary" />}
+        />
+        <Route
           path="reference/rules"
           element={<ReferencePage lessonId="appendix-rules-reference" />}
         />

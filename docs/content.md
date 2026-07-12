@@ -28,7 +28,7 @@ Frontmatter `level` values: `intro` | `basics` | `intermediate` | `advanced` | `
 
 - Parts I–IV (`intro`…`advanced`): base Splendor
 - Part V (`duel`, `order` 40–44): Splendor Duel — source `references/splendor-duel-rulebook.pdf`
-- Appendix (`reference`, `order` 50+): rules quick ref, expansions, solo
+- Appendix (`reference`, `order` 49+): glossary, rules quick ref, expansions, solo
 
 ## Rule accuracy
 

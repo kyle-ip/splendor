@@ -9,6 +9,8 @@ Terminology follows the official rules. Source of truth for this guide: the Engl
 
 ## Glossary
 
+Short index of core rule terms. For the **full guide glossary** (strategy terms, Duel, expansions, solo), see **[Glossary](/reference/glossary)**.
+
 | Official term | Meaning |
 |---------------|---------|
 | Tokens | Gem / gold chips on the table |

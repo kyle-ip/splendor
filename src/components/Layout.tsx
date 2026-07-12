@@ -42,6 +42,7 @@ export function Layout() {
       {
         label: t('navAppendix'),
         items: [
+          { to: '/reference/glossary', label: t('navGlossary') },
           { to: '/reference/rules', label: t('navRules') },
           { to: '/reference/solo', label: t('navSolo') },
           { to: '/reference/expansions', label: t('navExpansions') },

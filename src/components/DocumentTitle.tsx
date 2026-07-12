@@ -34,6 +34,8 @@ export function DocumentTitle() {
       page = lesson?.title ?? t('navTutorial');
     } else if (pathname.startsWith('/learn/') && isLessonLevel(level)) {
       page = getLevelInfo(locale, t)[level].title;
+    } else if (pathname.startsWith('/reference/glossary')) {
+      page = t('navGlossary');
     } else if (pathname.startsWith('/reference/rules')) {
       page = t('navRules');
     } else if (pathname.startsWith('/reference/solo')) {
