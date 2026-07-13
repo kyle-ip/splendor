@@ -5,17 +5,17 @@ export default {
     extend: {
       colors: {
         splendor: {
-          bg: '#ebe2d0',
-          surface: '#f4ecdc',
-          card: '#faf4e8',
-          ink: '#1a1410',
-          muted: '#4a3c30',
+          bg: '#ffffff',
+          surface: '#f7f5f2',
+          card: '#ffffff',
+          ink: '#1c1612',
+          muted: '#4a4036',
           accent: '#6b4e1a',
-          gold: '#a8893e',
+          gold: '#9a7b32',
           brass: '#7a6240',
-          velvet: '#4a1824',
-          lapis: '#243448',
-          line: '#3d3228',
+          velvet: '#5c1a28',
+          lapis: '#1e3a4f',
+          line: '#2c241c',
           rule: '#5c4a3a',
         },
         gem: {
@@ -33,8 +33,8 @@ export default {
         body: ['"EB Garamond"', '"Noto Serif SC"', 'Georgia', 'serif'],
       },
       boxShadow: {
-        soft: '0 4px 16px rgba(26, 20, 16, 0.08)',
-        press: 'inset 0 2px 4px rgba(26, 20, 16, 0.25)',
+        soft: '0 4px 16px rgba(28, 22, 18, 0.06)',
+        press: 'inset 0 2px 4px rgba(28, 22, 18, 0.2)',
       },
       keyframes: {
         'fade-up': {

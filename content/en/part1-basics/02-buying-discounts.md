@@ -49,4 +49,4 @@ Display: a Level 1 card (+1 emerald, 0 prestige, cost 1 ruby + 1 sapphire) vs a 
 
 ## Try it
 
-Open the [cost calculator](/tools/calculator?bonus=ruby:1&hand=ruby:1,onyx:2,gold:1&cost=ruby:2,onyx:2) with this lesson’s worked example already filled in.
+Work the same example by hand: with +1 ruby bonus, hand of 1 ruby + 2 onyx + 1 gold, and a cost of 2 ruby + 2 onyx, you pay 1 ruby + 2 onyx + 1 gold (gold fills the missing ruby).

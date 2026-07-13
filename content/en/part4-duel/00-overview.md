@@ -39,3 +39,5 @@ You do **not** play out the rest of a round like in base Splendor. First to trig
 ## Design Intent
 
 Duel is denser and more interactive: taking tokens is geometric, Privileges punish greedy takes, and three win lines force you to watch your rival’s Crowns and monocolor stack—not only their total score.
+
+After the rules chapters, walk a short annotated line in [Annotated Mini-Game](/learn/duel/part4-duel-05-sample-game).

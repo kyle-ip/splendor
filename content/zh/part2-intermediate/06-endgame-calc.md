@@ -84,5 +84,6 @@ duration: 9 分钟
 ## 本章要点
 
 - 引擎 → 贵族 → 节奏 → 保留 → 人数 → 终局
-- 用 [贵族追踪器](/tools/nobles?emerald=3&sapphire=3&ruby=2) 与 [卡牌估值工具](/tools/card-value?sapphire=1&points=2&bonusWeight=0.8&nobleFit=1.5) 压力测试接近终局的局面
+- 用 [标准练习](/tools/standard) 或 [骰子自动机练习](/tools/solo/dice) 压力测试接近终局的局面
+- 没有牌友时，可在 [骰子自动机练习](/tools/solo/dice) 或多人竞速的 [标准练习](/tools/standard) 里感受终局压力
 - 记住平局：购买发展卡更少者胜——末段按此排兵

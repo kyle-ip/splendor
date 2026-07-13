@@ -29,4 +29,4 @@ duration: 4 分钟
 
 ## 精通之路
 
-Splendor 精通 = 规则零失误 + 稳定引擎 + 读局 + 终局计算。多玩多复盘，结合本教程的 [购卡计算器](/tools/calculator)、[贵族追踪器](/tools/nobles) 与 [卡牌估值工具](/tools/card-value)。
+Splendor 精通 = 规则零失误 + 稳定引擎 + 读局 + 终局计算。多玩、用 [复盘模板](/tools/replay) 记录，并结合本教程的练习工具。

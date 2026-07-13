@@ -68,4 +68,4 @@ Never take “because the bank is full” into a forced discard of your key colo
 
 ## Try it
 
-Practice a mid-engine pay in the [cost calculator](/tools/calculator?bonus=emerald:2,sapphire:1&hand=ruby:1,gold:1&cost=emerald:3,sapphire:2,ruby:2).
+Practice a mid-engine pay on paper or at the table: +2 emerald +1 sapphire bonus, hand 1 ruby + 1 gold, cost 3 emerald + 2 sapphire + 2 ruby.

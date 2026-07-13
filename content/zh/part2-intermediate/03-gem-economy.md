@@ -68,4 +68,4 @@ duration: 8 分钟
 
 ## 动手试
 
-用 [费用计算器](/tools/calculator?bonus=emerald:2,sapphire:1&hand=ruby:1,gold:1&cost=emerald:3,sapphire:2,ruby:2) 练一笔中期引擎支付。
+在桌上或纸上练一笔中期引擎支付：奖励 +2 翡翠 +1 蓝宝石，手牌 1 红 + 1 金，费用 3 翡翠 + 2 蓝 + 2 红。

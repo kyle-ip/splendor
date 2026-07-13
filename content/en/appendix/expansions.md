@@ -17,8 +17,10 @@ The box contains **four separate modules**. Official guidance: use them **indivi
 - A city needs prestige **and** bonus combinations; claiming one ends the game after the current round
 - Winner is among players who claimed a city (then highest prestige if several)
 - **Vs base**: stop racing only to 15—engine toward a specific city tile instead
+- **Best for:** groups who like long-term planning and hate “first to 15 wins”
+- **Skip if:** you want short, punchy races or are still learning base scoring
 
-**What changes in evaluation:** Treat the face-up cities like “mandatory nobles with a prestige gate.” A 5-pt card that doesn’t help any city can be worse than a 2-pt card that unlocks a city color. Example: if a city needs 11 prestige + emerald×4 sapphire×4, Mary-Stuart-style depth beats random Level 3 off-colors.
+**What changes in evaluation:** Treat face-up cities like mandatory nobles with a prestige gate. A 5-pt card that helps no city can lose to a 2-pt that unlocks one. Example: if a city needs 11 prestige + emerald×4 sapphire×4, a deep emerald–sapphire engine beats random Level 3 off-colors.
 
 ### Trading Posts
 
@@ -26,6 +28,8 @@ The box contains **four separate modules**. Official guidance: use them **indivi
 - Abilities trigger after your turn (often after the noble check) when requirements are met
 - Some powers change gem-taking, gold value when paying, or add prestige
 - **Vs base**: gem economy and scoring paths shift; re-read ability timing carefully
+- **Best for:** players who enjoy engine combo timing and “power turns”
+- **Skip if:** your table already struggles with base timing (nobles / 10-token limit)
 
 **What changes in evaluation:** Early bonuses that unlock a strong post can outrank a naked 2-pt buy. Example: if a post lets gold pay as two colors, holding 1–2 gold becomes stronger than in base—revisit the gem-economy keep/spend rules.
 
@@ -35,8 +39,16 @@ The box contains **four separate modules**. Official guidance: use them **indivi
 - New card effects (e.g. double bonuses, free Level 1 takes) change evaluation
 - Market is wider: 4 base + 2 Orient face-up per level when decks allow
 - **Vs base**: card valuation must include Orient effects, not only points and single bonuses
+- **Best for:** fans of flashy card text and wider markets
+- **Skip if:** you want a clean table with fewer rules exceptions
 
-**What changes in evaluation:** A 0-pt Orient with double bonus or a free Level 1 take can beat a base 3-pt card early. Example: double sapphire while two nobles/cities need sapphire is often the best “engine” buy on the row—even above printed points.
+**What changes in evaluation:** A 0-pt Orient with double bonus or a free Level 1 take can beat a base 3-pt early. Example: double sapphire while two nobles need sapphire is often the best engine buy on the row.
+
+| Before (base habit) | After (Orient on table) |
+|---------------------|-------------------------|
+| Rank by points ÷ remaining cost | Rank by effect + noble fit first, then points |
+| Single bonus = +1 color | Double-bonus / free take can be the whole plan |
+| Narrow display | Wider market—scan Orient slots every refill |
 
 ### Strongholds
 
@@ -44,6 +56,8 @@ The box contains **four separate modules**. Official guidance: use them **indivi
 - Contest over specific development cards becomes more explicit
 - Placement/control can deny or claim cards beyond a simple buy
 - **Vs base**: denial and table-reading weight rise; plan around contested slots
+- **Best for:** 2–3p groups who already like denial and contested reserves
+- **Skip if:** 4p chaos already feels high enough without control pieces
 
 **What changes in evaluation:** Unique answers on the display are worth more because control tools amplify denial. Example: the only Level 2 that finishes your noble is a higher priority reserve/stronghold target than in base 4p, where cards vanish anyway.
 

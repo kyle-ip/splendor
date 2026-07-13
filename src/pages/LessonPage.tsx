@@ -8,7 +8,6 @@ import {
   getLessonsByLevel,
   getLevelInfo,
 } from '@/lib/lessons';
-import { SetupWizard } from '@/features/tools/SetupWizard';
 import { promo } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
 import { extractToc } from '@/lib/toc';
@@ -32,7 +31,7 @@ export function LevelPage() {
       <LevelHeader level={lessonLevel} />
       {lessonLevel === 'intro' && (
         <div className="mb-10 animate-fade-up space-y-4">
-          <h2 className="section-title-folio mb-2">{t('setupWizard')}</h2>
+          <h2 className="section-title-folio mb-2">{t('navIntro')}</h2>
           <InkRule className="mx-auto mb-4 max-w-[10rem]" />
           <figure>
             <div className="plate-window p-2 md:p-3">
@@ -43,7 +42,6 @@ export function LevelPage() {
               />
             </div>
           </figure>
-          <SetupWizard />
         </div>
       )}
       <div className="mb-6 animate-fade-up">

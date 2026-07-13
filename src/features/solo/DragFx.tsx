@@ -9,6 +9,7 @@ import {
   type ReactNode,
   type DragEvent,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { gems } from '@/lib/assets';
 import type { TakeColor } from './Board';
 
@@ -180,47 +181,52 @@ export function DragFxProvider({ children }: { children: ReactNode }) {
   return (
     <DragFxContext.Provider value={api}>
       {children}
-      {state.active && state.src && (
-        <div
-          className={`drag-ghost ${state.kind === 'card' ? 'drag-ghost-card' : 'drag-ghost-gem'} ${
-            state.overHand || state.overReserve ? 'drag-ghost-hot' : ''
-          }`}
-          style={{
-            left: pos.x,
-            top: pos.y,
-          }}
-        >
-          {state.kind === 'gem' ? (
-            <img src={state.src} alt="" className="w-16 h-16 object-contain" />
-          ) : (
-            <div className="drag-ghost-card-face">
-              {state.src ? (
-                <img src={state.src} alt="" className="w-8 h-8 object-contain" />
+      {createPortal(
+        <>
+          {state.active && state.src && (
+            <div
+              className={`drag-ghost ${state.kind === 'card' ? 'drag-ghost-card' : 'drag-ghost-gem'} ${
+                state.overHand || state.overReserve ? 'drag-ghost-hot' : ''
+              }`}
+              style={{
+                left: pos.x,
+                top: pos.y,
+              }}
+            >
+              {state.kind === 'gem' ? (
+                <img src={state.src} alt="" className="w-16 h-16 object-contain" />
               ) : (
-                <span className="font-display text-splendor-velvet text-lg">◇</span>
+                <div className="drag-ghost-card-face">
+                  {state.src ? (
+                    <img src={state.src} alt="" className="w-8 h-8 object-contain" />
+                  ) : (
+                    <span className="font-display text-splendor-velvet text-lg">◇</span>
+                  )}
+                </div>
               )}
             </div>
           )}
-        </div>
-      )}
-      {bursts.map((b) => (
-        <div
-          key={b.id}
-          className="drag-sparkle-burst"
-          style={{ left: b.x, top: b.y }}
-        >
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span
-              key={i}
-              className="drag-sparkle-bit"
-              style={{
-                ['--a' as string]: `${i * 45}deg`,
-                backgroundImage: `url(${b.src})`,
-              }}
-            />
+          {bursts.map((b) => (
+            <div
+              key={b.id}
+              className="drag-sparkle-burst"
+              style={{ left: b.x, top: b.y }}
+            >
+              {Array.from({ length: 8 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="drag-sparkle-bit"
+                  style={{
+                    ['--a' as string]: `${i * 45}deg`,
+                    backgroundImage: `url(${b.src})`,
+                  }}
+                />
+              ))}
+            </div>
           ))}
-        </div>
-      ))}
+        </>,
+        document.body,
+      )}
     </DragFxContext.Provider>
   );
 }

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import noblesData from '@/data/nobles.json';
 import type { GemCounts, NobleRequirement } from '@/types';
 import {
@@ -13,21 +13,35 @@ import {
 } from '@/data/solo-cards';
 import { useGemLabels } from '@/i18n/useGemLabels';
 import { useI18n } from '@/i18n/I18nProvider';
-import { PracticeShell, SoloCardTile, TokenRow, canBuy } from './shared';
+import { gems } from '@/lib/assets';
+import { pushCappedHistory } from '@/lib/practiceHistory';
+import { loadSession, saveSession, clearSession } from '@/lib/practiceSession';
+import { discardNeeded } from '@/lib/splendorRules';
+import { PracticeShell, SoloActionLog, TokenRow, ReservedHand } from './shared';
+import {
+  PracticeCoaching,
+  buildDiceCoaching,
+} from './PracticeCoaching';
+import { usePurchaseFx } from './PurchaseFx';
+import { useDiceFx } from './DiceFx';
 import {
   BoardTable,
   BuyableCard,
   HandDropZone,
+  NobleTile,
   ReserveDropZone,
-  canAddTakeGem,
+  getTakeRejectionReason,
   isTakeComplete,
   type TakeColor,
 } from './Board';
+import { useSoloToast } from './SoloToast';
+import { useSoloHints } from './SoloHints';
+import { useBankTakeFx } from './BankTakeFx';
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
 const noblesAll = noblesData as NobleRequirement[];
 
-type Phase = 'player' | 'done';
+type Phase = 'player' | 'discardGems' | 'chooseNoble' | 'busy' | 'done';
 
 type State = {
   bank: GemCounts;
@@ -51,7 +65,15 @@ type State = {
   lastDice: number | null;
   turn: number;
   pending: TakeColor[];
-  flash: string | null;
+  busyNonce: number;
+  discardNeeded: number;
+  pendingNobles: NobleRequirement[];
+  stats: {
+    takes: number;
+    buys: number;
+    playerNobles: number;
+    autoNobles: number;
+  };
 };
 
 function refill(
@@ -103,43 +125,27 @@ function createGame(): State {
     lastDice: null,
     turn: 1,
     pending: [],
-    flash: null,
+    busyNonce: 0,
+    discardNeeded: 0,
+    pendingNobles: [],
+    stats: { takes: 0, buys: 0, playerNobles: 0, autoNobles: 0 },
   };
 }
 
-function tokenCount(g: GemCounts) {
-  return g.emerald + g.sapphire + g.ruby + g.diamond + g.onyx + g.gold;
-}
-
-function trimToTen(hand: GemCounts): GemCounts {
-  const next = { ...hand };
-  let total = tokenCount(next);
-  const order: (keyof GemCounts)[] = [
-    'diamond',
-    'sapphire',
-    'emerald',
-    'ruby',
-    'onyx',
-    'gold',
-  ];
-  while (total > 10) {
-    for (const c of order) {
-      if (next[c] > 0 && total > 10) {
-        next[c] -= 1;
-        total -= 1;
-      }
-    }
-  }
-  return next;
+function eligibleNobles(
+  bonuses: Omit<GemCounts, 'gold'>,
+  nobles: NobleRequirement[],
+): NobleRequirement[] {
+  return nobles.filter((n) =>
+    COLORS.every((c) => bonuses[c] >= n.requirements[c]),
+  );
 }
 
 function claimNoble(
   bonuses: Omit<GemCounts, 'gold'>,
   nobles: NobleRequirement[],
 ): { noble: NobleRequirement | null; rest: NobleRequirement[] } {
-  const match = nobles.find((n) =>
-    COLORS.every((c) => bonuses[c] >= n.requirements[c]),
-  );
+  const match = eligibleNobles(bonuses, nobles)[0] ?? null;
   if (!match) return { noble: null, rest: nobles };
   return { noble: match, rest: nobles.filter((n) => n.id !== match.id) };
 }
@@ -184,25 +190,234 @@ function applyTake(s: State, pick: TakeColor[], logLine: string): State {
     hand[c] += 1;
     bank[c] -= 1;
   }
-  const trimmed = trimToTen(hand);
-  for (const c of [...COLORS, 'gold'] as const) {
-    bank[c] += hand[c] - trimmed[c];
-  }
   return {
     ...s,
-    hand: trimmed,
+    hand,
     bank,
     pending: [],
-    flash: null,
+    stats: { ...s.stats, takes: s.stats.takes + 1 },
     log: [logLine, ...s.log].slice(0, 14),
   };
+}
+
+function findAutomaPurchase(
+  s: State,
+): { card: SoloCard; level: 1 | 2 | 3 } | null {
+  const rows: { level: 1 | 2 | 3; cards: SoloCard[] }[] = [
+    { level: 3, cards: s.l3 },
+    { level: 2, cards: s.l2 },
+    { level: 1, cards: s.l1 },
+  ];
+  for (const row of rows) {
+    for (const card of row.cards) {
+      if (automaAfford(card, s.autoBonuses, s.autoGold)) {
+        return { card, level: row.level };
+      }
+    }
+  }
+  return null;
+}
+
+function applyAutomaBuy(
+  s: State,
+  card: SoloCard,
+  buyLevel: 1 | 2 | 3,
+  logLine: string,
+  nobleLogLine: string,
+): State {
+  const leftGold = automaPay(card, s.autoBonuses, s.autoGold);
+  if (leftGold === null) return s;
+
+  const spentGold = s.autoGold - leftGold;
+  let { l1, l2, l3, d1, d2, d3, autoBonuses, autoGold, autoPrestige, bank, nobles, log } =
+    s;
+
+  autoGold = leftGold;
+  bank = { ...bank, gold: bank.gold + spentGold };
+  autoBonuses = {
+    ...autoBonuses,
+    [card.bonus]: autoBonuses[card.bonus] + 1,
+  };
+  autoPrestige += card.points;
+
+  if (buyLevel === 1) {
+    l1 = l1.filter((c) => c.id !== card.id);
+    ({ row: l1, deck: d1 } = refill(l1, d1));
+  } else if (buyLevel === 2) {
+    l2 = l2.filter((c) => c.id !== card.id);
+    ({ row: l2, deck: d2 } = refill(l2, d2));
+  } else {
+    l3 = l3.filter((c) => c.id !== card.id);
+    ({ row: l3, deck: d3 } = refill(l3, d3));
+  }
+
+  log = [logLine, ...log];
+  const claimed = claimNoble(autoBonuses, nobles);
+  if (claimed.noble) {
+    nobles = claimed.rest;
+    autoPrestige += 3;
+    log = [nobleLogLine, ...log];
+  }
+
+  return {
+    ...s,
+    l1,
+    l2,
+    l3,
+    d1,
+    d2,
+    d3,
+    autoBonuses,
+    autoGold,
+    autoPrestige,
+    bank,
+    nobles,
+    log: log.slice(0, 14),
+    lastDice: null,
+    pending: [],
+    turn: s.turn + 1,
+    stats: {
+      ...s.stats,
+      autoNobles: claimed.noble ? s.stats.autoNobles + 1 : s.stats.autoNobles,
+    },
+  };
+}
+
+function applyAutomaFreeTake(
+  s: State,
+  card: SoloCard,
+  freeLogLine: string,
+  nobleLogLine: string,
+): State {
+  let { l1, d1, autoBonuses, autoPrestige, nobles, log } = s;
+
+  autoBonuses = {
+    ...autoBonuses,
+    [card.bonus]: autoBonuses[card.bonus] + 1,
+  };
+  autoPrestige += card.points;
+  l1 = l1.filter((c) => c.id !== card.id);
+  ({ row: l1, deck: d1 } = refill(l1, d1));
+  log = [freeLogLine, ...log];
+
+  const claimed = claimNoble(autoBonuses, nobles);
+  if (claimed.noble) {
+    nobles = claimed.rest;
+    autoPrestige += 3;
+    log = [nobleLogLine, ...log];
+  }
+
+  return {
+    ...s,
+    l1,
+    d1,
+    autoBonuses,
+    autoPrestige,
+    nobles,
+    log: log.slice(0, 14),
+    pending: [],
+    turn: s.turn + 1,
+    stats: {
+      ...s.stats,
+      autoNobles: claimed.noble ? s.stats.autoNobles + 1 : s.stats.autoNobles,
+    },
+  };
+}
+
+type PendingAutomaFx =
+  | { kind: 'buy'; cardId: string; level: 1 | 2 | 3 }
+  | { kind: 'free'; cardId: string };
+
+const DICE_RECORD_KEY = 'splendor-solo-dice-record';
+const DICE_SESSION_KEY = 'splendor-solo-dice-session';
+
+type DiceRecord = { wins: number; losses: number; ties: number };
+
+function readDiceRecord(): DiceRecord {
+  try {
+    const raw = localStorage.getItem(DICE_RECORD_KEY);
+    if (!raw) return { wins: 0, losses: 0, ties: 0 };
+    const parsed = JSON.parse(raw) as Partial<DiceRecord>;
+    return {
+      wins: Number(parsed.wins) || 0,
+      losses: Number(parsed.losses) || 0,
+      ties: Number(parsed.ties) || 0,
+    };
+  } catch {
+    return { wins: 0, losses: 0, ties: 0 };
+  }
+}
+
+function writeDiceRecord(winner: 'player' | 'automa' | 'tie'): DiceRecord {
+  const cur = readDiceRecord();
+  const next = { ...cur };
+  if (winner === 'player') next.wins += 1;
+  else if (winner === 'automa') next.losses += 1;
+  else next.ties += 1;
+  try {
+    localStorage.setItem(DICE_RECORD_KEY, JSON.stringify(next));
+  } catch {
+    /* ignore */
+  }
+  return next;
 }
 
 export function DiceAutomaPractice() {
   const { t } = useI18n();
   const labels = useGemLabels();
-  const [state, setState] = useState<State>(createGame);
-  const restart = useCallback(() => setState(createGame()), []);
+  const purchaseFx = usePurchaseFx();
+  const diceFx = useDiceFx();
+  const toast = useSoloToast();
+  const hints = useSoloHints();
+  const bankFx = useBankTakeFx();
+  const pendingAutomaFx = useRef<PendingAutomaFx | null>(null);
+  const pendingDiceRef = useRef<number | null>(null);
+  const recordedWinRef = useRef(false);
+  const [state, setState] = useState<State>(() => {
+    const saved = loadSession<State>(DICE_SESSION_KEY);
+    return saved ?? createGame();
+  });
+  const [history, setHistory] = useState<State[]>([]);
+  const [record, setRecord] = useState(() => readDiceRecord());
+  const [discardPick, setDiscardPick] = useState<(keyof GemCounts)[]>([]);
+
+  useEffect(() => {
+    if (state.winner) clearSession(DICE_SESSION_KEY);
+    else saveSession(DICE_SESSION_KEY, state);
+  }, [state]);
+
+  const pushHistory = (s: State) => {
+    setHistory((h) => pushCappedHistory(h, s, (x) => x.turn));
+  };
+
+  const restart = useCallback(() => {
+    recordedWinRef.current = false;
+    pendingAutomaFx.current = null;
+    pendingDiceRef.current = null;
+    clearSession(DICE_SESSION_KEY);
+    setHistory([]);
+    setDiscardPick([]);
+    setState(createGame());
+  }, []);
+
+  const undo = useCallback(() => {
+    setHistory((h) => {
+      if (h.length === 0) return h;
+      pendingAutomaFx.current = null;
+      pendingDiceRef.current = null;
+      recordedWinRef.current = false;
+      setDiscardPick([]);
+      setState(h[h.length - 1]);
+      return h.slice(0, -1);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!state.winner || recordedWinRef.current) return;
+    recordedWinRef.current = true;
+    const next = writeDiceRecord(state.winner);
+    setRecord(next);
+  }, [state.winner]);
 
   const finishIfNeeded = (s: State, afterPlayer: boolean): Partial<State> => {
     const pDone = s.prestige >= 15;
@@ -216,125 +431,62 @@ export function DiceAutomaPractice() {
     return { phase: 'done', winner };
   };
 
-  const runAutoma = (s: State): State => {
-    let {
-      l1,
-      l2,
-      l3,
-      d1,
-      d2,
-      d3,
-      autoBonuses,
-      autoGold,
-      autoPrestige,
-      bank,
-      nobles,
-      log,
-    } = s;
+  const findCardOnBoard = (
+    s: State,
+    cardId: string,
+    level: 1 | 2 | 3,
+  ): SoloCard | null => {
+    const row = level === 1 ? s.l1 : level === 2 ? s.l2 : s.l3;
+    return row.find((c) => c.id === cardId) ?? null;
+  };
 
-    const rows: { level: 1 | 2 | 3; cards: SoloCard[] }[] = [
-      { level: 3, cards: l3 },
-      { level: 2, cards: l2 },
-      { level: 1, cards: l1 },
-    ];
-
-    let bought: SoloCard | null = null;
-    let buyLevel: 1 | 2 | 3 | null = null;
-
-    for (const row of rows) {
-      for (const card of row.cards) {
-        if (automaAfford(card, autoBonuses, autoGold)) {
-          bought = card;
-          buyLevel = row.level;
-          break;
-        }
-      }
-      if (bought) break;
-    }
-
-    if (bought && buyLevel) {
-      const leftGold = automaPay(bought, autoBonuses, autoGold);
-      if (leftGold !== null) {
-        const spentGold = autoGold - leftGold;
-        autoGold = leftGold;
-        bank = { ...bank, gold: bank.gold + spentGold };
-        autoBonuses = {
-          ...autoBonuses,
-          [bought.bonus]: autoBonuses[bought.bonus] + 1,
-        };
-        autoPrestige += bought.points;
-        if (buyLevel === 1) {
-          l1 = l1.filter((c) => c.id !== bought!.id);
-          ({ row: l1, deck: d1 } = refill(l1, d1));
-        } else if (buyLevel === 2) {
-          l2 = l2.filter((c) => c.id !== bought!.id);
-          ({ row: l2, deck: d2 } = refill(l2, d2));
-        } else {
-          l3 = l3.filter((c) => c.id !== bought!.id);
-          ({ row: l3, deck: d3 } = refill(l3, d3));
-        }
-        log = [
-          t('soloLogAutoBuy', { level: buyLevel, points: bought.points }),
-          ...log,
-        ];
-
-        const claimed = claimNoble(autoBonuses, nobles);
-        if (claimed.noble) {
-          nobles = claimed.rest;
-          autoPrestige += 3;
-          log = [t('soloLogAutoNoble'), ...log];
-        }
-
-        const next: State = {
-          ...s,
-          l1,
-          l2,
-          l3,
-          d1,
-          d2,
-          d3,
-          autoBonuses,
-          autoGold,
-          autoPrestige,
-          bank,
-          nobles,
-          log: log.slice(0, 14),
-          lastDice: null,
-          pending: [],
-          flash: null,
-          turn: s.turn + 1,
-          phase: 'player',
-        };
-        return { ...next, ...finishIfNeeded(next, false) };
-      }
-    }
-
-    const dice = 1 + Math.floor(Math.random() * 6);
-    log = [t('soloLogDice', { n: dice }), ...log];
+  const applyDiceOutcome = (s: State, dice: number): State => {
+    let log = [t('soloLogDice', { n: dice }), ...s.log];
 
     if (dice <= 4) {
       const idx = dice - 1;
-      if (l1[idx]) {
-        const card = l1[idx];
-        autoBonuses = {
-          ...autoBonuses,
-          [card.bonus]: autoBonuses[card.bonus] + 1,
+      const card = s.l1[idx];
+      if (card) {
+        pendingAutomaFx.current = { kind: 'free', cardId: card.id };
+        return {
+          ...s,
+          phase: 'busy',
+          busyNonce: s.busyNonce + 1,
+          log: log.slice(0, 14),
+          lastDice: dice,
+          pending: [],
         };
-        autoPrestige += card.points;
-        l1 = l1.filter((c) => c.id !== card.id);
-        ({ row: l1, deck: d1 } = refill(l1, d1));
-        log = [t('soloLogAutoFree', { slot: dice }), ...log];
-      } else {
-        log = [t('soloLogDiceMiss'), ...log];
       }
-    } else if (bank.gold > 0) {
-      bank = { ...bank, gold: bank.gold - 1 };
-      autoGold += 1;
+      log = [t('soloLogDiceMiss'), ...log];
+    } else if (s.bank.gold > 0) {
+      const bank = { ...s.bank, gold: s.bank.gold - 1 };
+      const autoGold = s.autoGold + 1;
       log = [t('soloLogAutoGold'), ...log];
+      let { autoBonuses, autoPrestige, nobles } = s;
+      const claimed = claimNoble(autoBonuses, nobles);
+      if (claimed.noble) {
+        nobles = claimed.rest;
+        autoPrestige += 3;
+        log = [t('soloLogAutoNoble'), ...log];
+      }
+      const next: State = {
+        ...s,
+        bank,
+        autoGold,
+        autoPrestige,
+        nobles,
+        log: log.slice(0, 14),
+        lastDice: dice,
+        pending: [],
+        turn: s.turn + 1,
+        phase: 'player',
+      };
+      return { ...next, ...finishIfNeeded(next, false) };
     } else {
       log = [t('soloLogNoGold'), ...log];
     }
 
+    let { autoBonuses, autoPrestige, nobles } = s;
     const claimed = claimNoble(autoBonuses, nobles);
     if (claimed.noble) {
       nobles = claimed.rest;
@@ -344,58 +496,175 @@ export function DiceAutomaPractice() {
 
     const next: State = {
       ...s,
-      l1,
-      l2,
-      l3,
-      d1,
-      d2,
-      d3,
-      autoBonuses,
-      autoGold,
       autoPrestige,
-      bank,
       nobles,
       log: log.slice(0, 14),
       lastDice: dice,
       pending: [],
-      flash: null,
       turn: s.turn + 1,
       phase: 'player',
     };
     return { ...next, ...finishIfNeeded(next, false) };
   };
 
-  const afterPlayer = (s: State): State => {
-    const claimed = claimNoble(s.bonuses, s.nobles);
-    let next = s;
-    if (claimed.noble) {
-      next = {
-        ...s,
-        nobles: claimed.rest,
-        prestige: s.prestige + 3,
-        log: [t('soloLogPlayerNoble'), ...s.log].slice(0, 14),
-      };
-    }
-    const end = finishIfNeeded(next, true);
-    if (end.phase === 'done') return { ...next, ...end };
-    return runAutoma(next);
+  const startAutomaDice = (s: State): State => {
+    const dice = 1 + Math.floor(Math.random() * 6);
+    pendingDiceRef.current = dice;
+    return { ...s, phase: 'busy', busyNonce: s.busyNonce + 1 };
   };
 
+  const scheduleAutomaTurn = (s: State): State => {
+    const purchase = findAutomaPurchase(s);
+    if (purchase) {
+      pendingAutomaFx.current = {
+        kind: 'buy',
+        cardId: purchase.card.id,
+        level: purchase.level,
+      };
+      return { ...s, phase: 'busy', busyNonce: s.busyNonce + 1 };
+    }
+    return startAutomaDice(s);
+  };
+
+  const continueAfterPlayer = (s: State): State => {
+    const cleared: State = {
+      ...s,
+      phase: 'player',
+      discardNeeded: 0,
+      pendingNobles: [],
+    };
+    const end = finishIfNeeded(cleared, true);
+    if (end.phase === 'done') return { ...cleared, ...end };
+    return scheduleAutomaTurn(cleared);
+  };
+
+  const resolveNoblesOrContinue = (s: State): State => {
+    const eligible = eligibleNobles(s.bonuses, s.nobles);
+    if (eligible.length === 0) return continueAfterPlayer(s);
+    if (eligible.length === 1) {
+      const noble = eligible[0];
+      return continueAfterPlayer({
+        ...s,
+        nobles: s.nobles.filter((n) => n.id !== noble.id),
+        prestige: s.prestige + 3,
+        pendingNobles: [],
+        stats: { ...s.stats, playerNobles: s.stats.playerNobles + 1 },
+        log: [t('soloLogPlayerNoble'), ...s.log].slice(0, 14),
+      });
+    }
+    return {
+      ...s,
+      phase: 'chooseNoble',
+      pendingNobles: eligible,
+      discardNeeded: 0,
+    };
+  };
+
+  const resolveAfterMainAction = (s: State): State => {
+    const over = discardNeeded(s.hand);
+    if (over > 0) {
+      return {
+        ...s,
+        phase: 'discardGems',
+        discardNeeded: over,
+        pending: [],
+        pendingNobles: [],
+      };
+    }
+    return resolveNoblesOrContinue(s);
+  };
+
+  useEffect(() => {
+    if (state.phase !== 'busy') return;
+
+    if (pendingDiceRef.current !== null) {
+      const dice = pendingDiceRef.current;
+      pendingDiceRef.current = null;
+      diceFx.run(dice, () => {
+        setState((s) => {
+          if (dice >= 5 && s.bank.gold > 0) {
+            queueMicrotask(() => bankFx.take('gold', { toward: 'out' }));
+          }
+          return applyDiceOutcome(s, dice);
+        });
+      });
+      return;
+    }
+
+    if (!pendingAutomaFx.current) return;
+
+    const pending = pendingAutomaFx.current;
+    pendingAutomaFx.current = null;
+
+    let card: SoloCard | null = null;
+    if (pending.kind === 'buy') {
+      card = findCardOnBoard(state, pending.cardId, pending.level);
+    } else {
+      card = state.l1.find((c) => c.id === pending.cardId) ?? null;
+    }
+
+    if (!card) {
+      setState((s) => ({ ...s, phase: 'player' }));
+      return;
+    }
+
+    purchaseFx.run(card.id, 'automa', () => {
+      setState((s) => {
+        let next: State;
+        if (pending.kind === 'buy') {
+          const found = findCardOnBoard(s, pending.cardId, pending.level);
+          if (!found) return { ...s, phase: 'player' };
+          next = applyAutomaBuy(
+            s,
+            found,
+            pending.level,
+            t('soloLogAutoBuy', { level: pending.level, points: found.points }),
+            t('soloLogAutoNoble'),
+          );
+        } else {
+          const found = s.l1.find((c) => c.id === pending.cardId);
+          if (!found) return { ...s, phase: 'player' };
+          next = applyAutomaFreeTake(
+            s,
+            found,
+            t('soloLogAutoFree', { slot: s.lastDice ?? 0 }),
+            t('soloLogAutoNoble'),
+          );
+        }
+        return { ...next, phase: 'player', ...finishIfNeeded(next, false) };
+      });
+    });
+  }, [state.phase, state.busyNonce, state.l1, diceFx, purchaseFx, bankFx, t]);
+
   const pickGem = (color: TakeColor) => {
+    if (state.phase !== 'player' || state.winner) return;
+
+    const reason = getTakeRejectionReason(state.pending, color, state.bank);
+    if (reason) {
+      toast.show(
+        t(reason, {
+          color: labels[color],
+        } as { color: string }),
+      );
+      setState((s) => ({ ...s, pending: [] }));
+      return;
+    }
+
+    bankFx.take(color, { toward: 'down' });
+
     setState((s) => {
-      if (s.phase !== 'player' || s.winner) return s;
-      if (!canAddTakeGem(s.pending, color, s.bank)) {
-        return { ...s, flash: t('soloDragIllegal') };
-      }
       const pending = [...s.pending, color];
       if (!isTakeComplete(pending)) {
-        return { ...s, pending, flash: null };
+        return { ...s, pending };
       }
       const logLine =
         pending.length === 2
           ? t('soloLogTake2', { color: labels[pending[0]] })
           : t('soloLogTake3');
-      return afterPlayer(applyTake({ ...s, pending: [] }, pending, logLine));
+      pushHistory(s);
+      return resolveAfterMainAction(
+        applyTake({ ...s, pending: [] }, pending, logLine),
+      );
     });
   };
 
@@ -437,13 +706,10 @@ export function DiceAutomaPractice() {
       if (bank.gold > 0) {
         bank = { ...bank, gold: bank.gold - 1 };
         hand = { ...hand, gold: hand.gold + 1 };
+        queueMicrotask(() => bankFx.take('gold', { toward: 'down' }));
       }
-      const trimmed = trimToTen(hand);
-      bank = {
-        ...bank,
-        gold: bank.gold + (hand.gold - trimmed.gold),
-      };
-      return afterPlayer({
+      pushHistory(s);
+      return resolveAfterMainAction({
         ...s,
         l1,
         l2,
@@ -452,12 +718,68 @@ export function DiceAutomaPractice() {
         d2,
         d3,
         bank,
-        hand: trimmed,
+        hand,
         reserved: [...s.reserved, card],
         pending: [],
-        flash: null,
         log: [t('soloLogReserve'), ...s.log].slice(0, 14),
       });
+    });
+  };
+
+  const applyPlayerBuy = (
+    s: State,
+    card: SoloCard,
+    from: 'display' | 'reserved',
+    level?: 1 | 2 | 3,
+  ): State => {
+    const paid = payForCard(s.hand, card.cost, s.bonuses);
+    if (!paid) return s;
+
+    const bank = { ...s.bank };
+    for (const c of [...COLORS, 'gold'] as const) {
+      bank[c] += s.hand[c] - paid[c];
+    }
+
+    const bonuses = {
+      ...s.bonuses,
+      [card.bonus]: s.bonuses[card.bonus] + 1,
+    };
+    let { l1, l2, l3, d1, d2, d3, reserved } = s;
+    if (from === 'reserved') {
+      reserved = reserved.filter((c) => c.id !== card.id);
+    } else if (level === 1) {
+      l1 = l1.filter((c) => c.id !== card.id);
+      ({ row: l1, deck: d1 } = refill(l1, d1));
+    } else if (level === 2) {
+      l2 = l2.filter((c) => c.id !== card.id);
+      ({ row: l2, deck: d2 } = refill(l2, d2));
+    } else if (level === 3) {
+      l3 = l3.filter((c) => c.id !== card.id);
+      ({ row: l3, deck: d3 } = refill(l3, d3));
+    }
+
+    return resolveAfterMainAction({
+      ...s,
+      hand: paid,
+      bank,
+      bonuses,
+      prestige: s.prestige + card.points,
+      l1,
+      l2,
+      l3,
+      d1,
+      d2,
+      d3,
+      reserved,
+      pending: [],
+      stats: { ...s.stats, buys: s.stats.buys + 1 },
+      log: [
+        t('soloLogBuy', {
+          bonus: labels[card.bonus],
+          points: card.points,
+        }),
+        ...s.log,
+      ].slice(0, 14),
     });
   };
 
@@ -466,68 +788,86 @@ export function DiceAutomaPractice() {
     from: 'display' | 'reserved',
     level?: 1 | 2 | 3,
   ) => {
-    setState((s) => {
-      if (s.phase !== 'player' || s.winner) return s;
-      if (s.pending.length > 0) return s;
-      const paid = payForCard(s.hand, card.cost, s.bonuses);
-      if (!paid) return s;
+    if (state.phase !== 'player' || state.winner || state.pending.length > 0) {
+      return;
+    }
+    if (purchaseFx.isAnimating) return;
+    if (!payForCard(state.hand, card.cost, state.bonuses)) return;
 
-      const bank = { ...s.bank };
-      for (const c of [...COLORS, 'gold'] as const) {
-        bank[c] += s.hand[c] - paid[c];
-      }
-
-      const bonuses = {
-        ...s.bonuses,
-        [card.bonus]: s.bonuses[card.bonus] + 1,
-      };
-      let { l1, l2, l3, d1, d2, d3, reserved } = s;
-      if (from === 'reserved') {
-        reserved = reserved.filter((c) => c.id !== card.id);
-      } else if (level === 1) {
-        l1 = l1.filter((c) => c.id !== card.id);
-        ({ row: l1, deck: d1 } = refill(l1, d1));
-      } else if (level === 2) {
-        l2 = l2.filter((c) => c.id !== card.id);
-        ({ row: l2, deck: d2 } = refill(l2, d2));
-      } else if (level === 3) {
-        l3 = l3.filter((c) => c.id !== card.id);
-        ({ row: l3, deck: d3 } = refill(l3, d3));
-      }
-
-      return afterPlayer({
-        ...s,
-        hand: paid,
-        bank,
-        bonuses,
-        prestige: s.prestige + card.points,
-        l1,
-        l2,
-        l3,
-        d1,
-        d2,
-        d3,
-        reserved,
-        pending: [],
-        flash: null,
-        log: [
-          t('soloLogBuy', {
-            bonus: labels[card.bonus],
-            points: card.points,
-          }),
-          ...s.log,
-        ].slice(0, 14),
+    purchaseFx.run(card.id, 'player', () => {
+      setState((s) => {
+        pushHistory(s);
+        return applyPlayerBuy(s, card, from, level);
       });
     });
   };
 
-  const playerActive = state.phase === 'player' && !state.winner;
+  const toggleDiscard = (gem: keyof GemCounts) => {
+    if (state.phase !== 'discardGems' || state.discardNeeded <= 0) return;
+    const already = discardPick.filter((g) => g === gem).length;
+    const held = state.hand[gem];
+    if (already >= held) return;
+    if (discardPick.length >= state.discardNeeded) return;
+    const next = [...discardPick, gem];
+    if (next.length === state.discardNeeded) {
+      setDiscardPick([]);
+      setState((s) => {
+        const hand = { ...s.hand };
+        const bank = { ...s.bank };
+        for (const g of next) {
+          hand[g] -= 1;
+          bank[g] += 1;
+        }
+        return resolveNoblesOrContinue({
+          ...s,
+          hand,
+          bank,
+          discardNeeded: 0,
+          log: [t('soloLogDiscard'), ...s.log].slice(0, 14),
+        });
+      });
+      return;
+    }
+    setDiscardPick(next);
+  };
+
+  const claimPlayerNoble = (nobleId: number) => {
+    if (state.phase !== 'chooseNoble') return;
+    setState((s) => {
+      const noble = s.pendingNobles.find((n) => n.id === nobleId);
+      if (!noble) return s;
+      return continueAfterPlayer({
+        ...s,
+        nobles: s.nobles.filter((n) => n.id !== nobleId),
+        prestige: s.prestige + 3,
+        pendingNobles: [],
+        stats: { ...s.stats, playerNobles: s.stats.playerNobles + 1 },
+        log: [t('soloLogPlayerNoble'), ...s.log].slice(0, 14),
+      });
+    });
+  };
+
+  const playerActive =
+    state.phase === 'player' &&
+    !state.winner &&
+    !purchaseFx.isAnimating &&
+    !diceFx.isAnimating;
+
+  const humanDiscarding = state.phase === 'discardGems' && !state.winner;
+  const humanChoosingNoble = state.phase === 'chooseNoble' && !state.winner;
 
   return (
     <PracticeShell
       title={t('soloDiceTitle')}
       subtitle={t('soloDiceDesc')}
       onReset={restart}
+      onUndo={undo}
+      canUndo={history.length > 0 && (playerActive || humanDiscarding || humanChoosingNoble)}
+      recordLine={t('soloDiceRecord', {
+        wins: record.wins,
+        losses: record.losses,
+        ties: record.ties,
+      })}
     >
       {state.winner && (
         <div className="panel p-4">
@@ -544,11 +884,74 @@ export function DiceAutomaPractice() {
               automa: state.autoPrestige,
             })}
           </p>
+          <PracticeCoaching
+            tips={buildDiceCoaching({
+              playerPrestige: state.prestige,
+              autoPrestige: state.autoPrestige,
+              playerWon: state.winner === 'player',
+              takeLogCount: state.stats.takes,
+              buyLogCount: state.stats.buys,
+              playerNobles: state.stats.playerNobles,
+              autoNobles: state.stats.autoNobles,
+              turns: state.turn,
+            })}
+          />
         </div>
       )}
 
-      {state.flash && (
-        <p className="text-sm font-serif text-gem-ruby">{state.flash}</p>
+      {humanChoosingNoble && (
+        <div className="panel p-4 space-y-3">
+          <p className="font-serif text-splendor-velvet">{t('stdChooseNoble')}</p>
+          <div className="flex flex-wrap gap-3">
+            {state.pendingNobles.map((n) => (
+              <NobleTile
+                key={n.id}
+                noble={n}
+                spendable
+                onSpend={() => claimPlayerNoble(n.id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {humanDiscarding && (
+        <div className="panel p-4 space-y-3">
+          <p className="font-serif text-splendor-velvet">
+            {t('stdDiscardHint', {
+              need: state.discardNeeded,
+              picked: discardPick.length,
+            })}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {(
+              ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx', 'gold'] as (keyof GemCounts)[]
+            ).map((gem) => {
+              const count = state.hand[gem];
+              if (count <= 0) return null;
+              const picked = discardPick.filter((g) => g === gem).length;
+              return (
+                <button
+                  key={gem}
+                  type="button"
+                  disabled={
+                    picked >= count || discardPick.length >= state.discardNeeded
+                  }
+                  onClick={() => toggleDiscard(gem)}
+                  className="btn-outline text-sm inline-flex items-center gap-1.5 disabled:opacity-40"
+                >
+                  <img
+                    src={gems[gem]}
+                    alt={labels[gem]}
+                    className="w-6 h-6 object-contain"
+                  />
+                  {labels[gem]} ×{count}
+                  {picked > 0 ? ` (−${picked})` : ''}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       )}
 
       <div className="grid lg:grid-cols-[1fr_16rem] gap-4 items-start">
@@ -564,7 +967,7 @@ export function DiceAutomaPractice() {
                   card={card}
                   hand={state.hand}
                   bonuses={state.bonuses}
-                  disabled={!playerActive || state.pending.length > 0}
+                  phaseLocked={!playerActive || state.pending.length > 0}
                   onBuy={() => buy(card, 'display', 3)}
                   reservable={
                     playerActive &&
@@ -584,7 +987,7 @@ export function DiceAutomaPractice() {
                   card={card}
                   hand={state.hand}
                   bonuses={state.bonuses}
-                  disabled={!playerActive || state.pending.length > 0}
+                  phaseLocked={!playerActive || state.pending.length > 0}
                   onBuy={() => buy(card, 'display', 2)}
                   reservable={
                     playerActive &&
@@ -604,7 +1007,7 @@ export function DiceAutomaPractice() {
                   card={card}
                   hand={state.hand}
                   bonuses={state.bonuses}
-                  disabled={!playerActive || state.pending.length > 0}
+                  phaseLocked={!playerActive || state.pending.length > 0}
                   onBuy={() => buy(card, 'display', 1)}
                   reservable={
                     playerActive &&
@@ -640,7 +1043,7 @@ export function DiceAutomaPractice() {
             active={playerActive}
             onDropGem={pickGem}
             onCancelPending={() =>
-              setState((s) => ({ ...s, pending: [], flash: null }))
+              setState((s) => ({ ...s, pending: [] }))
             }
           />
 
@@ -651,25 +1054,18 @@ export function DiceAutomaPractice() {
             onDropCard={reserve}
           >
             {state.reserved.length > 0 ? (
-              <div className="grid gap-2">
-                {state.reserved.map((card) => (
-                  <SoloCardTile
-                    key={card.id}
-                    card={card}
-                    disabled={
-                      !playerActive ||
-                      state.pending.length > 0 ||
-                      !canBuy(card, state.hand, state.bonuses)
-                    }
-                    onClick={() => buy(card, 'reserved')}
-                    badge={
-                      canBuy(card, state.hand, state.bonuses)
-                        ? t('soloCanBuy')
-                        : undefined
-                    }
-                  />
-                ))}
-              </div>
+              <ReservedHand
+                cards={state.reserved}
+                hand={state.hand}
+                bonuses={state.bonuses}
+                showHints={hints.enabled}
+                onBuy={
+                  playerActive && state.pending.length === 0
+                    ? (card) => buy(card, 'reserved')
+                    : undefined
+                }
+                isExiting={(id) => purchaseFx.isExiting(id)}
+              />
             ) : undefined}
           </ReserveDropZone>
 
@@ -682,30 +1078,30 @@ export function DiceAutomaPractice() {
               showGold={false}
               title={t('soloYourBonuses')}
             />
-            <p className="text-xs font-serif text-splendor-muted">
-              {t('gemGold')}: {state.autoGold}
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 border border-splendor-line bg-white/80 text-base font-serif tabular-nums ${
+                  state.autoGold === 0 ? 'opacity-45' : ''
+                }`}
+              >
+                <img
+                  src={gems.gold}
+                  alt={labels.gold}
+                  className="w-8 h-8 object-contain"
+                />
+                {state.autoGold}
+              </span>
               {state.lastDice != null && (
-                <> · {t('soloLastDice')}: {state.lastDice}</>
+                <span className="text-xs font-serif text-splendor-muted">
+                  {t('soloLastDice')}: {state.lastDice}
+                </span>
               )}
-            </p>
+            </div>
           </div>
         </aside>
       </div>
 
-      {state.log.length > 0 && (
-        <section className="panel-soft p-4">
-          <p className="text-xs font-serif text-splendor-muted mb-2">
-            {t('soloLog')}
-          </p>
-          <ul className="space-y-1">
-            {state.log.map((line, i) => (
-              <li key={i} className="text-sm font-body text-splendor-ink/85">
-                {line}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <SoloActionLog lines={state.log} />
     </PracticeShell>
   );
 }

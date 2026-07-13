@@ -67,7 +67,7 @@ Assume mid-game: contested noble needs **sapphire ×3**; your bonuses are sapphi
 
 Early/mid game, **X often beats Y** if the noble is contested. Late game with a lead, **Y** can be correct.
 
-Use the site’s [card value scorer](/tools/card-value?sapphire=1&points=1&bonusWeight=1.5&nobleFit=2) (mid-game weights, one sapphire gap left) to tweak for the current nobles and display.
+Score cards by hand for the current nobles and display: weight remaining bonus gaps, printed points, and noble fit—then buy the highest net line you can cash soon.
 
 ## Common Misjudgments
 

@@ -79,47 +79,72 @@ export const LEVEL1_CARDS: SoloCard[] = [
   card('l1-o8', 1, 0, 'onyx', { emerald: 1, sapphire: 1, ruby: 1, diamond: 1 }),
 ];
 
-/** Practice subset (20/30). Label this clearly in solo UI copy. */
+/** Full Level 2 pool (30/30). Source: official print distribution. */
 export const LEVEL2_CARDS: SoloCard[] = [
-  card('l2-e1', 2, 1, 'emerald', { emerald: 2, sapphire: 2, onyx: 3 }),
-  card('l2-e2', 2, 2, 'emerald', { sapphire: 3, diamond: 3 }),
-  card('l2-e3', 2, 2, 'emerald', { ruby: 5 }),
-  card('l2-e4', 2, 3, 'emerald', { emerald: 6 }),
-  card('l2-s1', 2, 1, 'sapphire', { emerald: 3, sapphire: 2, diamond: 2 }),
-  card('l2-s2', 2, 2, 'sapphire', { emerald: 3, onyx: 3 }),
-  card('l2-s3', 2, 2, 'sapphire', { diamond: 5 }),
-  card('l2-s4', 2, 3, 'sapphire', { sapphire: 6 }),
-  card('l2-r1', 2, 1, 'ruby', { sapphire: 2, ruby: 2, diamond: 3 }),
-  card('l2-r2', 2, 2, 'ruby', { emerald: 3, ruby: 3 }),
-  card('l2-r3', 2, 2, 'ruby', { onyx: 5 }),
-  card('l2-r4', 2, 3, 'ruby', { ruby: 6 }),
-  card('l2-d1', 2, 1, 'diamond', { emerald: 2, diamond: 2, onyx: 3 }),
-  card('l2-d2', 2, 2, 'diamond', { sapphire: 3, diamond: 3 }),
-  card('l2-d3', 2, 2, 'diamond', { emerald: 5 }),
-  card('l2-d4', 2, 3, 'diamond', { diamond: 6 }),
-  card('l2-o1', 2, 1, 'onyx', { ruby: 2, diamond: 2, onyx: 3 }),
-  card('l2-o2', 2, 2, 'onyx', { ruby: 3, onyx: 3 }),
-  card('l2-o3', 2, 2, 'onyx', { sapphire: 5 }),
-  card('l2-o4', 2, 3, 'onyx', { onyx: 6 }),
+  // Emerald
+  card('l2-e1', 2, 1, 'emerald', { emerald: 2, ruby: 3, diamond: 3 }),
+  card('l2-e2', 2, 1, 'emerald', { onyx: 2, sapphire: 3, diamond: 2 }),
+  card('l2-e3', 2, 2, 'emerald', { onyx: 1, sapphire: 2, diamond: 4 }),
+  card('l2-e4', 2, 2, 'emerald', { sapphire: 5, emerald: 3 }),
+  card('l2-e5', 2, 2, 'emerald', { emerald: 5 }),
+  card('l2-e6', 2, 3, 'emerald', { emerald: 6 }),
+  // Sapphire
+  card('l2-s1', 2, 1, 'sapphire', { sapphire: 2, emerald: 2, ruby: 3 }),
+  card('l2-s2', 2, 1, 'sapphire', { onyx: 3, sapphire: 2, emerald: 3 }),
+  card('l2-s3', 2, 2, 'sapphire', { sapphire: 3, diamond: 5 }),
+  card('l2-s4', 2, 2, 'sapphire', { onyx: 4, ruby: 1, diamond: 2 }),
+  card('l2-s5', 2, 2, 'sapphire', { sapphire: 5 }),
+  card('l2-s6', 2, 3, 'sapphire', { sapphire: 6 }),
+  // Ruby
+  card('l2-r1', 2, 1, 'ruby', { onyx: 3, ruby: 2, diamond: 2 }),
+  card('l2-r2', 2, 1, 'ruby', { onyx: 3, sapphire: 3, ruby: 2 }),
+  card('l2-r3', 2, 2, 'ruby', { sapphire: 4, emerald: 2, diamond: 1 }),
+  card('l2-r4', 2, 2, 'ruby', { onyx: 5, diamond: 3 }),
+  card('l2-r5', 2, 2, 'ruby', { onyx: 5 }),
+  card('l2-r6', 2, 3, 'ruby', { ruby: 6 }),
+  // Diamond
+  card('l2-d1', 2, 1, 'diamond', { onyx: 2, emerald: 3, ruby: 2 }),
+  card('l2-d2', 2, 1, 'diamond', { sapphire: 3, ruby: 3, diamond: 2 }),
+  card('l2-d3', 2, 2, 'diamond', { onyx: 2, emerald: 1, ruby: 4 }),
+  card('l2-d4', 2, 2, 'diamond', { onyx: 3, ruby: 5 }),
+  card('l2-d5', 2, 2, 'diamond', { ruby: 5 }),
+  card('l2-d6', 2, 3, 'diamond', { diamond: 6 }),
+  // Onyx
+  card('l2-o1', 2, 1, 'onyx', { sapphire: 2, emerald: 2, diamond: 3 }),
+  card('l2-o2', 2, 1, 'onyx', { onyx: 2, emerald: 3, diamond: 3 }),
+  card('l2-o3', 2, 2, 'onyx', { sapphire: 1, emerald: 4, ruby: 2 }),
+  card('l2-o4', 2, 2, 'onyx', { emerald: 5, ruby: 3 }),
+  card('l2-o5', 2, 2, 'onyx', { diamond: 5 }),
+  card('l2-o6', 2, 3, 'onyx', { onyx: 6 }),
 ];
 
-/** Practice subset (15/20). Label this clearly in solo UI copy. */
+/** Full Level 3 pool (20/20). Source: official print distribution. */
 export const LEVEL3_CARDS: SoloCard[] = [
-  card('l3-e1', 3, 3, 'emerald', { sapphire: 3, ruby: 3, diamond: 3, onyx: 5 }),
-  card('l3-e2', 3, 4, 'emerald', { emerald: 3, sapphire: 3, diamond: 3, onyx: 6 }),
-  card('l3-e3', 3, 5, 'emerald', { emerald: 3, onyx: 7 }),
-  card('l3-s1', 3, 3, 'sapphire', { emerald: 3, ruby: 3, diamond: 5, onyx: 3 }),
-  card('l3-s2', 3, 4, 'sapphire', { emerald: 6, sapphire: 3, ruby: 3, diamond: 3 }),
-  card('l3-s3', 3, 5, 'sapphire', { sapphire: 3, diamond: 7 }),
-  card('l3-r1', 3, 3, 'ruby', { emerald: 5, sapphire: 3, diamond: 3, onyx: 3 }),
-  card('l3-r2', 3, 4, 'ruby', { emerald: 3, sapphire: 6, ruby: 3, onyx: 3 }),
-  card('l3-r3', 3, 5, 'ruby', { emerald: 7, ruby: 3 }),
-  card('l3-d1', 3, 3, 'diamond', { emerald: 3, sapphire: 5, ruby: 3, onyx: 3 }),
-  card('l3-d2', 3, 4, 'diamond', { sapphire: 3, ruby: 6, diamond: 3, onyx: 3 }),
-  card('l3-d3', 3, 5, 'diamond', { ruby: 7, diamond: 3 }),
-  card('l3-o1', 3, 3, 'onyx', { emerald: 3, sapphire: 3, ruby: 5, diamond: 3 }),
-  card('l3-o2', 3, 4, 'onyx', { emerald: 3, ruby: 3, diamond: 6, onyx: 3 }),
-  card('l3-o3', 3, 5, 'onyx', { sapphire: 7, onyx: 3 }),
+  // Emerald
+  card('l3-e1', 3, 3, 'emerald', { onyx: 3, sapphire: 3, ruby: 3, diamond: 5 }),
+  card('l3-e2', 3, 4, 'emerald', { sapphire: 7 }),
+  card('l3-e3', 3, 4, 'emerald', { sapphire: 6, emerald: 3, diamond: 3 }),
+  card('l3-e4', 3, 5, 'emerald', { sapphire: 7, emerald: 3 }),
+  // Sapphire
+  card('l3-s1', 3, 3, 'sapphire', { onyx: 5, emerald: 3, ruby: 3, diamond: 3 }),
+  card('l3-s2', 3, 4, 'sapphire', { diamond: 7 }),
+  card('l3-s3', 3, 4, 'sapphire', { onyx: 3, sapphire: 3, diamond: 6 }),
+  card('l3-s4', 3, 5, 'sapphire', { sapphire: 3, diamond: 7 }),
+  // Ruby
+  card('l3-r1', 3, 3, 'ruby', { onyx: 3, sapphire: 5, emerald: 3, diamond: 3 }),
+  card('l3-r2', 3, 4, 'ruby', { emerald: 7 }),
+  card('l3-r3', 3, 4, 'ruby', { sapphire: 3, emerald: 6, ruby: 3 }),
+  card('l3-r4', 3, 5, 'ruby', { emerald: 7, ruby: 3 }),
+  // Diamond
+  card('l3-d1', 3, 3, 'diamond', { onyx: 3, sapphire: 3, emerald: 3, ruby: 5 }),
+  card('l3-d2', 3, 4, 'diamond', { onyx: 7 }),
+  card('l3-d3', 3, 4, 'diamond', { onyx: 6, ruby: 3, diamond: 3 }),
+  card('l3-d4', 3, 5, 'diamond', { onyx: 7, diamond: 3 }),
+  // Onyx
+  card('l3-o1', 3, 3, 'onyx', { sapphire: 3, emerald: 5, ruby: 3, diamond: 3 }),
+  card('l3-o2', 3, 4, 'onyx', { ruby: 7 }),
+  card('l3-o3', 3, 4, 'onyx', { onyx: 3, emerald: 3, ruby: 6 }),
+  card('l3-o4', 3, 5, 'onyx', { onyx: 3, ruby: 7 }),
 ];
 
 export function shuffle<T>(items: T[], rng = Math.random): T[] {

@@ -6,7 +6,7 @@ docs/             # Project documentation
 references/       # Official rulebook PDF and related sources
 src/
   components/     # Layout and shared UI
-  features/       # Tools and solo practice
+  features/       # Tools, solo practice, standard vs-AI practice
   pages/          # Route pages
   data/           # Nobles, card samples, setup table
   lib/            # Lessons, gems, TOC helpers
@@ -40,4 +40,8 @@ When editing rules prose, prefer clear, unambiguous wording and cross-check agai
 npm test
 ```
 
-Runs Vitest unit tests (currently `src/lib/gems.test.ts` for purchase affordability).
+Runs Vitest unit tests (currently `src/lib/gems.test.ts` for purchase affordability and `src/lib/toolQuery.test.ts` for URL seeding).
+
+## Solo practice decks
+
+`src/data/solo-cards.ts` ships full print pools: Level 1 ×40, Level 2 ×30, Level 3 ×20.

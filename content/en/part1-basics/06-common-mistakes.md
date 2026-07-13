@@ -33,6 +33,20 @@ You only have 3 reserve slots. Every reserved card should have a clear buy plan.
 
 Bought or reserved cards are replaced immediately from that level’s deck. Scan the new card each turn—opportunities often appear there.
 
+## Worked Mistakes
+
+### Hand overflow after a take
+
+You hold **9 tokens** and take **3 different**. Mid-turn you briefly have 12—that is legal. Before ending the turn you must return **2**. Returning the two colors you still need for next buy is the classic trap: take only when the leftover hand still supports your plan, or buy/reserve instead.
+
+### Forgetting bonuses
+
+A Level 2 costs **6 emerald**. You already have **+3 emerald** bonus and **2 emerald + 1 gold** in hand. Paying as if you need all 6 from the hand (and deciding you “cannot afford it”) is a common misread—net cost is **3 emerald**, so hand + gold covers it.
+
+### Wrong noble race
+
+Nobles in play include **3 emerald / 3 sapphire / 3 onyx**. You buy a fourth **ruby** bonus while sitting on 2/2/2 toward that noble. The ruby card may be fine for points later, but this turn you delayed the +3 visit that was one focused buy away—scan noble gaps before “whatever is cheapest.”
+
 ## Chapter Takeaways
 
 - Four actions: 3 different / 2 same / reserve / buy
@@ -40,4 +54,4 @@ Bought or reserved cards are replaced immediately from that level’s deck. Scan
 - Nobles check bonus totals only; visit for +3
 - 15 prestige ends the round; highest score wins (fewest cards breaks ties)
 
-After this chapter, play a physical game and verify costs in the [purchase calculator](/tools/calculator).
+After this chapter, play a physical game. After the game, capture one turning point in [replay notes](/tools/replay).

@@ -58,4 +58,4 @@ duration: 8 分钟
 
 ## 练习提示
 
-打开 [费用计算器](/tools/calculator?bonus=emerald:3,sapphire:2,ruby:1&hand=diamond:2,gold:1&cost=emerald:3,onyx:3,diamond:2)（已预填中期引擎），再比较桌上二级与三级的净费用。问自己：*每再拿一轮宝石，能换多少分？*
+用中期引擎（例如 +3 翡翠 +2 蓝 +1 红，手牌 2 钻 + 1 金）比较桌上二级与三级的净费用。问自己：*每再拿一轮宝石，能换多少分？*

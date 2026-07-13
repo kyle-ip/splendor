@@ -49,4 +49,4 @@ duration: 5 分钟
 
 ## 动手试
 
-打开 [费用计算器](/tools/calculator?bonus=ruby:1&hand=ruby:1,onyx:2,gold:1&cost=ruby:2,onyx:2)，本课演算示例已预填。
+用手算同一例：奖励 +1 红宝石，手牌 1 红 + 2 玛瑙 + 1 金，费用 2 红 + 2 玛瑙时，支付 1 红 + 2 玛瑙 + 1 金（黄金补缺的红宝石）。

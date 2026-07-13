@@ -14,6 +14,12 @@ Sources used for this personal educational guide:
   gem centers from pngimg.com free transparent PNGs (non-commercial educational use);
   sapphire/emerald/ruby/diamond/gold sources downloaded for UI clarity;
   onyx derived by recoloring the diamond source to match Splendor's dark stone
+- Noble portraits under `public/assets/nobles/noble-01.jpg` … `noble-10.jpg`:
+  original AI-generated Renaissance-style portraits created for this guide
+  (not official Splendor art; educational / non-commercial use)
+- Player seat avatars under `public/assets/players/player-*.jpg`:
+  original AI-generated miniature portraits for standard practice seats
+  (not official Splendor art; educational / non-commercial use)
 
 Not affiliated with Space Cowboys or Asmodee. For non-commercial learning use.
 If publishing publicly, confirm rights with the rights holders.

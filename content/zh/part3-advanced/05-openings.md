@@ -85,3 +85,5 @@ duration: 9 分钟
                → 否 → 一级某色密集？ → 是 → 引擎路线
                                      → 否 → 混合；先拿 1–2 张奖励
 ```
+
+完整混合 → 3/3/3 线与中盘转折见 [带注释的双人样例对局](/learn/advanced/part3-advanced-07-sample-game-2p)。

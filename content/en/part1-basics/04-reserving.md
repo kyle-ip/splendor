@@ -30,6 +30,17 @@ There is **no** separate limit on how many gold tokens you may hold—gold simpl
 - You fear someone else will take the card
 - You need gold to finish a cost
 
+## Worked Board
+
+You have **2 sapphire + 1 ruby** in hand and **+1 sapphire** bonus. A face-up Level 1 card costs **3 sapphire + 1 emerald**. The next player sits on 3 sapphire and clearly wants the same card. Gold is available in the bank.
+
+| Approach | Action | Why |
+|----------|--------|-----|
+| Soft | Take emerald + diamond + onyx | Spreads colors but leaves the card on the table |
+| Better | Reserve that Level 1 (take 1 gold) | Locks the card, adds gold for the sapphire gap, denies the seat after you |
+
+Next turn you can often buy from reserve once you pick up one more sapphire (or use the gold). Saving the reserve slot for a card you will buy soon matters more than grabbing gold for its own sake.
+
 ## Notes
 
 - Reserve slots are scarce; don’t stockpile cards you have no plan to buy

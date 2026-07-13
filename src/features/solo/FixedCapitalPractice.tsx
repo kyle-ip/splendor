@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import noblesData from '@/data/nobles.json';
 import type { GemCounts, NobleRequirement } from '@/types';
 import {
@@ -11,10 +11,14 @@ import {
 } from '@/data/solo-cards';
 import { useGemLabels } from '@/i18n/useGemLabels';
 import { useI18n } from '@/i18n/I18nProvider';
-import { PracticeShell, TokenRow } from './shared';
+import { pushCappedHistory } from '@/lib/practiceHistory';
+import { PracticeShell, SoloActionLog, TokenRow } from './shared';
 import { BoardTable, BuyableCard } from './Board';
+import { usePurchaseFx } from './PurchaseFx';
+import { useSoloToast } from './SoloToast';
 
 const noblesAll = noblesData as NobleRequirement[];
+const BEST_KEY = 'splendor-solo-fixed-best-turns';
 
 type State = {
   hand: GemCounts;
@@ -57,42 +61,99 @@ function won(bonuses: Omit<GemCounts, 'gold'>) {
   );
 }
 
+function readBest(): number | null {
+  try {
+    const raw = localStorage.getItem(BEST_KEY);
+    if (!raw) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeBest(turns: number) {
+  try {
+    const prev = readBest();
+    if (prev === null || turns < prev) {
+      localStorage.setItem(BEST_KEY, String(turns));
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 export function FixedCapitalPractice() {
   const { t } = useI18n();
   const labels = useGemLabels();
+  const purchaseFx = usePurchaseFx();
+  const toast = useSoloToast();
   const [state, setState] = useState<State>(createGame);
+  const [history, setHistory] = useState<State[]>([]);
+  const [bestTurns, setBestTurns] = useState<number | null>(() => readBest());
 
-  const restart = useCallback(() => setState(createGame()), []);
+  useEffect(() => {
+    if (!state.won) return;
+    writeBest(state.turns);
+    setBestTurns(readBest());
+  }, [state.won, state.turns]);
+
+  const pushHistory = (prev: State) => {
+    setHistory((h) => pushCappedHistory(h, prev, (s) => s.turns));
+  };
+
+  const restart = useCallback(() => {
+    setHistory([]);
+    setState(createGame());
+  }, []);
+
+  const undo = useCallback(() => {
+    setHistory((h) => {
+      if (h.length === 0) return h;
+      const prev = h[h.length - 1];
+      setState(prev);
+      return h.slice(0, -1);
+    });
+  }, []);
+
+  const applyBuy = (s: State, card: SoloCard): State => {
+    const paid = payForCard(s.hand, card.cost, s.bonuses);
+    if (!paid) return s;
+    const bonuses = { ...s.bonuses, [card.bonus]: s.bonuses[card.bonus] + 1 };
+    let deck = s.deck;
+    let display = s.display.filter((c) => c.id !== card.id);
+    if (deck.length > 0) {
+      display = [...display, deck[0]];
+      deck = deck.slice(1);
+    }
+    const nextWon = won(bonuses);
+    return {
+      ...s,
+      hand: paid,
+      bonuses,
+      display,
+      deck,
+      turns: s.turns + 1,
+      won: nextWon,
+      log: [
+        t('soloLogBuy', {
+          bonus: labels[card.bonus],
+          points: card.points,
+        }),
+        ...s.log,
+      ].slice(0, 12),
+    };
+  };
 
   const buy = (card: SoloCard) => {
-    setState((s) => {
-      if (s.won) return s;
-      const paid = payForCard(s.hand, card.cost, s.bonuses);
-      if (!paid) return s;
-      const bonuses = { ...s.bonuses, [card.bonus]: s.bonuses[card.bonus] + 1 };
-      let deck = s.deck;
-      let display = s.display.filter((c) => c.id !== card.id);
-      if (deck.length > 0) {
-        display = [...display, deck[0]];
-        deck = deck.slice(1);
-      }
-      const nextWon = won(bonuses);
-      return {
-        ...s,
-        hand: paid,
-        bonuses,
-        display,
-        deck,
-        turns: s.turns + 1,
-        won: nextWon,
-        log: [
-          t('soloLogBuy', {
-            bonus: labels[card.bonus],
-            points: card.points,
-          }),
-          ...s.log,
-        ].slice(0, 12),
-      };
+    if (state.won || purchaseFx.isAnimating) return;
+    if (!payForCard(state.hand, card.cost, state.bonuses)) return;
+
+    purchaseFx.run(card.id, 'player', () => {
+      setState((s) => {
+        pushHistory(s);
+        return applyBuy(s, card);
+      });
     });
   };
 
@@ -100,11 +161,13 @@ export function FixedCapitalPractice() {
     setState((s) => {
       if (s.won || s.resetsLeft <= 0) return s;
       if (s.deck.length < 4) {
+        toast.show(t('soloLogResetFail'));
         return {
           ...s,
           log: [t('soloLogResetFail'), ...s.log].slice(0, 12),
         };
       }
+      pushHistory(s);
       const { display, deck } = drawDisplay(s.deck, 4);
       return {
         ...s,
@@ -117,11 +180,19 @@ export function FixedCapitalPractice() {
     });
   };
 
+  const recordLine =
+    bestTurns === null
+      ? t('soloBestTurnsNone')
+      : t('soloBestTurns', { turns: bestTurns });
+
   return (
     <PracticeShell
       title={t('soloFixedTitle')}
       subtitle={t('soloFixedDesc')}
       onReset={restart}
+      onUndo={undo}
+      canUndo={history.length > 0 && !purchaseFx.isAnimating}
+      recordLine={recordLine}
     >
       {state.won && (
         <div className="panel p-4 border-gem-emerald/40 ring-1 ring-gem-emerald/30">
@@ -135,6 +206,8 @@ export function FixedCapitalPractice() {
         <BoardTable
           nobles={state.nobles}
           spentNobleCount={3 - state.resetsLeft}
+          nobleSpendable={!state.won && state.resetsLeft > 0}
+          onSpendNoble={resetRow}
           rows={[
             {
               level: 1,
@@ -145,7 +218,7 @@ export function FixedCapitalPractice() {
                   card={card}
                   hand={state.hand}
                   bonuses={state.bonuses}
-                  disabled={state.won}
+                  phaseLocked={state.won || purchaseFx.isAnimating}
                   onBuy={() => buy(card)}
                 />
               ),
@@ -168,14 +241,11 @@ export function FixedCapitalPractice() {
             <p className="text-[11px] font-serif text-splendor-muted leading-relaxed">
               {t('soloFixedGoal')}
             </p>
-            <button
-              type="button"
-              className="btn-outline w-full text-sm"
-              disabled={state.won || state.resetsLeft <= 0}
-              onClick={resetRow}
-            >
-              {t('soloResetAction')}
-            </button>
+            {!state.won && state.resetsLeft > 0 && (
+              <p className="text-[11px] font-serif text-splendor-muted leading-relaxed">
+                {t('soloFixedResetHint')}
+              </p>
+            )}
             {!state.won && (
               <p className="text-[11px] font-serif text-splendor-muted">
                 {t('soloPickBuyHint')}
@@ -185,20 +255,7 @@ export function FixedCapitalPractice() {
         </aside>
       </div>
 
-      {state.log.length > 0 && (
-        <section className="panel-soft p-4">
-          <p className="text-xs font-serif text-splendor-muted mb-2 tracking-wide">
-            {t('soloLog')}
-          </p>
-          <ul className="space-y-1">
-            {state.log.map((line, i) => (
-              <li key={i} className="text-sm font-body text-splendor-ink/85">
-                {line}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <SoloActionLog lines={state.log} />
     </PracticeShell>
   );
 }

@@ -9,12 +9,36 @@ import { PageEnter } from '@/components/PageEnter';
 import { DocumentTitle } from '@/components/DocumentTitle';
 import { InkRule, WoodcutMark } from '@/components/manuscript/WoodcutFrame';
 import type { LessonLevel } from '@/types';
+import { TOOL_VISIBILITY } from '@/lib/toolVisibility';
 
 type NavItem = { to: string; label: string; roman?: string };
+
+const SIDEBAR_COLLAPSED_KEY = 'splendor-guide-sidebar-collapsed';
+
+function readSidebarCollapsed(): boolean {
+  try {
+    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 
 export function Layout() {
   const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarCollapsed);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed((c) => {
+      const next = !c;
+      try {
+        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next ? '1' : '0');
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
 
   const navGroups = useMemo(
     () => [
@@ -30,16 +54,6 @@ export function Layout() {
         ] as NavItem[],
       },
       {
-        label: t('navTools'),
-        items: [
-          { to: '/tools/calculator', label: t('navCalculator') },
-          { to: '/tools/nobles', label: t('navNobles') },
-          { to: '/tools/card-value', label: t('navCardValue') },
-          { to: '/tools/replay', label: t('navReplay') },
-          { to: '/tools/solo', label: t('navSoloPractice') },
-        ] as NavItem[],
-      },
-      {
         label: t('navAppendix'),
         items: [
           { to: '/reference/glossary', label: t('navGlossary') },
@@ -47,6 +61,25 @@ export function Layout() {
           { to: '/reference/solo', label: t('navSolo') },
           { to: '/reference/expansions', label: t('navExpansions') },
         ] as NavItem[],
+      },
+      {
+        label: t('navTools'),
+        items: (
+          [
+            TOOL_VISIBILITY.replay && {
+              to: '/tools/replay',
+              label: t('navReplay'),
+            },
+            TOOL_VISIBILITY.solo && {
+              to: '/tools/solo',
+              label: t('navSoloPractice'),
+            },
+            TOOL_VISIBILITY.standard && {
+              to: '/tools/standard',
+              label: t('navStandardPractice'),
+            },
+          ] as (NavItem | false)[]
+        ).filter((item): item is NavItem => Boolean(item)),
       },
     ],
     [t],
@@ -61,10 +94,23 @@ export function Layout() {
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
 
-  const brandBlock = (
+  const brandBlock = (opts?: { collapseControl?: boolean }) => (
     <>
       <div className="flex items-start justify-between gap-2 mb-1">
-        <WoodcutMark className="text-splendor-ink/70 mt-0.5 shrink-0" />
+        {opts?.collapseControl ? (
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            className="mt-0.5 shrink-0 p-0.5 -ml-0.5 rounded-sm text-splendor-ink/70 hover:text-splendor-ink transition-colors"
+            title={t('collapseSidebar')}
+            aria-label={t('collapseSidebar')}
+            aria-expanded
+          >
+            <WoodcutMark />
+          </button>
+        ) : (
+          <WoodcutMark className="text-splendor-ink/70 mt-0.5 shrink-0" />
+        )}
         <NavLink
           to="/"
           className="block group flex-1 min-w-0"
@@ -93,7 +139,12 @@ export function Layout() {
   const navLinks = (
     <nav className="px-3 py-4 overflow-y-auto md:max-h-[calc(100vh-11rem)]">
       {navGroups.map((group, gi) => (
-        <div key={group.label} className={gi > 0 ? 'mt-5 pt-4 border-t border-splendor-line/30' : 'mb-1'}>
+        <div
+          key={group.label}
+          className={
+            gi > 0 ? 'mt-5 pt-4 border-t border-splendor-line/30' : 'mb-1'
+          }
+        >
           <p className="px-3 mb-2 text-[10px] tracking-[0.22em] uppercase text-splendor-muted/80 font-serif text-center">
             {group.label}
           </p>
@@ -161,32 +212,71 @@ export function Layout() {
         />
       )}
 
+      {/* Collapsed desktop rail */}
+      {sidebarCollapsed && (
+        <aside
+          className="sidebar-ledger hidden md:flex md:fixed md:h-full md:w-11 z-40 flex-col items-center border-b-0 py-4 gap-3"
+          aria-label={t('expandSidebar')}
+        >
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            className="p-1 text-splendor-ink/70 hover:text-splendor-ink transition-colors"
+            title={t('expandSidebar')}
+            aria-label={t('expandSidebar')}
+            aria-expanded={false}
+          >
+            <WoodcutMark />
+          </button>
+        </aside>
+      )}
+
       <aside
         id="mobile-nav"
-        className={`sidebar-ledger md:w-[15.5rem] md:fixed md:h-full flex-shrink-0 z-40 border-b md:border-b-0
+        className={`sidebar-ledger md:h-full flex-shrink-0 z-40 border-b md:border-b-0
           max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:w-[15.5rem]
           max-md:transition-transform max-md:duration-200
           ${menuOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'}
-          md:translate-x-0`}
+          ${
+            sidebarCollapsed
+              ? 'md:hidden'
+              : 'md:fixed md:w-[15.5rem] md:translate-x-0'
+          }`}
       >
         <div className="p-5 border-b border-splendor-line/50 hidden md:block">
-          {brandBlock}
+          {brandBlock({ collapseControl: true })}
         </div>
         <div className="p-5 border-b border-splendor-line/50 md:hidden">
-          {brandBlock}
+          {brandBlock()}
         </div>
         {navLinks}
       </aside>
 
-      <main className="flex-1 md:ml-[15.5rem] relative z-0">
+      <main
+        className={`flex-1 relative z-0 transition-[margin] duration-200 ${
+          sidebarCollapsed ? 'md:ml-11' : 'md:ml-[15.5rem]'
+        }`}
+      >
         <div className="px-2 md:px-4 py-5 md:py-8">
-          <div className="ledger-sheet max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10">
+          <div
+            className={`ledger-sheet mx-auto px-4 md:px-8 py-6 md:py-10 ${
+              sidebarCollapsed
+                ? 'max-w-6xl xl:max-w-7xl'
+                : 'max-w-5xl xl:max-w-6xl'
+            }`}
+          >
             <PageEnter>
               <Outlet />
             </PageEnter>
           </div>
         </div>
-        <footer className="max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 pb-10">
+        <footer
+          className={`mx-auto px-4 md:px-8 pb-10 ${
+            sidebarCollapsed
+              ? 'max-w-6xl xl:max-w-7xl'
+              : 'max-w-5xl xl:max-w-6xl'
+          }`}
+        >
           <InkRule className="mb-6 max-w-xs" />
           <div className="text-[11px] text-splendor-muted/80 font-serif leading-relaxed space-y-2">
             <p>{t('footerArt')}</p>

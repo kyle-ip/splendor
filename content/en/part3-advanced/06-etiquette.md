@@ -29,4 +29,4 @@ After each game, spend 2 minutes noting (this site's **review template** helps):
 
 ## Path to Mastery
 
-Splendor mastery = zero rules mistakes + a stable engine + reading the table + endgame math. Play, review, and use this guide's [calculator](/tools/calculator), [noble tracker](/tools/nobles), and [card-value tool](/tools/card-value).
+Splendor mastery = zero rules mistakes + a stable engine + reading the table + endgame math. Play, review with [replay notes](/tools/replay), and use this guide's practice tools.

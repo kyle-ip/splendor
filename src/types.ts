@@ -31,7 +31,6 @@ export interface GemCounts {
 
 export interface NobleRequirement {
   id: number;
-  name: { en: string; zh: string };
   requirements: Omit<GemCounts, 'gold'>;
 }
 

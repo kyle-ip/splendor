@@ -42,20 +42,18 @@ export function DocumentTitle() {
       page = t('navSolo');
     } else if (pathname.startsWith('/reference/expansions')) {
       page = t('navExpansions');
-    } else if (pathname.startsWith('/tools/calculator')) {
-      page = t('navCalculator');
-    } else if (pathname.startsWith('/tools/nobles')) {
-      page = t('navNobles');
-    } else if (pathname.startsWith('/tools/card-value')) {
-      page = t('navCardValue');
     } else if (pathname.startsWith('/tools/replay')) {
       page = t('navReplay');
     } else if (pathname.startsWith('/tools/solo/fixed')) {
       page = t('soloFixedTitle');
     } else if (pathname.startsWith('/tools/solo/dice')) {
       page = t('soloDiceTitle');
+    } else if (pathname.startsWith('/tools/solo/card')) {
+      page = t('solo3Title');
     } else if (pathname.startsWith('/tools/solo')) {
       page = t('navSoloPractice');
+    } else if (pathname.startsWith('/tools/standard')) {
+      page = t('navStandardPractice');
     } else {
       page = t('notFoundPage');
     }

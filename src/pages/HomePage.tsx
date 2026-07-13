@@ -3,6 +3,10 @@ import { getLessons, getLevelInfo } from '@/lib/lessons';
 import { promo, gems } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
 import { InkRule, WoodcutFrame } from '@/components/manuscript/WoodcutFrame';
+import {
+  TOOL_VISIBILITY,
+  firstVisibleToolsPath,
+} from '@/lib/toolVisibility';
 
 const paths = [
   { level: 'intro' as const, roman: 'I' },
@@ -50,7 +54,7 @@ export function HomePage() {
             <Link to="/learn/intro" className="btn-gilt">
               {t('startLearning')}
             </Link>
-            <Link to="/tools/calculator" className="btn-outline">
+            <Link to={firstVisibleToolsPath()} className="btn-outline">
               {t('openTools')}
             </Link>
           </div>
@@ -132,6 +136,9 @@ export function HomePage() {
           {[
             { to: '/learn/intro', label: t('navIntro'), external: false },
             { to: '/learn/basics', label: t('navBasics'), external: false },
+            { to: '/learn/intermediate', label: t('pathAfterBasics'), external: false },
+            { to: '/tools/solo', label: t('pathSoloOptional'), external: false },
+            { to: '/learn/duel', label: t('pathDuelOptional'), external: false },
             { to: '/reference/rules', label: t('navRules'), external: false },
             {
               to: 'https://boardgamearena.com/gamepanel?game=splendor',
@@ -140,7 +147,7 @@ export function HomePage() {
             },
           ].map((step, i) => (
             <li
-              key={step.to}
+              key={`${step.to}-${i}`}
               className="flex gap-3 items-baseline border-b border-splendor-line/15 pb-3 last:border-0"
             >
               <span className="font-display text-sm text-splendor-ink/55 tracking-woodcut w-6 shrink-0">
@@ -173,19 +180,39 @@ export function HomePage() {
         <h2 className="section-title-folio mb-2">{t('merchantTools')}</h2>
         <InkRule className="mx-auto mb-6 max-w-[10rem]" />
         <div className="border-y border-splendor-line/35 py-1">
-          {[
-            { to: '/tools/calculator', label: t('navCalculator'), desc: t('toolCalcDesc') },
-            { to: '/tools/nobles', label: t('navNobles'), desc: t('toolNoblesDesc') },
-            { to: '/tools/card-value', label: t('navCardValue'), desc: t('toolCardDesc') },
-            { to: '/tools/replay', label: t('navReplay'), desc: t('toolReplayDesc') },
-            { to: '/tools/solo', label: t('navSoloPractice'), desc: t('toolSoloDesc') },
-          ].map((tool) => (
-            <Link key={tool.to} to={tool.to} className="index-row">
-              <span className="index-label">{tool.label}</span>
-              <span className="toc-leader" aria-hidden />
-              <span className="index-desc">{tool.desc}</span>
-            </Link>
-          ))}
+          {(
+            [
+              TOOL_VISIBILITY.replay && {
+                to: '/tools/replay',
+                label: t('navReplay'),
+                desc: t('toolReplayDesc'),
+              },
+              TOOL_VISIBILITY.solo && {
+                to: '/tools/solo',
+                label: t('navSoloPractice'),
+                desc: t('toolSoloDesc'),
+              },
+              TOOL_VISIBILITY.standard && {
+                to: '/tools/standard',
+                label: t('navStandardPractice'),
+                desc: t('toolStandardDesc'),
+              },
+            ] as (
+              | { to: string; label: string; desc: string }
+              | false
+            )[]
+          )
+            .filter(
+              (tool): tool is { to: string; label: string; desc: string } =>
+                Boolean(tool),
+            )
+            .map((tool) => (
+              <Link key={tool.to} to={tool.to} className="index-row">
+                <span className="index-label">{tool.label}</span>
+                <span className="toc-leader" aria-hidden />
+                <span className="index-desc">{tool.desc}</span>
+              </Link>
+            ))}
         </div>
       </section>
 

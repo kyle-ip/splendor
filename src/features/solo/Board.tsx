@@ -2,11 +2,14 @@ import type { ReactNode, DragEvent } from 'react';
 import { useRef, useState } from 'react';
 import type { GemCounts, NobleRequirement } from '@/types';
 import type { SoloCard } from '@/data/solo-cards';
-import { gems } from '@/lib/assets';
+import { gems, promo, noblePortraitUrl } from '@/lib/assets';
 import { useGemLabels } from '@/i18n/useGemLabels';
 import { useI18n } from '@/i18n/I18nProvider';
 import { canBuy, SoloCardTile } from './shared';
 import { useDragFxOptional } from './DragFx';
+import { usePurchaseFxOptional } from './PurchaseFx';
+import { useSoloHintsOptional } from './SoloHints';
+import { useBankTakeFxOptional } from './BankTakeFx';
 
 export const BANK_ORDER = [
   'emerald',
@@ -29,9 +32,9 @@ const TAKE_COLORS: TakeColor[] = [
 ];
 
 const DECK_STYLE: Record<1 | 2 | 3, { bg: string; border: string }> = {
-  1: { bg: 'bg-[#2f5d3a]', border: 'border-[#1e3d26]' },
-  2: { bg: 'bg-[#b08a2e]', border: 'border-[#7a5e1a]' },
-  3: { bg: 'bg-[#2a4a7a]', border: 'border-[#1a2f52]' },
+  1: { bg: 'bg-[#6b8f78]', border: 'border-[#5a7a66]' },
+  2: { bg: 'bg-[#c4a96a]', border: 'border-[#a89055]' },
+  3: { bg: 'bg-[#6a8098]', border: 'border-[#5a6e84]' },
 };
 
 export function canAddTakeGem(
@@ -39,22 +42,38 @@ export function canAddTakeGem(
   color: TakeColor,
   bank: GemCounts,
 ): boolean {
-  const already = pending.filter((c) => c === color).length;
-  if (bank[color] - already < 1) return false;
+  return getTakeRejectionReason(pending, color, bank) === null;
+}
 
-  if (pending.length === 0) return true;
+export type TakeRejectKey =
+  | 'soloTakeRejectEmpty'
+  | 'soloTakeRejectPair'
+  | 'soloTakeRejectThirdDup'
+  | 'soloTakeRejectFull'
+  | 'soloDragIllegal';
+
+export function getTakeRejectionReason(
+  pending: TakeColor[],
+  color: TakeColor,
+  bank: GemCounts,
+): TakeRejectKey | null {
+  const already = pending.filter((c) => c === color).length;
+  if (bank[color] - already < 1) return 'soloTakeRejectEmpty';
+
+  if (pending.length === 0) return null;
 
   if (pending.length === 1) {
-    if (color === pending[0]) return bank[color] >= 4;
-    return true;
+    if (color === pending[0]) return bank[color] >= 4 ? null : 'soloTakeRejectPair';
+    return null;
   }
 
   if (pending.length === 2) {
-    if (pending[0] === pending[1]) return false;
-    return color !== pending[0] && color !== pending[1];
+    if (pending[0] === pending[1]) return 'soloTakeRejectFull';
+    if (color === pending[0] || color === pending[1]) return 'soloTakeRejectThirdDup';
+    return null;
   }
 
-  return false;
+  return 'soloTakeRejectFull';
 }
 
 export function isTakeComplete(pending: TakeColor[]): boolean {
@@ -75,21 +94,26 @@ export function DeckBack({
   const style = DECK_STYLE[level];
   return (
     <div
-      className={`relative aspect-[2/3] w-full max-w-[5.5rem] rounded-md border-2 ${style.border} ${style.bg} shadow-sm flex flex-col items-center justify-end pb-2 select-none`}
+      className={`relative aspect-[63/88] w-full max-h-[11.5rem] rounded-xl border border-splendor-ink/25 ${style.bg} shadow-[0_2px_8px_rgba(44,36,28,0.12),inset_0_1px_0_rgba(255,255,255,0.2)] flex flex-col items-center justify-end pb-2 select-none overflow-hidden`}
       title={`${count}`}
     >
-      <span className="font-display text-white/90 text-xs tracking-widest mb-auto mt-3">
-        Splendor
-      </span>
+      <div className="mb-auto mt-2.5 px-1.5 w-[88%] flex justify-center">
+        <img
+          src={promo.title}
+          alt="Splendor"
+          className="w-full h-auto object-contain drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)]"
+          draggable={false}
+        />
+      </div>
       <div className="flex gap-1 mb-1">
         {Array.from({ length: level }).map((_, i) => (
           <span
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-white/90 shadow-sm"
+            className="w-1.5 h-1.5 rounded-full bg-white/90 border border-black/15"
           />
         ))}
       </div>
-      <span className="text-[10px] font-serif text-white/70">{count}</span>
+      <span className="text-[10px] font-serif text-white/80 tabular-nums">{count}</span>
     </div>
   );
 }
@@ -97,44 +121,76 @@ export function DeckBack({
 export function NobleTile({
   noble,
   spent,
+  spendable,
+  onSpend,
 }: {
   noble: NobleRequirement;
   spent?: boolean;
+  /** Unspent noble that can be clicked to spend (fixed-capital reset) */
+  spendable?: boolean;
+  onSpend?: () => void;
 }) {
-  const { locale } = useI18n();
   const reqs = (
     ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const
   ).filter((c) => noble.requirements[c] > 0);
-  const label = noble.name[locale] ?? noble.name.en;
 
-  return (
-    <div
-      className={`w-[4.5rem] h-[4.5rem] sm:w-[5.25rem] sm:h-[5.25rem] border border-splendor-line bg-[#f3ebe0] p-1.5 flex flex-col ${
-        spent ? 'opacity-35 line-through' : ''
-      }`}
-      title={label}
-    >
-      <div className="flex items-start gap-1">
-        <span className="font-display text-sm text-splendor-velvet leading-none">
+  const portrait = noblePortraitUrl(noble.id);
+  const interactive = Boolean(!spent && spendable && onSpend);
+  const className = `relative aspect-square w-[5.75rem] sm:w-[6.75rem] rounded-xl overflow-hidden border border-splendor-ink/20 shadow-[0_2px_10px_rgba(44,36,28,0.12),inset_0_1px_0_rgba(255,255,255,0.15)] ${
+    portrait
+      ? 'bg-[#4a3f38]'
+      : 'bg-gradient-to-br from-[#6a584e] via-[#4a3d36] to-[#322a26]'
+  } ${spent ? 'opacity-40' : ''} ${
+    interactive
+      ? 'cursor-pointer transition-[transform,box-shadow] hover:scale-[1.03] hover:border-splendor-gold/70 hover:shadow-[0_4px_14px_rgba(154,123,50,0.28)]'
+      : ''
+  }`;
+
+  const inner = (
+    <>
+      {portrait && (
+        <img
+          src={portrait}
+          alt=""
+          className={`absolute inset-0 w-full h-full object-cover object-[center_20%] sepia-[0.2] ${
+            spent ? 'grayscale' : ''
+          }`}
+          draggable={false}
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25 pointer-events-none" />
+      <div className="relative z-[1] h-full p-1.5 sm:p-2 flex flex-col justify-between">
+        <span className="font-display text-base sm:text-lg text-[#faf4e8] leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]">
           3
         </span>
-        <div className="flex flex-col gap-0.5 ml-auto">
+        <div className="flex flex-row flex-wrap items-center justify-center gap-x-1 gap-y-0.5">
           {reqs.map((c) => (
             <span
               key={c}
-              className="inline-flex items-center gap-0.5 text-[10px] font-serif"
+              className="inline-flex items-center gap-0.5 text-xs sm:text-sm font-serif font-medium tabular-nums text-[#f5efe6] drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]"
             >
-              <img src={gems[c]} alt="" className="w-3.5 h-3.5 object-contain" />
+              <img
+                src={gems[c]}
+                alt=""
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain shrink-0 drop-shadow-sm"
+              />
               {noble.requirements[c]}
             </span>
           ))}
         </div>
       </div>
-      <p className="mt-auto text-[9px] font-serif text-splendor-muted truncate">
-        {label}
-      </p>
-    </div>
+    </>
   );
+
+  if (interactive) {
+    return (
+      <button type="button" className={`${className} text-left`} onClick={onSpend}>
+        {inner}
+      </button>
+    );
+  }
+
+  return <div className={className}>{inner}</div>;
 }
 
 export function BankStack({
@@ -154,12 +210,15 @@ export function BankStack({
 }) {
   const labels = useGemLabels();
   const fx = useDragFxOptional();
+  const bankFx = useBankTakeFxOptional();
   const [dragging, setDragging] = useState(false);
   const canInteract = Boolean(draggable && count > 0 && !dimmed);
+  const popping = Boolean(bankFx?.isPopping(color));
 
   return (
     <button
       type="button"
+      data-bank-gem={color}
       disabled={!canInteract && !onClick}
       draggable={canInteract}
       onDragStart={
@@ -178,13 +237,13 @@ export function BankStack({
         fx?.endDrag();
       }}
       onClick={onClick}
-      className={`bank-stack-lift relative flex flex-col items-center gap-1 p-1 rounded-md ${
+      className={`bank-stack-lift relative flex flex-col items-center gap-1.5 p-1 rounded-md ${
         canInteract
           ? 'cursor-grab active:cursor-grabbing'
           : 'cursor-default'
       } ${dimmed || count <= 0 ? 'opacity-35' : ''} ${
         dragging ? 'is-dragging' : ''
-      }`}
+      } ${popping ? 'is-taken' : ''}`}
       aria-label={labels[color]}
     >
       <div className="relative w-12 h-12 sm:w-14 sm:h-14">
@@ -211,9 +270,7 @@ export function BankStack({
           />
         )}
       </div>
-      <span className="text-xs font-serif text-splendor-ink tabular-nums">
-        {count}
-      </span>
+      <span className="bank-stack-count">{count}</span>
     </button>
   );
 }
@@ -226,6 +283,7 @@ export function HandDropZone({
   onDropGem,
   onCancelPending,
   children,
+  hideHandDisplay = false,
 }: {
   hand: GemCounts;
   pending: TakeColor[];
@@ -234,6 +292,8 @@ export function HandDropZone({
   onDropGem: (color: TakeColor) => void;
   onCancelPending?: () => void;
   children?: ReactNode;
+  /** When stats are shown elsewhere — only pending / drop target */
+  hideHandDisplay?: boolean;
 }) {
   const { t } = useI18n();
   const labels = useGemLabels();
@@ -268,11 +328,12 @@ export function HandDropZone({
     const color = e.dataTransfer.getData('application/x-splendor-gem') as TakeColor;
     if (TAKE_COLORS.includes(color)) {
       const legal = !bank || canAddTakeGem(pending, color, bank);
-      onDropGem(color);
       if (legal) {
+        onDropGem(color);
         setLandKey((k) => k + 1);
         fx?.sparkleAt(zoneRef.current, gems[color]);
       } else {
+        onDropGem(color);
         setShakeKey(0);
         requestAnimationFrame(() => setShakeKey(1));
       }
@@ -281,6 +342,8 @@ export function HandDropZone({
   };
 
   const armed = Boolean(fx?.state.active && fx.state.kind === 'gem' && fx.state.overHand);
+  const showPendingChrome = pending.length > 0;
+  const showHandHeader = !hideHandDisplay || showPendingChrome;
 
   return (
     <div
@@ -289,65 +352,83 @@ export function HandDropZone({
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
-      className={`drop-zone-live panel p-3 sm:p-4 min-h-[7rem] ${
-        active ? 'ring-1 ring-splendor-line/80' : ''
-      } ${armed ? 'is-armed' : ''} ${shakeKey > 0 ? 'shake-illegal' : ''}`}
+      className={`drop-zone-live ${
+        hideHandDisplay && !showPendingChrome
+          ? `min-h-[2.5rem] rounded-md border border-dashed border-splendor-line/50 ${
+              active ? 'bg-white/30' : 'bg-transparent'
+            }`
+          : `panel-soft p-3 ${
+              hideHandDisplay ? 'min-h-[3.5rem]' : 'min-h-[7rem] sm:p-4'
+            }`
+      } ${
+        !hideHandDisplay || showPendingChrome
+          ? `${active ? 'ring-1 ring-splendor-line/80' : ''} `
+          : ''
+      }${armed ? 'is-armed' : ''} ${shakeKey > 0 ? 'shake-illegal' : ''}`}
       onAnimationEnd={(e) => {
         if (e.animationName === 'shake-illegal') setShakeKey(0);
       }}
+      aria-label={hideHandDisplay ? t('soloPendingTake') : t('soloYourTokens')}
     >
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <p className="text-xs font-serif text-splendor-muted tracking-wide">
-          {t('soloYourTokens')}
-        </p>
-        {pending.length > 0 && onCancelPending && (
-          <button
-            type="button"
-            className="text-[11px] font-serif text-splendor-accent hover:underline"
-            onClick={onCancelPending}
-          >
-            {t('soloCancelPick')}
-          </button>
-        )}
-      </div>
+      {showHandHeader && (
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <p className="text-xs font-serif text-splendor-muted tracking-wide">
+            {hideHandDisplay ? t('soloPendingTake') : t('soloYourTokens')}
+          </p>
+          {pending.length > 0 && onCancelPending && (
+            <button
+              type="button"
+              className="text-[11px] font-serif text-splendor-accent hover:underline"
+              onClick={onCancelPending}
+            >
+              {t('soloCancelPick')}
+            </button>
+          )}
+        </div>
+      )}
 
       {pending.length > 0 && (
-        <div key={landKey} className="flex flex-wrap items-center gap-1.5 mb-3">
-          <span className="text-[11px] font-serif text-splendor-muted">
-            {t('soloPendingTake')}:
-          </span>
+        <div key={landKey} className="flex flex-wrap items-center gap-2 mb-3">
           {pending.map((c, i) => (
             <img
               key={`${c}-${i}-${landKey}`}
               src={gems[c]}
               alt={labels[c]}
-              className="w-7 h-7 object-contain gem-land"
+              className="w-8 h-8 sm:w-9 sm:h-9 object-contain gem-land"
             />
           ))}
-          <span className="text-[11px] font-serif text-splendor-muted">
+          <span className="text-sm sm:text-base font-display tabular-nums text-splendor-ink">
             ({pending.length}/3)
           </span>
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2">
-        {BANK_ORDER.map((c) =>
-          hand[c] > 0 ? (
-            <span
-              key={c}
-              className="inline-flex items-center gap-1 px-2 py-1 border border-splendor-line bg-white/80 text-sm font-serif"
-            >
-              <img src={gems[c]} alt={labels[c]} className="w-6 h-6 object-contain" />
-              {hand[c]}
-            </span>
-          ) : null,
-        )}
-        {tokenSum(hand) === 0 && pending.length === 0 && (
-          <p className="text-xs font-serif text-splendor-muted/80">
-            {active ? t('soloDragHint') : '—'}
-          </p>
-        )}
-      </div>
+      {!hideHandDisplay && (
+        <div className="flex flex-wrap gap-2">
+          {BANK_ORDER.map((c) => {
+            const count = hand[c];
+            if (count === 0 && c !== 'gold') return null;
+            return (
+              <span
+                key={c}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 border border-splendor-line bg-white/90 text-base font-serif tabular-nums ${
+                  count === 0 ? 'opacity-45' : ''
+                }`}
+              >
+                <img
+                  src={gems[c]}
+                  alt={labels[c]}
+                  className="w-8 h-8 object-contain"
+                />
+                {count}
+              </span>
+            );
+          })}
+          {tokenSum(hand) === 0 && pending.length === 0 && !active && (
+            <p className="text-xs font-serif text-splendor-muted/80">—</p>
+          )}
+        </div>
+      )}
       {children}
     </div>
   );
@@ -368,18 +449,36 @@ export function CardRow({
   cards: SoloCard[];
   renderCard: (card: SoloCard, index: number) => ReactNode;
 }) {
+  const purchaseFx = usePurchaseFxOptional();
+
   return (
-    <div className="grid grid-cols-[auto_repeat(4,minmax(0,1fr))] gap-2 sm:gap-3 items-stretch">
-      <div className="flex items-center">
+    <div className="grid grid-cols-5 gap-2 sm:gap-3 items-start">
+      <div className="min-w-0">
         <DeckBack level={level} count={deckCount} />
       </div>
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={cards[i]?.id ?? `empty-${level}-${i}`} className="min-w-0">
-          {cards[i] ? renderCard(cards[i], i) : (
-            <div className="aspect-[2/3] max-h-[9rem] border border-dashed border-splendor-line/40 rounded-sm" />
-          )}
-        </div>
-      ))}
+      {Array.from({ length: 4 }).map((_, i) => {
+        const card = cards[i];
+        const exiting = card && purchaseFx?.isExiting(card.id);
+        const exitBuyer = purchaseFx?.exitBuyer;
+        return (
+          <div key={card?.id ?? `empty-${level}-${i}`} className="min-w-0">
+            {card ? (
+              <div
+                data-solo-card={card.id}
+                className={`relative transition-none ${
+                  exiting && exitBuyer
+                    ? `card-purchase-exit card-purchase-exit--${exitBuyer}`
+                    : ''
+                }`}
+              >
+                {renderCard(card, i)}
+              </div>
+            ) : (
+              <div className="aspect-[63/88] max-h-[11.5rem] w-full rounded-xl border border-dashed border-splendor-line/35 bg-white/50 card-slot-refill" />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -387,6 +486,8 @@ export function CardRow({
 export function BoardTable({
   nobles,
   spentNobleCount = 0,
+  nobleSpendable,
+  onSpendNoble,
   rows,
   bank,
   bankInteractive,
@@ -395,6 +496,8 @@ export function BoardTable({
 }: {
   nobles: NobleRequirement[];
   spentNobleCount?: number;
+  nobleSpendable?: boolean;
+  onSpendNoble?: () => void;
   rows: {
     level: 1 | 2 | 3;
     deckCount: number;
@@ -406,13 +509,17 @@ export function BoardTable({
   onBankGem?: (color: TakeColor) => void;
   children?: ReactNode;
 }) {
-  const { t } = useI18n();
-
   return (
-    <div className="panel p-3 sm:p-5 space-y-4 sm:space-y-5 bg-[#1a1612]/[0.04]">
+    <div className="practice-board p-3 sm:p-5 space-y-4 sm:space-y-5">
       <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
         {nobles.map((n, i) => (
-          <NobleTile key={n.id} noble={n} spent={i < spentNobleCount} />
+          <NobleTile
+            key={n.id}
+            noble={n}
+            spent={i < spentNobleCount}
+            spendable={nobleSpendable && i >= spentNobleCount}
+            onSpend={onSpendNoble}
+          />
         ))}
       </div>
 
@@ -429,7 +536,7 @@ export function BoardTable({
       </div>
 
       {bank && (
-        <div className="pt-2 border-t border-splendor-line/60">
+        <div className="pt-2 border-t border-splendor-line/25">
           <div className="flex flex-wrap justify-center items-end gap-1 sm:gap-3">
             {BANK_ORDER.map((color) => {
               const isGold = color === 'gold';
@@ -451,11 +558,6 @@ export function BoardTable({
               );
             })}
           </div>
-          {bankInteractive && (
-            <p className="text-center text-[11px] font-serif text-splendor-muted mt-2">
-              {t('soloDragHint')}
-            </p>
-          )}
         </div>
       )}
 
@@ -468,7 +570,7 @@ export function BuyableCard({
   card,
   hand,
   bonuses,
-  disabled,
+  phaseLocked,
   onBuy,
   onReserve,
   reservable,
@@ -476,16 +578,19 @@ export function BuyableCard({
   card: SoloCard;
   hand: GemCounts;
   bonuses: Omit<GemCounts, 'gold'>;
-  disabled?: boolean;
+  /** Not player's turn or mid take — no buy/reserve actions */
+  phaseLocked?: boolean;
   onBuy?: () => void;
   onReserve?: () => void;
   reservable?: boolean;
 }) {
-  const { t } = useI18n();
   const fx = useDragFxOptional();
+  const hints = useSoloHintsOptional();
   const [dragging, setDragging] = useState(false);
   const affordable = canBuy(card, hand, bonuses);
-  const canDrag = Boolean(reservable && onReserve);
+  const canBuyNow = affordable && !phaseLocked && Boolean(onBuy);
+  const canDrag = Boolean(reservable && onReserve && !phaseLocked);
+  const showHints = Boolean(hints?.enabled);
 
   return (
     <div
@@ -502,15 +607,15 @@ export function BuyableCard({
         setDragging(false);
         fx?.endDrag();
       }}
-      className={`${
+      className={`relative ${
         canDrag ? 'card-drag-source cursor-grab active:cursor-grabbing' : ''
       } ${dragging ? 'is-dragging' : ''}`}
     >
       <SoloCardTile
         card={card}
-        disabled={disabled || !affordable || !onBuy}
-        onClick={affordable && onBuy ? onBuy : undefined}
-        badge={affordable && !disabled ? t('soloCanBuy') : undefined}
+        bonuses={showHints ? bonuses : undefined}
+        affordable={showHints && canBuyNow}
+        onClick={canBuyNow ? onBuy : undefined}
       />
     </div>
   );

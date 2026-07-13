@@ -84,5 +84,6 @@ Don’t “collect cards” into a tie you lose on count.
 ## Chapter Takeaways
 
 - Engine → nobles → tempo → reserve → player count → endgame
-- Pressure-test close races with the [noble tracker](/tools/nobles?emerald=3&sapphire=3&ruby=2) and [card-value tool](/tools/card-value?sapphire=1&points=2&bonusWeight=0.8&nobleFit=1.5)
+- Pressure-test close races in [standard practice](/tools/standard) or [dice automa](/tools/solo/dice)
+- No partner at the table? Rehearse endgame pressure in [dice automa practice](/tools/solo/dice) or a multi-seat race in [standard practice](/tools/standard)
 - Remember the tiebreak: fewest development cards wins—and play the last turns accordingly

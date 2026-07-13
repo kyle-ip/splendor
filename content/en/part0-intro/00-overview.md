@@ -27,3 +27,9 @@ When any player has **≥15 prestige** at the end of their turn, the endgame beg
 - Beginners: Simple rules—you'll learn in one game
 - Strategy fans: Open information rewards reading the table and competition
 - Family gatherings: Fast pace, moderate interaction
+
+## Suggested Path
+
+1. Finish **Part 0–1** (~25 minutes of reading)
+2. Play a **physical** game at the table
+3. Come back for Intermediate lessons and [solo](/tools/solo) / [standard](/tools/standard) practice when you want a better win rate

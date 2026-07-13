@@ -2,7 +2,29 @@ import { Link } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nProvider';
 import { FixedCapitalPractice } from '@/features/solo/FixedCapitalPractice';
 import { DiceAutomaPractice } from '@/features/solo/DiceAutomaPractice';
+import { CardAutomaPractice } from '@/features/solo/CardAutomaPractice';
 import { DragFxProvider } from '@/features/solo/DragFx';
+import { PurchaseFxProvider } from '@/features/solo/PurchaseFx';
+import { DiceFxProvider } from '@/features/solo/DiceFx';
+import { SoloToastProvider } from '@/features/solo/SoloToast';
+import { SoloHintsProvider } from '@/features/solo/SoloHints';
+import { BankTakeFxProvider } from '@/features/solo/BankTakeFx';
+
+function SoloPracticeShell({ children }: { children: React.ReactNode }) {
+  return (
+    <DragFxProvider>
+      <BankTakeFxProvider>
+        <PurchaseFxProvider>
+          <DiceFxProvider>
+            <SoloToastProvider>
+              <SoloHintsProvider>{children}</SoloHintsProvider>
+            </SoloToastProvider>
+          </DiceFxProvider>
+        </PurchaseFxProvider>
+      </BankTakeFxProvider>
+    </DragFxProvider>
+  );
+}
 
 export function SoloPracticeHubPage() {
   const { t } = useI18n();
@@ -40,6 +62,13 @@ export function SoloPracticeHubPage() {
             {t('soloDiceDesc')}
           </span>
         </Link>
+        <Link to="/tools/solo/card" className="index-row !items-start py-4">
+          <span className="index-label text-lg">{t('solo3Title')}</span>
+          <span className="toc-leader mt-3" aria-hidden />
+          <span className="index-desc max-w-[14rem] leading-relaxed">
+            {t('solo3Desc')}
+          </span>
+        </Link>
       </div>
     </div>
   );
@@ -47,16 +76,24 @@ export function SoloPracticeHubPage() {
 
 export function SoloFixedPage() {
   return (
-    <DragFxProvider>
+    <SoloPracticeShell>
       <FixedCapitalPractice />
-    </DragFxProvider>
+    </SoloPracticeShell>
   );
 }
 
 export function SoloDicePage() {
   return (
-    <DragFxProvider>
+    <SoloPracticeShell>
       <DiceAutomaPractice />
-    </DragFxProvider>
+    </SoloPracticeShell>
+  );
+}
+
+export function SoloCardAutomaPage() {
+  return (
+    <SoloPracticeShell>
+      <CardAutomaPractice />
+    </SoloPracticeShell>
   );
 }

@@ -33,7 +33,7 @@ Use one shared setup; only the player count changes.
 
 | Fact | Value |
 |------|-------|
-| Nobles | Francis I (emerald×3 ruby×3 onyx×3); Machiavelli (diamond×4 sapphire×4) |
+| Nobles | emerald×3 ruby×3 onyx×3; diamond×4 sapphire×4 |
 | Level 1 | Cheap emerald, cheap ruby, expensive sapphire mono, stray diamond |
 | Bank | Full for the player count |
 
@@ -42,8 +42,8 @@ Use one shared setup; only the player count changes.
 | Turn | Typical 2p line | Why |
 |------|-----------------|-----|
 | T1 | Take emerald + ruby + diamond (or 2 emerald if legal and contested) | Slow board; you can afford a soft open |
-| T2 | Buy the cheap emerald or ruby | Contested Francis colors; denial ROI is high |
-| T3 | Reassess noble vs Machiavelli | Opponent’s tokens are fully readable—pivot early |
+| T2 | Buy the cheap emerald or ruby | Contested 3/3/3 colors; denial ROI is high |
+| T3 | Reassess 3/3/3 vs diamond×4 sapphire×4 | Opponent’s tokens are fully readable—pivot early |
 
 ### Turns 1–3 at 4 players
 
@@ -54,6 +54,20 @@ Use one shared setup; only the player count changes.
 | T3 | Lock a path that already shows on the refill | Soft hybrid opens get stolen |
 
 **Takeaway:** 2p rewards **control and denial**; 4p rewards **cashing buys** whenever the display offers them.
+
+## 4-Player Decision Skeleton (Turns 1–6)
+
+Same nobles as above. Four seats: You → A → B → C.
+
+| Turn | You | Why |
+|------|-----|-----|
+| 1 | Buy cheap emerald if free/cheap; else take emerald + ruby + diamond | In 4p, **cash a buy** over a soft open when the display offers it |
+| 2 | Second cheap bonus (ruby) if still there; else take toward it | Cards vanish—don’t plan three gem turns in a row |
+| 3 | If A/B contested your colors, pivot hybrid; else press 3/3/3 | Denial ROI is lower than in 2p |
+| 4–5 | Prefer any affordable Level 1/2 over “perfect” gem takes | Tempo is the scarce resource |
+| 6 | Scan: who is one buy from a noble? Deny only if you can buy that card **soon** | Pure denial often feeds seat C |
+
+**Callout:** Replay this skeleton at 2p—you will take more pure gem turns and more contested reserves. Practice the contrast in [dice automa](/tools/solo/dice) (no partners) or a full [standard practice](/tools/standard) (2–4p vs AI) after reading.
 
 ## Adjustment Checklist
 

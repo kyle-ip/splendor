@@ -85,3 +85,5 @@ Nobles match display? → Yes → Noble sprint
                      → No → Many L1 of one color? → Yes → Engine path
                                                → No → Hybrid; take 1–2 bonuses first
 ```
+
+Walk a full hybrid → 3/3/3 line with midgame pivots in the [annotated 2-player sample](/learn/advanced/part3-advanced-07-sample-game-2p).

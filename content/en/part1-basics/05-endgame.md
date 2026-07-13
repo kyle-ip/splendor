@@ -35,6 +35,18 @@ In a four-player game (order A → B → C → D), player C reaches 15 at the en
 - A and B already acted this round and do not act again
 - Then compare totals (including nobles); apply the tiebreak if needed
 
+## Worked Board — Last Round Pressure
+
+**2 players.** Seat order: You → Opponent. Scores: **You 14**, **Opponent 13**. You can buy a 1-point Level 1 (to 15) or set up a 3-point Level 2 that needs another gem turn.
+
+| Choice | Result | Why |
+|--------|--------|-----|
+| Buy the 1-pt now | You hit 15; Opponent still gets one turn after you | You trigger, but they may answer with 2+ points (or a noble) and overtake |
+| Take gems toward the 3-pt | You stay at 14; no endgame yet | Safer only if Opponent cannot score this turn and you will cash 3 next |
+| Competitive default when close | Prefer a sure buy that triggers **only if** Opponent’s reply cannot beat your total | Always count: their prestige + what they can buy (including reserved cards) on the extra turn |
+
+If you trigger at 16 and Opponent **already acted** this round, they get no extra turn—your lead usually holds.
+
 ## Beginner Advice
 
 Near 15 points, prioritize actions that **add prestige now**, not stockpiling gems for a later purchase.

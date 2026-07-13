@@ -5,10 +5,6 @@ order: 52
 duration: Anytime
 ---
 
-The three solo modes below are **house rules / fan variants** (not official Space Cowboys rules). Modes 1 and 2 follow custom write-ups; **Mode 3** follows the *Splendor Solo Automa* (Carolina Gamer) rulebook and component art in `references/solo-automa`. Where the source is silent, rulings are marked **"Suggested ruling."**
-
----
-
 ## Solo Mode 1: Fixed-Fund Challenge
 
 **Concept**: A closed-resource engine puzzle. After taking your starting gems, you **never take gems from the bank again**—only buy and reset the display.
@@ -65,7 +61,7 @@ Player turn (standard four actions) → player noble check → automa action →
 
 When either side reaches ≥15 prestige, settle as a race; **both player and automa can attract nobles**.
 
-**Practice**: [Dice automa](/tools/solo/dice) (in-browser). The browser decks use a **practice subset** (Level 1 full 40; Level 2 = 20/30; Level 3 = 15/20)—enough variety to learn the mode, not a full print run.
+**Practice**: [Dice automa](/tools/solo/dice) (in-browser). Browser decks match the full print run (Level 1 ×40, Level 2 ×30, Level 3 ×20).
 
 ---
 
@@ -85,7 +81,7 @@ When either side reaches ≥15 prestige, settle as a race; **both player and aut
 | Token placement board | **1**—bank gems stacked by number |
 | Card backs | Splendor SOLO AUTOMA backs (print-and-play) |
 
-Original rules PDF: [solo mode 3.pdf](/assets/solo3/rules.pdf) (bundled with the site assets).
+**Practice**: [Card automa](/tools/solo/card) (in-browser). Print sheets and PDF remain available under `public/assets/solo3/` for table play.
 
 ### Token Board Numbers
 

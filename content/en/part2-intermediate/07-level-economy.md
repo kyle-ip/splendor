@@ -58,4 +58,4 @@ After ~3–4 bonuses in a color, another +1 of that color is often weak—unless
 
 ## Practice Prompt
 
-Open the [cost calculator](/tools/calculator?bonus=emerald:3,sapphire:2,ruby:1&hand=diamond:2,gold:1&cost=emerald:3,onyx:3,diamond:2) with a mid-engine preset, then compare net cost of a Level 2 vs Level 3 from your table. Ask: *points per remaining gem turn.*
+With a mid-engine (e.g. +3 emerald +2 sapphire +1 ruby, hand 2 diamond + 1 gold), compare net cost of a Level 2 vs Level 3 from your table. Ask: *points per remaining gem turn.*

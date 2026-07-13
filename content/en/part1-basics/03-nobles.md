@@ -40,4 +40,4 @@ At setup, scan every face-up noble and note which colors appear often—especial
 
 ## Try it
 
-Open the [noble tracker](/tools/nobles?emerald=3&sapphire=2&onyx=2) with near-complete bonuses for a 3/3/3 path—see what is visit-ready vs almost there.
+In practice (solo or standard), set yourself near a 3/3/3 path and watch which nobles become visit-ready vs almost there.

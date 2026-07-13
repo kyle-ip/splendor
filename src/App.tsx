@@ -4,15 +4,14 @@ import { HomePage } from '@/pages/HomePage';
 import { LevelPage, LessonPage } from '@/pages/LessonPage';
 import { ReferencePage } from '@/pages/ReferencePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
-import { CalculatorPage } from '@/pages/tools/CalculatorPage';
-import { NoblesPage } from '@/pages/tools/NoblesPage';
-import { CardValuePage } from '@/pages/tools/CardValuePage';
 import { ReplayPage } from '@/pages/tools/ReplayPage';
 import {
   SoloDicePage,
   SoloFixedPage,
+  SoloCardAutomaPage,
   SoloPracticeHubPage,
 } from '@/pages/tools/SoloPracticePage';
+import { StandardPracticePage } from '@/pages/tools/StandardPracticePage';
 
 export default function App() {
   return (
@@ -37,13 +36,12 @@ export default function App() {
           path="reference/expansions"
           element={<ReferencePage lessonId="appendix-expansions" />}
         />
-        <Route path="tools/calculator" element={<CalculatorPage />} />
-        <Route path="tools/nobles" element={<NoblesPage />} />
-        <Route path="tools/card-value" element={<CardValuePage />} />
         <Route path="tools/replay" element={<ReplayPage />} />
         <Route path="tools/solo" element={<SoloPracticeHubPage />} />
         <Route path="tools/solo/fixed" element={<SoloFixedPage />} />
         <Route path="tools/solo/dice" element={<SoloDicePage />} />
+        <Route path="tools/solo/card" element={<SoloCardAutomaPage />} />
+        <Route path="tools/standard" element={<StandardPracticePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
