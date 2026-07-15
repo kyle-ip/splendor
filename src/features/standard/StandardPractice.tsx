@@ -39,6 +39,10 @@ import {
   passTurn,
   setPendingTake,
 } from './engine';
+import {
+  contestedCardIds,
+  selectStandardTip,
+} from './practiceTips';
 import { SetupForm, type SetupValues } from './SetupForm';
 import {
   SideTable,
@@ -46,6 +50,7 @@ import {
   seatDisplayName,
   seatsToSides,
 } from './SeatPanel';
+import { StandardTipBanner } from './StandardTipBanner';
 import type { Color, GameState, GemKey, LogEntry } from './types';
 
 const AI_DELAY_MS = 420;
@@ -127,6 +132,9 @@ export function StandardPractice() {
   const [history, setHistory] = useState<GameState[]>([]);
   const [fastAi, setFastAi] = useState(false);
   const [discardPick, setDiscardPick] = useState<GemKey[]>([]);
+  const [dismissedTips, setDismissedTips] = useState<Set<string>>(
+    () => new Set(),
+  );
   const aiLockRef = useRef(false);
 
   useEffect(() => {
@@ -142,6 +150,7 @@ export function StandardPractice() {
     setHistory([]);
     aiLockRef.current = false;
     setDiscardPick([]);
+    setDismissedTips(new Set());
     const next = createGame(setup);
     setState(next);
     setPlaying(true);
@@ -154,6 +163,7 @@ export function StandardPractice() {
     setHistory([]);
     aiLockRef.current = false;
     setDiscardPick([]);
+    setDismissedTips(new Set());
     clearSession(STD_SESSION_KEY);
   };
 
@@ -193,6 +203,20 @@ export function StandardPractice() {
     if (!state) return [];
     return state.log.map((e) => formatLog(e, state, t, labels));
   }, [state, t, labels]);
+
+  const contestedIds = useMemo(() => {
+    if (!state || !humanSeat || !hints.enabled) return new Set<string>();
+    return contestedCardIds(state, humanSeat.id);
+  }, [state, humanSeat, hints.enabled]);
+
+  const activeTip = useMemo(() => {
+    if (!state || !humanSeat || !hints.enabled || !humanMainTurn) return null;
+    return selectStandardTip(state, humanSeat.id, dismissedTips);
+  }, [state, humanSeat, hints.enabled, humanMainTurn, dismissedTips]);
+
+  const dismissTip = (id: string) => {
+    setDismissedTips((prev) => new Set(prev).add(id));
+  };
 
   useEffect(() => {
     setDiscardPick([]);
@@ -503,32 +527,46 @@ export function StandardPractice() {
               const human = state.seats.find((s) => s.isHuman);
               if (!human) return [];
               const takeActions = state.log.filter(
-                (e) => e.kind === 'take3' || e.kind === 'take2',
+                (e) =>
+                  (e.kind === 'take3' || e.kind === 'take2') &&
+                  e.seat === human.id,
               ).length;
-              const buyActions = state.log.filter((e) => e.kind === 'buy').length;
+              const buyActions = state.log.filter(
+                (e) => e.kind === 'buy' && e.seat === human.id,
+              ).length;
               const humanNobles = state.log.filter(
                 (e) => e.kind === 'noble' && e.seat === human.id,
               ).length;
               const oppNobles = state.log.filter(
                 (e) => e.kind === 'noble' && e.seat !== human.id,
               ).length;
-              const oppMax = Math.max(
-                ...state.seats.filter((s) => !s.isHuman).map((s) => s.prestige),
-                0,
-              );
+              const oppSeats = state.seats.filter((s) => !s.isHuman);
+              const oppLead =
+                oppSeats.reduce(
+                  (best, s) =>
+                    !best || s.prestige > best.prestige ? s : best,
+                  null as (typeof oppSeats)[0] | null,
+                ) ?? null;
+              const oppMax = oppLead?.prestige ?? 0;
               return buildStandardCoaching({
                 humanPrestige: human.prestige,
                 humanCardCount: human.cardCount,
                 humanNoblesApprox: humanNobles,
                 oppMaxPrestige: oppMax,
                 oppHasNobleLead: oppNobles > humanNobles,
+                oppCardCountAtLead: oppLead?.cardCount ?? 0,
                 takeActions,
                 buyActions,
                 won: state.winnerIds.includes(human.id),
+                turns: state.turn,
               });
             })()}
           />
         </div>
+      )}
+
+      {activeTip && (
+        <StandardTipBanner tip={activeTip} onDismiss={dismissTip} />
       )}
 
       {humanChoosingNoble && (
@@ -618,6 +656,7 @@ export function StandardPractice() {
                     hand={me.hand}
                     bonuses={me.bonuses}
                     phaseLocked={phaseLocked}
+                    contested={contestedIds.has(card.id)}
                     onBuy={() => buy(card, 'display', lv)}
                     reservable={
                       Boolean(humanMainTurn) &&

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ruby">
+  <circle cx="32" cy="32" r="30" fill="#e8dfc8" stroke="#2c241c" stroke-width="2"/>
+  <circle cx="32" cy="32" r="22" fill="#9e2a22" stroke="#5c1814" stroke-width="1.5"/>
+  <circle cx="26" cy="26" r="6" fill="#c44a40" opacity="0.55"/>
+</svg>

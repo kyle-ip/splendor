@@ -94,7 +94,7 @@ export function DeckBack({
   const style = DECK_STYLE[level];
   return (
     <div
-      className={`relative aspect-[63/88] w-full max-h-[11.5rem] rounded-xl border border-splendor-ink/25 ${style.bg} shadow-[0_2px_8px_rgba(44,36,28,0.12),inset_0_1px_0_rgba(255,255,255,0.2)] flex flex-col items-center justify-end pb-2 select-none overflow-hidden`}
+      className={`relative aspect-[63/88] w-full max-h-[11.5rem] rounded-sm border border-splendor-ink/30 ${style.bg} shadow-[0_1px_4px_rgba(44,36,28,0.1),inset_0_1px_0_rgba(255,255,255,0.15)] flex flex-col items-center justify-end pb-2 select-none overflow-hidden`}
       title={`${count}`}
     >
       <div className="mb-auto mt-2.5 px-1.5 w-[88%] flex justify-center">
@@ -136,13 +136,13 @@ export function NobleTile({
 
   const portrait = noblePortraitUrl(noble.id);
   const interactive = Boolean(!spent && spendable && onSpend);
-  const className = `relative aspect-square w-[5.75rem] sm:w-[6.75rem] rounded-xl overflow-hidden border border-splendor-ink/20 shadow-[0_2px_10px_rgba(44,36,28,0.12),inset_0_1px_0_rgba(255,255,255,0.15)] ${
+  const className = `relative aspect-square w-[5.75rem] sm:w-[6.75rem] rounded-sm overflow-hidden border-2 border-splendor-ink/35 shadow-[0_1px_6px_rgba(44,36,28,0.12),inset_0_0_0_1px_rgba(232,223,200,0.35)] ${
     portrait
-      ? 'bg-[#4a3f38]'
+      ? 'bg-[#3a322c]'
       : 'bg-gradient-to-br from-[#6a584e] via-[#4a3d36] to-[#322a26]'
   } ${spent ? 'opacity-40' : ''} ${
     interactive
-      ? 'cursor-pointer transition-[transform,box-shadow] hover:scale-[1.03] hover:border-splendor-gold/70 hover:shadow-[0_4px_14px_rgba(154,123,50,0.28)]'
+      ? 'cursor-pointer transition-[transform,box-shadow] hover:scale-[1.02] hover:border-splendor-gold/70 hover:shadow-[0_2px_10px_rgba(154,123,50,0.25)]'
       : ''
   }`;
 
@@ -152,7 +152,7 @@ export function NobleTile({
         <img
           src={portrait}
           alt=""
-          className={`absolute inset-0 w-full h-full object-cover object-[center_20%] sepia-[0.2] ${
+          className={`absolute inset-0 w-full h-full object-cover object-[center_20%] sepia-[0.35] contrast-[1.05] ${
             spent ? 'grayscale' : ''
           }`}
           draggable={false}
@@ -474,7 +474,7 @@ export function CardRow({
                 {renderCard(card, i)}
               </div>
             ) : (
-              <div className="aspect-[63/88] max-h-[11.5rem] w-full rounded-xl border border-dashed border-splendor-line/35 bg-white/50 card-slot-refill" />
+              <div className="aspect-[63/88] max-h-[11.5rem] w-full rounded-sm border border-dashed border-splendor-line/35 bg-white/50 card-slot-refill" />
             )}
           </div>
         );
@@ -571,6 +571,7 @@ export function BuyableCard({
   hand,
   bonuses,
   phaseLocked,
+  contested,
   onBuy,
   onReserve,
   reservable,
@@ -580,6 +581,8 @@ export function BuyableCard({
   bonuses: Omit<GemCounts, 'gold'>;
   /** Not player's turn or mid take — no buy/reserve actions */
   phaseLocked?: boolean;
+  /** Opponent can afford this card (shown only when hints are on) */
+  contested?: boolean;
   onBuy?: () => void;
   onReserve?: () => void;
   reservable?: boolean;
@@ -615,6 +618,7 @@ export function BuyableCard({
         card={card}
         bonuses={showHints ? bonuses : undefined}
         affordable={showHints && canBuyNow}
+        contested={showHints && contested}
         onClick={canBuyNow ? onBuy : undefined}
       />
     </div>

@@ -1,11 +1,13 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import type { GemCounts } from '@/types';
 import type { SoloCard } from '@/data/solo-cards';
 import { gems } from '@/lib/assets';
 import { useGemLabels } from '@/i18n/useGemLabels';
 import { useI18n } from '@/i18n/I18nProvider';
 import { payForCard } from '@/data/solo-cards';
+import { getLessonById } from '@/lib/lessons';
 import { useSoloHintsOptional } from './SoloHints';
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
@@ -108,10 +110,17 @@ export function SoloActionLog({ lines }: { lines: string[] }) {
   );
 }
 
+const LEVEL_BAND: Record<1 | 2 | 3, string> = {
+  1: 'bg-[#6b8f78]',
+  2: 'bg-[#c4a96a]',
+  3: 'bg-[#6a8098]',
+};
+
 export function SoloCardTile({
   card,
   onClick,
   affordable,
+  contested,
   badge,
   bonuses,
 }: {
@@ -119,6 +128,8 @@ export function SoloCardTile({
   onClick?: () => void;
   /** Ring highlight when the player can afford this card now */
   affordable?: boolean;
+  /** Opponent can currently afford this card (distinct from buyable gold ring) */
+  contested?: boolean;
   badge?: string;
   /** Permanent gem bonuses — show (-N) on costs covered by owned cards */
   bonuses?: Omit<GemCounts, 'gold'>;
@@ -128,17 +139,35 @@ export function SoloCardTile({
 
   const clickable = Boolean(onClick);
 
+  const ringClass = [
+    affordable
+      ? 'border-splendor-gold/80 shadow-[0_2px_8px_rgba(154,123,50,0.2),0_0_0_1px_rgba(154,123,50,0.35)] hover:scale-[1.01]'
+      : contested
+        ? 'border-splendor-velvet/55 shadow-[0_2px_8px_rgba(90,40,50,0.14),0_0_0_1px_rgba(90,40,50,0.28)]'
+        : '',
+    affordable && contested ? 'ring-1 ring-offset-1 ring-splendor-velvet/45' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <button
       type="button"
       disabled={!onClick}
       onClick={onClick}
-      className={`text-left p-2 sm:p-2.5 bg-[var(--board-ivory)] w-full aspect-[63/88] max-h-[11.5rem] flex flex-col overflow-hidden rounded-xl transition-[border-color,box-shadow,transform] border border-splendor-ink/15 shadow-[0_2px_8px_rgba(44,36,28,0.1),0_1px_2px_rgba(44,36,28,0.06)] ${
-        affordable
-          ? 'border-splendor-gold/80 shadow-[0_2px_10px_rgba(154,123,50,0.22),0_0_0_2px_rgba(154,123,50,0.28)] hover:scale-[1.015]'
-          : ''
-      } ${clickable ? 'cursor-pointer' : 'cursor-default'}`}
+      className={`relative text-left pt-3 p-2 sm:pt-3.5 sm:p-2.5 bg-[var(--board-ivory)] w-full aspect-[63/88] max-h-[11.5rem] flex flex-col overflow-hidden rounded-sm transition-[border-color,box-shadow,transform] border border-splendor-ink/25 shadow-[0_1px_4px_rgba(44,36,28,0.08)] ${ringClass} ${clickable ? 'cursor-pointer' : 'cursor-default'}`}
     >
+      {contested && (
+        <span
+          className="absolute top-2 right-1.5 z-[1] h-2 w-2 rounded-full bg-splendor-velvet/85 ring-1 ring-splendor-velvet/40"
+          title="Contested"
+          aria-hidden
+        />
+      )}
+      <span
+        className={`absolute inset-x-0 top-0 h-1.5 ${LEVEL_BAND[card.level]}`}
+        aria-hidden
+      />
       <div className="flex justify-between items-start gap-1 mb-1">
         <span className="font-display text-lg sm:text-xl text-splendor-velvet leading-none tabular-nums">
           {card.points || ''}
@@ -317,8 +346,13 @@ export function PracticeShell({
   headerExtra?: ReactNode;
   children: ReactNode;
 }) {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const hints = useSoloHintsOptional();
+  const [searchParams] = useSearchParams();
+  const fromLessonId = searchParams.get('from');
+  const fromLesson = fromLessonId
+    ? getLessonById(locale, fromLessonId)
+    : undefined;
 
   return (
     <div className="space-y-6">
@@ -329,6 +363,16 @@ export function PracticeShell({
         <h1 className="page-title">{title}</h1>
         <div className="ornament-line my-4" />
         <p className="font-serif text-splendor-muted leading-relaxed">{subtitle}</p>
+        {fromLesson && (
+          <p className="mt-2">
+            <Link
+              to={`/learn/${fromLesson.level}/${fromLesson.id}`}
+              className="text-sm font-serif text-splendor-velvet underline decoration-splendor-ink/25 hover:decoration-splendor-velvet"
+            >
+              ← {t('practiceBackToLesson')}: {fromLesson.title}
+            </Link>
+          </p>
+        )}
         {recordLine && (
           <p className="mt-2 text-sm font-serif text-splendor-ink/70">{recordLine}</p>
         )}

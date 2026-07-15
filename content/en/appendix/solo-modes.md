@@ -207,6 +207,20 @@ Automa prestige = sum of its retained **point-bearing development cards** (no no
 
 ---
 
+## Browser practice tiers (Modes 2–3)
+
+In-browser practice can optionally dial pressure without rewriting the published Automa rules. These levers are **practice options only**—they are not official printed variants.
+
+| Tier | Mode 2 (dice) | Mode 3 (★ cards) |
+|------|---------------|------------------|
+| Easy | ~50% chance to reroll a 5–6 into 1–4 (fewer gold / free-skew faces) | **1** ★ card in the Automa deck |
+| Normal | Fair d6 (as published) | **2** ★ cards (as published) |
+| Hard | If 1–4 targets an empty Level 1 slot, reroll once | **4** ★ cards in the Automa deck |
+
+Mode 1 has no practice tier. Switch tier in the practice header to start a new session.
+
+---
+
 ## Relation to Main Rules
 
 - The main tutorial assumes **multiplayer base Splendor**.  

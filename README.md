@@ -23,6 +23,7 @@ Project documentation lives in [`docs/`](docs/):
 - [Overview & features](docs/overview.md)
 - [Deploy to GitHub Pages](docs/deploy.md)
 - [Content & layout](docs/content.md)
+- [Design direction](docs/design.md)
 
 ## Stack
 

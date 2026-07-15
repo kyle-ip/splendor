@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { LevelHeader } from '@/components/Layout';
+import { LessonPracticeCta } from '@/components/LessonPracticeCta';
 import { MarkdownContent } from '@/components/MarkdownContent';
 import { PageToc } from '@/components/PageToc';
 import {
@@ -121,6 +122,7 @@ export function LessonPage() {
             <PageToc markdown={lesson.content} minItems={4} />
           </div>
           <MarkdownContent content={lesson.content} />
+          <LessonPracticeCta lessonId={lesson.id} />
         </div>
 
         {showToc && (

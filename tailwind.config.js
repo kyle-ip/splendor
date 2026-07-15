@@ -6,7 +6,7 @@ export default {
       colors: {
         splendor: {
           bg: '#ffffff',
-          surface: '#f7f5f2',
+          surface: '#ffffff',
           card: '#ffffff',
           ink: '#1c1612',
           muted: '#4a4036',

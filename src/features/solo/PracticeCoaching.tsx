@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export type CoachingTip = {
-  /** Message key fragment resolved via t() */
   messageKey:
     | 'coachTakeHeavy'
     | 'coachNoNobles'
-    | 'coachCardHeavy';
+    | 'coachCardHeavy'
+    | 'coachLowCards';
   lessonPath: string;
 };
 
@@ -47,14 +47,18 @@ export function buildStandardCoaching(input: {
   humanPrestige: number;
   humanCardCount: number;
   humanNoblesApprox: number;
-  oppMaxPrestige: number;
-  oppHasNobleLead: boolean;
+  /** Human take / buy only (not full-table). */
   takeActions: number;
   buyActions: number;
+  oppMaxPrestige: number;
+  oppHasNobleLead: boolean;
+  /** Opponent with max prestige — for card-count compare */
+  oppCardCountAtLead: number;
   won: boolean;
+  turns: number;
 }): CoachingTip[] {
   const tips: CoachingTip[] = [];
-  if (input.takeActions >= input.buyActions + 2) {
+  if (input.turns >= 5 && input.takeActions >= input.buyActions + 2) {
     tips.push({
       messageKey: 'coachTakeHeavy',
       lessonPath: '/learn/intermediate/part2-intermediate-03-gem-economy',
@@ -66,11 +70,18 @@ export function buildStandardCoaching(input: {
       lessonPath: '/learn/intermediate/part2-intermediate-02-noble-planning',
     });
   }
-  if (!input.won && input.oppMaxPrestige - input.humanPrestige <= 3) {
+  const gap = input.oppMaxPrestige - input.humanPrestige;
+  if (!input.won && gap <= 3) {
     tips.push({
       messageKey: 'coachCardHeavy',
       lessonPath: '/learn/intermediate/part2-intermediate-06-endgame-calc',
     });
+    if (input.humanCardCount < input.oppCardCountAtLead) {
+      tips.push({
+        messageKey: 'coachLowCards',
+        lessonPath: '/learn/intermediate/part2-intermediate-07-level-economy',
+      });
+    }
   }
   return tips.slice(0, 3);
 }

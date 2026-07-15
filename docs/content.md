@@ -28,7 +28,7 @@ Frontmatter `level` values: `intro` | `basics` | `intermediate` | `advanced` | `
 
 - Parts I–IV (`intro`…`advanced`): base Splendor
 - Part V (`duel`, `order` 40–44): Splendor Duel — source `references/splendor-duel-rulebook.pdf`
-- Appendix (`reference`, `order` 49+): glossary, rules quick ref, expansions, solo
+- Appendix (`reference`, `order` 48+): glossary, etiquette, rules quick ref, expansions, solo
 
 ## Rule accuracy
 
@@ -40,7 +40,7 @@ When editing rules prose, prefer clear, unambiguous wording and cross-check agai
 npm test
 ```
 
-Runs Vitest unit tests (currently `src/lib/gems.test.ts` for purchase affordability and `src/lib/toolQuery.test.ts` for URL seeding).
+Runs Vitest unit tests (currently `src/lib/gems.test.ts` for purchase affordability, plus solo/standard engine tests).
 
 ## Solo practice decks
 

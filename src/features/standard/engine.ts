@@ -340,14 +340,7 @@ function afterTokensOk(state: GameState): GameState {
     );
   }
   if (eligible.length > 1) {
-    // AI auto-picks best later via chooseAiNoble; human chooses
-    if (!seat.isHuman) {
-      const best = pickBestNoble(seat, eligible);
-      return applyClaimNoble(
-        { ...state, pendingNobles: eligible, phase: 'chooseNoble' },
-        best.id,
-      );
-    }
+    // Human chooses; AI also enters chooseNoble so chooseAiAction can score
     return {
       ...state,
       phase: 'chooseNoble',

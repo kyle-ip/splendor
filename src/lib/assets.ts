@@ -12,12 +12,12 @@ export const promo = {
 };
 
 export const gems = {
-  emerald: `${assetBase}/gems/emerald.png`,
-  sapphire: `${assetBase}/gems/sapphire.png`,
-  ruby: `${assetBase}/gems/ruby.png`,
-  diamond: `${assetBase}/gems/diamond.png`,
-  onyx: `${assetBase}/gems/onyx.png`,
-  gold: `${assetBase}/gems/gold.png`,
+  emerald: `${assetBase}/gems/emerald.svg`,
+  sapphire: `${assetBase}/gems/sapphire.svg`,
+  ruby: `${assetBase}/gems/ruby.svg`,
+  diamond: `${assetBase}/gems/diamond.svg`,
+  onyx: `${assetBase}/gems/onyx.svg`,
+  gold: `${assetBase}/gems/gold.svg`,
 } as const;
 
 export const nobleSample = `${assetBase}/nobles/sample.jpg`;

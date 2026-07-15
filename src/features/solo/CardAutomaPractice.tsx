@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import noblesData from '@/data/nobles.json';
 import type { GemCounts, NobleRequirement } from '@/types';
 import {
@@ -42,6 +42,11 @@ import { useSoloToast } from './SoloToast';
 import { useSoloHints } from './SoloHints';
 import { useBankTakeFx } from './BankTakeFx';
 import { usePurchaseFx } from './PurchaseFx';
+import {
+  SoloPracticeTierPicker,
+  useSoloPracticeTier,
+} from './PracticeTierPicker';
+import { readSoloPracticeTier, starCountForTier } from './practiceTier';
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
 const noblesAll = noblesData as NobleRequirement[];
@@ -100,10 +105,11 @@ function eligibleNobles(
   );
 }
 
-function buildAutomaDeck(): AutomaCardDef[] {
+function buildAutomaDeck(starCount = 2): AutomaCardDef[] {
   const stars = shuffle(AUTOMA_CARDS.filter((c) => c.star));
   const normals = AUTOMA_CARDS.filter((c) => !c.star);
-  const pickedStars = stars.slice(0, 2);
+  const n = Math.max(0, Math.min(4, starCount));
+  const pickedStars = stars.slice(0, n);
   return shuffle([...normals, ...pickedStars]);
 }
 
@@ -113,7 +119,7 @@ function bandFor(card: AutomaCardDef, phaseBand: 1 | 2 | 3): AutomaBand {
   return card.bottom;
 }
 
-function createGame(): State {
+function createGame(starCount = 2): State {
   const d1s = shuffle(LEVEL1_CARDS);
   const d2s = shuffle(LEVEL2_CARDS);
   const d3s = shuffle(LEVEL3_CARDS);
@@ -142,7 +148,7 @@ function createGame(): State {
     d2: b.deck,
     d3: c.deck,
     nobles: shuffle(noblesAll).slice(0, 3),
-    deck: buildAutomaDeck(),
+    deck: buildAutomaDeck(starCount),
     discard: [],
     phaseBand: 1,
     turn: 1,
@@ -171,9 +177,10 @@ export function CardAutomaPractice() {
   const hints = useSoloHints();
   const bankFx = useBankTakeFx();
   const purchaseFx = usePurchaseFx();
+  const { tier, setTier } = useSoloPracticeTier();
   const [state, setState] = useState<State>(() => {
     const saved = loadSession<State>(SESSION_KEY);
-    return saved ?? createGame();
+    return saved ?? createGame(starCountForTier(readSoloPracticeTier()));
   });
   const [history, setHistory] = useState<State[]>([]);
   const [discardPick, setDiscardPick] = useState<(keyof GemCounts)[]>([]);
@@ -191,8 +198,17 @@ export function CardAutomaPractice() {
     clearSession(SESSION_KEY);
     setHistory([]);
     setDiscardPick([]);
-    setState(createGame());
-  }, []);
+    setState(createGame(starCountForTier(tier)));
+  }, [tier]);
+
+  const tierBoot = useRef(true);
+  useEffect(() => {
+    if (tierBoot.current) {
+      tierBoot.current = false;
+      return;
+    }
+    restart();
+  }, [tier, restart]);
 
   const undo = useCallback(() => {
     setHistory((h) => {
@@ -543,6 +559,9 @@ export function CardAutomaPractice() {
       onReset={restart}
       onUndo={undo}
       canUndo={history.length > 0 && (playerActive || state.phase === 'discardGems')}
+      headerExtra={
+        <SoloPracticeTierPicker value={tier} onChange={setTier} />
+      }
       recordLine={t('solo3TurnBand', {
         turn: state.turn,
         band: state.phaseBand,

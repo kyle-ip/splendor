@@ -37,6 +37,11 @@ import {
 import { useSoloToast } from './SoloToast';
 import { useSoloHints } from './SoloHints';
 import { useBankTakeFx } from './BankTakeFx';
+import {
+  SoloPracticeTierPicker,
+  useSoloPracticeTier,
+} from './PracticeTierPicker';
+import { rollPracticeDie } from './practiceTier';
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
 const noblesAll = noblesData as NobleRequirement[];
@@ -370,6 +375,7 @@ export function DiceAutomaPractice() {
   const toast = useSoloToast();
   const hints = useSoloHints();
   const bankFx = useBankTakeFx();
+  const { tier, setTier } = useSoloPracticeTier();
   const pendingAutomaFx = useRef<PendingAutomaFx | null>(null);
   const pendingDiceRef = useRef<number | null>(null);
   const recordedWinRef = useRef(false);
@@ -399,6 +405,15 @@ export function DiceAutomaPractice() {
     setDiscardPick([]);
     setState(createGame());
   }, []);
+
+  const tierBoot = useRef(true);
+  useEffect(() => {
+    if (tierBoot.current) {
+      tierBoot.current = false;
+      return;
+    }
+    restart();
+  }, [tier, restart]);
 
   const undo = useCallback(() => {
     setHistory((h) => {
@@ -508,7 +523,8 @@ export function DiceAutomaPractice() {
   };
 
   const startAutomaDice = (s: State): State => {
-    const dice = 1 + Math.floor(Math.random() * 6);
+    const occupied = [0, 1, 2, 3].map((i) => Boolean(s.l1[i]));
+    const dice = rollPracticeDie(tier, occupied);
     pendingDiceRef.current = dice;
     return { ...s, phase: 'busy', busyNonce: s.busyNonce + 1 };
   };
@@ -868,6 +884,9 @@ export function DiceAutomaPractice() {
         losses: record.losses,
         ties: record.ties,
       })}
+      headerExtra={
+        <SoloPracticeTierPicker value={tier} onChange={setTier} />
+      }
     >
       {state.winner && (
         <div className="panel p-4">

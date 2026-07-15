@@ -137,6 +137,7 @@ export function HomePage() {
             { to: '/learn/intro', label: t('navIntro'), external: false },
             { to: '/learn/basics', label: t('navBasics'), external: false },
             { to: '/learn/intermediate', label: t('pathAfterBasics'), external: false },
+            { to: '/learn/advanced', label: t('navAdvanced'), external: false },
             { to: '/tools/solo', label: t('pathSoloOptional'), external: false },
             { to: '/learn/duel', label: t('pathDuelOptional'), external: false },
             { to: '/reference/rules', label: t('navRules'), external: false },

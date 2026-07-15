@@ -96,35 +96,42 @@ export function Layout() {
 
   const brandBlock = (opts?: { collapseControl?: boolean }) => (
     <>
-      <div className="flex items-start justify-between gap-2 mb-1">
-        {opts?.collapseControl ? (
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            className="mt-0.5 shrink-0 p-0.5 -ml-0.5 rounded-sm text-splendor-ink/70 hover:text-splendor-ink transition-colors"
-            title={t('collapseSidebar')}
-            aria-label={t('collapseSidebar')}
-            aria-expanded
+      <div className="mb-1">
+        <div
+          className={`flex items-center gap-2 mb-2 ${
+            opts?.collapseControl ? 'justify-between' : ''
+          }`}
+        >
+          <NavLink
+            to="/"
+            className="group min-w-0"
+            onClick={() => setMenuOpen(false)}
           >
-            <WoodcutMark />
-          </button>
-        ) : (
-          <WoodcutMark className="text-splendor-ink/70 mt-0.5 shrink-0" />
-        )}
+            <img
+              src={promo.logo}
+              alt="Splendor"
+              className="h-9 w-auto object-contain group-hover:opacity-90 transition-opacity"
+            />
+          </NavLink>
+          {opts?.collapseControl && (
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="shrink-0 p-1 rounded-sm text-splendor-ink/70 hover:text-splendor-ink transition-colors"
+              title={t('collapseSidebar')}
+              aria-label={t('collapseSidebar')}
+              aria-expanded
+            >
+              <WoodcutMark />
+            </button>
+          )}
+        </div>
         <NavLink
           to="/"
-          className="block group flex-1 min-w-0"
+          className="block group"
           onClick={() => setMenuOpen(false)}
         >
-          <img
-            src={promo.logo}
-            alt="Splendor"
-            className="h-9 w-auto object-contain mb-2 group-hover:opacity-90 transition-opacity"
-          />
-          <p className="font-display text-base text-splendor-velvet tracking-woodcut">
-            Splendor
-          </p>
-          <p className="text-[11px] text-splendor-muted mt-1 tracking-[0.14em] uppercase font-serif">
+          <p className="text-[11px] text-splendor-muted tracking-[0.14em] uppercase font-serif group-hover:text-splendor-ink/80 transition-colors">
             {t('brandSubtitle')}
           </p>
         </NavLink>
@@ -215,7 +222,7 @@ export function Layout() {
       {/* Collapsed desktop rail */}
       {sidebarCollapsed && (
         <aside
-          className="sidebar-ledger hidden md:flex md:fixed md:h-full md:w-11 z-40 flex-col items-center border-b-0 py-4 gap-3"
+          className="sidebar-ledger hidden md:flex md:fixed md:h-full md:w-11 z-40 flex-col items-center border-b-0 py-4"
           aria-label={t('expandSidebar')}
         >
           <button
