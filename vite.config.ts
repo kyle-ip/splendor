@@ -17,7 +17,7 @@ function spaFallback() {
 }
 
 export default defineConfig({
-  base: '/splendor-guide/',
+  base: '/splendor/',
   plugins: [react(), spaFallback()],
   resolve: {
     alias: {

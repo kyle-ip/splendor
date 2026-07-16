@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open: `http://localhost:5173/splendor-guide/`
+Open: `http://localhost:5173/splendor/`
 
 ```bash
 npm run build

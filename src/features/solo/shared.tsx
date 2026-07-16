@@ -186,7 +186,7 @@ export function SoloCardTile({
           {badge}
         </p>
       )}
-      <div className="mt-auto flex flex-col gap-1">
+      <div className="mt-auto flex flex-col gap-0.5">
         {costBits.map((c) => {
           const base = card.cost[c];
           const covered =
@@ -194,19 +194,19 @@ export function SoloCardTile({
           return (
             <span
               key={c}
-              className="inline-flex items-center gap-1 text-sm sm:text-base font-serif font-medium tabular-nums"
+              className="inline-flex items-center gap-0.5 text-xs sm:text-sm font-serif font-medium tabular-nums leading-none"
             >
               <img
                 src={gems[c]}
                 alt=""
-                className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0"
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain shrink-0"
               />
               <span className={covered > 0 ? 'text-splendor-muted/75' : ''}>
                 {base}
               </span>
               {covered > 0 && (
                 <span
-                  className="text-[11px] sm:text-xs font-serif font-semibold text-gem-emerald leading-none"
+                  className="text-[10px] sm:text-[11px] font-serif font-semibold text-gem-emerald leading-none"
                   title={`-${covered}`}
                 >
                   (-{covered})

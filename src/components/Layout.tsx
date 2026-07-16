@@ -13,7 +13,7 @@ import { TOOL_VISIBILITY } from '@/lib/toolVisibility';
 
 type NavItem = { to: string; label: string; roman?: string };
 
-const SIDEBAR_COLLAPSED_KEY = 'splendor-guide-sidebar-collapsed';
+const SIDEBAR_COLLAPSED_KEY = 'splendor-sidebar-collapsed';
 
 function readSidebarCollapsed(): boolean {
   try {

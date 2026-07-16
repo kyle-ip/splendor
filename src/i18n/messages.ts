@@ -1,7 +1,7 @@
 export type Locale = 'en' | 'zh';
 
 export const DEFAULT_LOCALE: Locale = 'en';
-export const LOCALE_STORAGE_KEY = 'splendor-guide-locale';
+export const LOCALE_STORAGE_KEY = 'splendor-locale';
 
 export const messages = {
   en: {
