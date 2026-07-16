@@ -1,6 +1,6 @@
-# Splendor Guide
+# Splendor
 
-A bilingual (EN / 中文) web tutorial for Splendor: layered lessons, interactive tools, and a rules appendix. Deploys to GitHub Pages.
+A web tutorial for Splendor: layered lessons, interactive tools, and a rules appendix.
 
 ## Quick start
 

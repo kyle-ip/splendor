@@ -207,12 +207,39 @@ function applyTake(s: State, pick: TakeColor[], logLine: string): State {
 
 function findAutomaPurchase(
   s: State,
+  tier: 'easy' | 'normal' | 'hard' = 'normal',
 ): { card: SoloCard; level: 1 | 2 | 3 } | null {
-  const rows: { level: 1 | 2 | 3; cards: SoloCard[] }[] = [
-    { level: 3, cards: s.l3 },
-    { level: 2, cards: s.l2 },
-    { level: 1, cards: s.l1 },
-  ];
+  // Easy: prefer lower levels (weaker). Hard/normal: L3→L1; hard picks highest points among affordable.
+  const rows: { level: 1 | 2 | 3; cards: SoloCard[] }[] =
+    tier === 'easy'
+      ? [
+          { level: 1, cards: s.l1 },
+          { level: 2, cards: s.l2 },
+          { level: 3, cards: s.l3 },
+        ]
+      : [
+          { level: 3, cards: s.l3 },
+          { level: 2, cards: s.l2 },
+          { level: 1, cards: s.l1 },
+        ];
+
+  if (tier === 'hard') {
+    let best: { card: SoloCard; level: 1 | 2 | 3 } | null = null;
+    for (const row of rows) {
+      for (const card of row.cards) {
+        if (!automaAfford(card, s.autoBonuses, s.autoGold)) continue;
+        if (
+          !best ||
+          card.points > best.card.points ||
+          (card.points === best.card.points && card.level > best.card.level)
+        ) {
+          best = { card, level: row.level };
+        }
+      }
+    }
+    return best;
+  }
+
   for (const row of rows) {
     for (const card of row.cards) {
       if (automaAfford(card, s.autoBonuses, s.autoGold)) {
@@ -530,7 +557,7 @@ export function DiceAutomaPractice() {
   };
 
   const scheduleAutomaTurn = (s: State): State => {
-    const purchase = findAutomaPurchase(s);
+    const purchase = findAutomaPurchase(s, tier);
     if (purchase) {
       pendingAutomaFx.current = {
         kind: 'buy',

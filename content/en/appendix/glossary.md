@@ -17,8 +17,8 @@ Alphabetical index of terms used across this guide. **Official rule terms** matc
 | **Bonus** | The gem color shown on the top-right of a development card. Each bonus of a color reduces future costs of that color by 1 and counts toward noble requirements. |
 | **Development card** | A card you buy for prestige and bonuses. Three levels: Level 1 (40 cards), Level 2 (30), Level 3 (20). |
 | **Display** | The face-up development cards in the middle (4 per level when decks allow). |
-| **Gold (joker)** | Wild token; substitutes for any one gem color when paying. Obtained only by reserving (if any gold remains). |
-| **Gem / token colors** | Emerald (green), sapphire (blue), ruby (red), diamond (white), onyx (black), gold (yellow). |
+| **Gold (joker)** | Wild gold token; substitutes for any one gem color when paying. Obtained only by reserving (if any gold remains). |
+| **Gem / token colors** | This guide names colored gems by table color: **Green**, **Blue**, **Red**, **White**, **Black**, plus **Gold** (wild). Official rulebooks also use emerald / sapphire / ruby / diamond / onyx / gold. |
 | **Noble tile** | A face-up tile that visits a player who has enough bonuses of the required colors. Worth **3 prestige**; cannot be refused; at most **1 visit per turn**. |
 | **Prestige points** | Score on development cards and nobles. Reaching **≥15** triggers the endgame round. |
 | **Reserve / reserved card** | A development card kept in your hand (max **3**). The only way to get gold. Reserved cards cannot be discarded—only bought. |

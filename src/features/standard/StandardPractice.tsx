@@ -43,6 +43,8 @@ import {
   contestedCardIds,
   selectStandardTip,
 } from './practiceTips';
+import { recommendHumanMove } from './moveHints';
+import { MoveHintBanner } from './MoveHintBanner';
 import { SetupForm, type SetupValues } from './SetupForm';
 import {
   SideTable,
@@ -51,13 +53,27 @@ import {
   seatsToSides,
 } from './SeatPanel';
 import { StandardTipBanner } from './StandardTipBanner';
-import type { Color, GameState, GemKey, LogEntry } from './types';
+import type { AiStyle, Color, GameState, GemKey, LogEntry } from './types';
 
 const AI_DELAY_MS = 420;
 const AI_FAST_MS = 160;
 const STD_SESSION_KEY = 'splendor-standard-session';
 
 type StdSession = { setup: SetupValues; state: GameState };
+
+function normalizeSetup(setup?: Partial<SetupValues>): SetupValues {
+  return {
+    playerCount: setup?.playerCount ?? 2,
+    humanSeat: setup?.humanSeat ?? 0,
+    difficulty: setup?.difficulty ?? 'normal',
+    aiStyle: setup?.aiStyle ?? 'balanced',
+  };
+}
+
+function normalizeState(state: GameState): GameState {
+  if (state.aiStyle) return state;
+  return { ...state, aiStyle: 'balanced' as AiStyle };
+}
 
 function formatLog(
   entry: LogEntry,
@@ -114,11 +130,7 @@ export function StandardPractice() {
 
   const [setup, setSetup] = useState<SetupValues>(() => {
     const saved = loadSession<StdSession>(STD_SESSION_KEY);
-    return saved?.setup ?? {
-      playerCount: 2,
-      humanSeat: 0,
-      difficulty: 'normal',
-    };
+    return normalizeSetup(saved?.setup);
   });
   const [playing, setPlaying] = useState(() => {
     const saved = loadSession<StdSession>(STD_SESSION_KEY);
@@ -126,7 +138,9 @@ export function StandardPractice() {
   });
   const [state, setState] = useState<GameState | null>(() => {
     const saved = loadSession<StdSession>(STD_SESSION_KEY);
-    if (saved?.state && !saved.state.winnerIds.length) return saved.state;
+    if (saved?.state && !saved.state.winnerIds.length) {
+      return normalizeState(saved.state);
+    }
     return null;
   });
   const [history, setHistory] = useState<GameState[]>([]);
@@ -135,6 +149,7 @@ export function StandardPractice() {
   const [dismissedTips, setDismissedTips] = useState<Set<string>>(
     () => new Set(),
   );
+  const [missedDenials, setMissedDenials] = useState(0);
   const aiLockRef = useRef(false);
 
   useEffect(() => {
@@ -151,6 +166,7 @@ export function StandardPractice() {
     aiLockRef.current = false;
     setDiscardPick([]);
     setDismissedTips(new Set());
+    setMissedDenials(0);
     const next = createGame(setup);
     setState(next);
     setPlaying(true);
@@ -164,7 +180,22 @@ export function StandardPractice() {
     aiLockRef.current = false;
     setDiscardPick([]);
     setDismissedTips(new Set());
+    setMissedDenials(0);
     clearSession(STD_SESSION_KEY);
+  };
+
+  const noteMissedDenial = (
+    s: GameState,
+    humanId: number,
+    action: { type: string; cardId?: string },
+  ) => {
+    const contested = contestedCardIds(s, humanId);
+    if (contested.size === 0) return;
+    const denied =
+      (action.type === 'buy' || action.type === 'reserve') &&
+      action.cardId != null &&
+      contested.has(action.cardId);
+    if (!denied) setMissedDenials((n) => n + 1);
   };
 
   const pushHistory = (s: GameState) => {
@@ -208,6 +239,14 @@ export function StandardPractice() {
     if (!state || !humanSeat || !hints.enabled) return new Set<string>();
     return contestedCardIds(state, humanSeat.id);
   }, [state, humanSeat, hints.enabled]);
+
+  const moveHint = useMemo(() => {
+    if (!state || !humanSeat || !hints.enabled || !humanMainTurn) return null;
+    if (state.pendingTake.length > 0) return null;
+    return recommendHumanMove(state);
+  }, [state, humanSeat, hints.enabled, humanMainTurn]);
+
+  const suggestedCardId = moveHint?.highlightCardId;
 
   const activeTip = useMemo(() => {
     if (!state || !humanSeat || !hints.enabled || !humanMainTurn) return null;
@@ -312,6 +351,9 @@ export function StandardPractice() {
       if (!isTakeComplete(pending as TakeColor[])) {
         return setPendingTake(s, pending);
       }
+      if (humanSeat) {
+        noteMissedDenial(s, humanSeat.id, { type: 'take' });
+      }
       pushHistory(s);
       return (
         applyAction({ ...s, pendingTake: [] }, { type: 'take', colors: pending }) ??
@@ -330,6 +372,7 @@ export function StandardPractice() {
       if (s.bank.gold > 0) {
         queueMicrotask(() => bankFx.take('gold', { toward: 'down' }));
       }
+      noteMissedDenial(s, currentSeat(s).id, { type: 'reserve', cardId });
       pushHistory(s);
       return (
         applyAction(s, {
@@ -351,6 +394,7 @@ export function StandardPractice() {
     if (!humanSeat) return;
     if (!payForCard(humanSeat.hand, card.cost, humanSeat.bonuses)) return;
 
+    noteMissedDenial(state, humanSeat.id, { type: 'buy', cardId: card.id });
     purchaseFx.run(card.id, 'player', () => {
       setState((s) => {
         if (!s) return s;
@@ -559,11 +603,14 @@ export function StandardPractice() {
                 buyActions,
                 won: state.winnerIds.includes(human.id),
                 turns: state.turn,
+                missedDenials,
               });
             })()}
           />
         </div>
       )}
+
+      {moveHint && <MoveHintBanner hint={moveHint} />}
 
       {activeTip && (
         <StandardTipBanner tip={activeTip} onDismiss={dismissTip} />
@@ -657,6 +704,7 @@ export function StandardPractice() {
                     bonuses={me.bonuses}
                     phaseLocked={phaseLocked}
                     contested={contestedIds.has(card.id)}
+                    suggested={suggestedCardId === card.id}
                     onBuy={() => buy(card, 'display', lv)}
                     reservable={
                       Boolean(humanMainTurn) &&

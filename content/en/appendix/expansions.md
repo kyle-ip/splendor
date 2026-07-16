@@ -20,7 +20,7 @@ The box contains **four separate modules**. Official guidance: use them **indivi
 - **Best for:** groups who like long-term planning and hate “first to 15 wins”
 - **Skip if:** you want short, punchy races or are still learning base scoring
 
-**What changes in evaluation:** Treat face-up cities like mandatory nobles with a prestige gate. A 5-pt card that helps no city can lose to a 2-pt that unlocks one. Example: if a city needs 11 prestige + emerald×4 sapphire×4, a deep emerald–sapphire engine beats random Level 3 off-colors.
+**What changes in evaluation:** Treat face-up cities like mandatory nobles with a prestige gate. A 5-pt card that helps no city can lose to a 2-pt that unlocks one. Example: if a city needs 11 prestige + green×4 blue×4, a deep green–blue engine beats random Level 3 off-colors.
 
 ### Trading Posts
 
@@ -42,7 +42,9 @@ The box contains **four separate modules**. Official guidance: use them **indivi
 - **Best for:** fans of flashy card text and wider markets
 - **Skip if:** you want a clean table with fewer rules exceptions
 
-**What changes in evaluation:** A 0-pt Orient with double bonus or a free Level 1 take can beat a base 3-pt early. Example: double sapphire while two nobles need sapphire is often the best engine buy on the row.
+**Teaching deep-dive:** [Orient Module Mini-Lesson](/learn/reference/appendix-orient-module)
+
+**What changes in evaluation:** A 0-pt Orient with double bonus or a free Level 1 take can beat a base 3-pt early. Example: double blue while two nobles need blue is often the best engine buy on the row.
 
 | Before (base habit) | After (Orient on table) |
 |---------------------|-------------------------|

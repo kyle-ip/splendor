@@ -1,11 +1,13 @@
 ---
 title: Strategy from Base to Duel
 level: duel
-order: 44
+order: 45
 duration: 8 min
 ---
 
 Skills from Parts 2–3 (engine, denial, tempo) still matter. Recalibrate for **three win lines**, the **token board**, and **Privileges**.
+
+Read [Pearl & Privilege economy](/learn/duel/part4-duel-04-pearl-privilege) before this chapter if Privilege gifts still feel opaque.
 
 ## Watch All Three Clocks
 
@@ -53,7 +55,7 @@ One short fork per victory condition—adjust to the real board.
 |------|------|--------|-------|
 | Race to 20 | You 14, Opp 12; a 3-pt is open and a 5-pt needs two more turns | Take the **sure 3** if it puts you to ≥17 and threatens 20 next | Slow 5 setup that lets Opp hit Crowns 6 first |
 | Crowns | Opp at 5 Crowns; you can buy a Crown card **or** a Privilege-denying take | Buy/deny the Crown path if Opp would hit **6** next | Chasing 20 while ignoring an imminent Royal spike |
-| Same-color 10 | You have 7 prestige in sapphire; a sapphire 3-pt is contested | Reserve or buy the sapphire answer; Privileges that take sapphire off the board help | Random off-color 4-pt that breaks your color race |
+| Same-color 10 | You have 7 prestige in blue; a blue 3-pt is contested | Reserve or buy the blue answer; Privileges that take blue off the board help | Random off-color 4-pt that breaks your color race |
 
 **Callout:** Duel ends **immediately** on a win—there is no “finish the round.” Count the opponent’s Crowns and color totals every turn.
 

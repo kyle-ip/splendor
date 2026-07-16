@@ -122,6 +122,7 @@ export function runGame(
     playerCount,
     humanSeat: 0,
     difficulty: opts.difficulty,
+    rng,
   });
 
   let aiBuyOps = 0;

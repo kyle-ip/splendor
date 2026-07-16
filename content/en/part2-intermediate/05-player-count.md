@@ -33,17 +33,17 @@ Use one shared setup; only the player count changes.
 
 | Fact | Value |
 |------|-------|
-| Nobles | emerald×3 ruby×3 onyx×3; diamond×4 sapphire×4 |
-| Level 1 | Cheap emerald, cheap ruby, expensive sapphire mono, stray diamond |
+| Nobles | green×3 red×3 black×3; white×4 blue×4 |
+| Level 1 | Cheap green, cheap red, expensive blue mono, stray white |
 | Bank | Full for the player count |
 
 ### Turns 1–3 at 2 players
 
 | Turn | Typical 2p line | Why |
 |------|-----------------|-----|
-| T1 | Take emerald + ruby + diamond (or 2 emerald if legal and contested) | Slow board; you can afford a soft open |
-| T2 | Buy the cheap emerald or ruby | Contested 3/3/3 colors; denial ROI is high |
-| T3 | Reassess 3/3/3 vs diamond×4 sapphire×4 | Opponent’s tokens are fully readable—pivot early |
+| T1 | Take green + red + white (or 2 green if legal and contested) | Slow board; you can afford a soft open |
+| T2 | Buy the cheap green or red | Contested 3/3/3 colors; denial ROI is high |
+| T3 | Reassess 3/3/3 vs white×4 blue×4 | Opponent’s tokens are fully readable—pivot early |
 
 ### Turns 1–3 at 4 players
 
@@ -61,8 +61,8 @@ Same nobles as above. Four seats: You → A → B → C.
 
 | Turn | You | Why |
 |------|-----|-----|
-| 1 | Buy cheap emerald if free/cheap; else take emerald + ruby + diamond | In 4p, **cash a buy** over a soft open when the display offers it |
-| 2 | Second cheap bonus (ruby) if still there; else take toward it | Cards vanish—don’t plan three gem turns in a row |
+| 1 | Buy cheap green if free/cheap; else take green + red + white | In 4p, **cash a buy** over a soft open when the display offers it |
+| 2 | Second cheap bonus (red) if still there; else take toward it | Cards vanish—don’t plan three gem turns in a row |
 | 3 | If A/B contested your colors, pivot hybrid; else press 3/3/3 | Denial ROI is lower than in 2p |
 | 4–5 | Prefer any affordable Level 1/2 over “perfect” gem takes | Tempo is the scarce resource |
 | 6 | Scan: who is one buy from a noble? Deny only if you can buy that card **soon** | Pure denial often feeds seat C |

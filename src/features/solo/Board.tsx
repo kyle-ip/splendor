@@ -572,6 +572,7 @@ export function BuyableCard({
   bonuses,
   phaseLocked,
   contested,
+  suggested,
   onBuy,
   onReserve,
   reservable,
@@ -583,6 +584,8 @@ export function BuyableCard({
   phaseLocked?: boolean;
   /** Opponent can afford this card (shown only when hints are on) */
   contested?: boolean;
+  /** Practice AI recommends this card */
+  suggested?: boolean;
   onBuy?: () => void;
   onReserve?: () => void;
   reservable?: boolean;
@@ -619,6 +622,7 @@ export function BuyableCard({
         bonuses={showHints ? bonuses : undefined}
         affordable={showHints && canBuyNow}
         contested={showHints && contested}
+        suggested={showHints && suggested}
         onClick={canBuyNow ? onBuy : undefined}
       />
     </div>

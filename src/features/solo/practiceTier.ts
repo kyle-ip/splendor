@@ -28,6 +28,22 @@ export function starCountForTier(tier: SoloPracticeTier): number {
 }
 
 /**
+ * Mode 1 Fixed Capital starting stock / resets by practice tier.
+ * - easy: more gems & resets
+ * - normal: official practice defaults (3 each + 3 gold, 3 resets)
+ * - hard: tighter capital
+ */
+export function fixedCapitalStart(tier: SoloPracticeTier): {
+  perColor: number;
+  gold: number;
+  resets: number;
+} {
+  if (tier === 'easy') return { perColor: 4, gold: 4, resets: 4 };
+  if (tier === 'hard') return { perColor: 2, gold: 2, resets: 2 };
+  return { perColor: 3, gold: 3, resets: 3 };
+}
+
+/**
  * Mode 2 die bias for practice.
  * - easy: 50% chance to reroll 5–6 (weaker gold/free-skew)
  * - hard: if 1–4 would miss empty slot, reroll once

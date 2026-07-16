@@ -11,7 +11,7 @@ duration: Anytime
 
 ### Setup
 
-1. **Starting funds**: Take **3 of each** of the six gem types (emerald, sapphire, ruby, diamond, onyx, **gold**)—**18 tokens** total—all held by the player.  
+1. **Starting funds**: Take **3 of each** of the six gem types (green, blue, red, white, black, **gold**)—**18 tokens** total—all held by the player.  
 2. **Development cards**: Use only the **Level 1** deck. Shuffle and **display 4 face up**; the rest is the draw pile. Levels 2 and 3 are **not used**.  
 3. **Nobles**: Draw **3** at random. In this mode nobles give **no prestige**—they are **reset charges** only.
 
@@ -89,11 +89,11 @@ Gems are taken by board number (matching the card faces), not as free piles:
 
 | Number | Color |
 |--------|-------|
-| **1** | Onyx (black) |
-| **2** | Emerald (green) |
-| **3** | Sapphire (blue) |
-| **4** | Ruby (red) |
-| **5** | Diamond (white) |
+| **1** | Black (black) |
+| **2** | Green (green) |
+| **3** | Blue (blue) |
+| **4** | Red (red) |
+| **5** | White (white) |
 
 ![Token placement board / number key](/assets/solo3/page5.jpg)
 

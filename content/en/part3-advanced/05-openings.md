@@ -30,24 +30,24 @@ The direction you choose in the first 2–3 turns often sets the skeleton of the
 
 These are **templates**, not scripts—adjust to the actual display.
 
-### Noble sprint (3/3/3 on emerald–ruby–onyx)
+### Noble sprint (3/3/3 on green–red–black)
 
 | Turn | Action |
 |------|--------|
-| T1 | Take emerald + ruby + onyx (or buy a free/cheap matching bonus) |
-| T2 | Buy cheapest emerald or ruby on display |
+| T1 | Take green + red + black (or buy a free/cheap matching bonus) |
+| T2 | Buy cheapest green or red on display |
 | T3 | Take missing color(s) or buy the second bonus |
 | T4 | Buy third color bonus / gold-bridge reserve if blocked |
 | T5 | Buy the last gap or take gems to finish the noble next turn |
 
-### Mono sapphire engine
+### Mono blue engine
 
 | Turn | Action |
 |------|--------|
-| T1 | Take sapphire-heavy mix (2 sapphire if legal and useful) |
-| T2–T3 | Buy two cheap +1 sapphire cards |
-| T4 | Take toward a Level 2 sapphire or flexible 2-pt |
-| T5 | Buy Level 2 if net cost is low; else third sapphire bonus |
+| T1 | Take blue-heavy mix (2 blue if legal and useful) |
+| T2–T3 | Buy two cheap +1 blue cards |
+| T4 | Take toward a Level 2 blue or flexible 2-pt |
+| T5 | Buy Level 2 if net cost is low; else third blue bonus |
 
 ### Hybrid open
 
@@ -62,15 +62,15 @@ These are **templates**, not scripts—adjust to the actual display.
 
 | Fact | Value |
 |------|-------|
-| Nobles | Two tiles both need sapphire×3 |
-| Level 1 display | Three cheap sapphire bonuses, one stray emerald |
+| Nobles | Two tiles both need blue×3 |
+| Level 1 display | Three cheap blue bonuses, one stray green |
 | Players | 3 |
 
 | Choice | Result |
 |--------|--------|
-| Noble sprint on sapphire | Fast if you win the race; contested by others |
-| Mono emerald | Weak—only one emerald card visible |
-| Hybrid | Take one sapphire + one other cheap bonus; reassess after refill |
+| Noble sprint on blue | Fast if you win the race; contested by others |
+| Mono green | Weak—only one green card visible |
+| Hybrid | Take one blue + one other cheap bonus; reassess after refill |
 
 **Conclusion:** When a color is **crowded on nobles and Level 1**, sprint only if you can win the race; otherwise open hybrid and steal the path later.
 

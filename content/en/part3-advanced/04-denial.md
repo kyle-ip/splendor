@@ -41,13 +41,13 @@ Quick check: *If this denial didn’t exist, would I still want this action?* If
 
 | Fact | Value |
 |------|-------|
-| Opponent bonuses | emerald ×2, sapphire ×2 |
-| Noble on table | emerald ×3, sapphire ×3, onyx ×3 |
-| Display | Level 1 +1 emerald, cheap for you |
+| Opponent bonuses | green ×2, blue ×2 |
+| Noble on table | green ×3, blue ×3, black ×3 |
+| Display | Level 1 +1 green, cheap for you |
 
-If you can buy that emerald card **and** it helps your own path, do it. You slow their noble and strengthen yourself.
+If you can buy that green card **and** it helps your own path, do it. You slow their noble and strengthen yourself.
 
-If the card is useless to you and expensive, prefer taking the last sapphire tokens they need—or reserve only when you have a real buy plan.
+If the card is useless to you and expensive, prefer taking the last blue tokens they need—or reserve only when you have a real buy plan.
 
 ## Don’t Overdo It
 

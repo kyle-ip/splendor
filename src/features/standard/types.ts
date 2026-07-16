@@ -3,6 +3,9 @@ import type { SoloCard } from '@/data/solo-cards';
 
 export type Difficulty = 'easy' | 'normal' | 'hard';
 
+/** Teaching focus layered on top of difficulty weights. */
+export type AiStyle = 'balanced' | 'engine' | 'deny' | 'noble';
+
 export type Color = 'emerald' | 'sapphire' | 'ruby' | 'diamond' | 'onyx';
 
 export type GemKey = Color | 'gold';
@@ -76,6 +79,8 @@ export type GameState = {
   turn: number;
   busyNonce: number;
   difficulty: Difficulty;
+  /** Teaching persona overlay; defaults to balanced when missing (old sessions). */
+  aiStyle: AiStyle;
   pendingTake: Color[];
 };
 
@@ -84,4 +89,7 @@ export type CreateGameOptions = {
   /** 0-based index of the human seat */
   humanSeat: number;
   difficulty: Difficulty;
+  aiStyle?: AiStyle;
+  /** Optional RNG for deterministic deck/noble shuffle (sims / tests) */
+  rng?: () => number;
 };

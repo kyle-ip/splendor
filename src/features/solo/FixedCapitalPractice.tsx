@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import noblesData from '@/data/nobles.json';
 import type { GemCounts, NobleRequirement } from '@/types';
 import {
@@ -16,6 +16,18 @@ import { PracticeShell, SoloActionLog, TokenRow } from './shared';
 import { BoardTable, BuyableCard } from './Board';
 import { usePurchaseFx } from './PurchaseFx';
 import { useSoloToast } from './SoloToast';
+import {
+  PracticeCoaching,
+  buildFixedCoaching,
+} from './PracticeCoaching';
+import {
+  SoloPracticeTierPicker,
+  useSoloPracticeTier,
+} from './PracticeTierPicker';
+import {
+  fixedCapitalStart,
+  type SoloPracticeTier,
+} from './practiceTier';
 
 const noblesAll = noblesData as NobleRequirement[];
 const BEST_KEY = 'splendor-solo-fixed-best-turns';
@@ -26,29 +38,32 @@ type State = {
   display: SoloCard[];
   deck: SoloCard[];
   nobles: NobleRequirement[];
+  initialResets: number;
   resetsLeft: number;
   turns: number;
   log: string[];
   won: boolean;
 };
 
-function createGame(): State {
+function createGame(tier: SoloPracticeTier): State {
+  const start = fixedCapitalStart(tier);
   const deck = shuffle(LEVEL1_CARDS);
   const { display, deck: rest } = drawDisplay(deck, 4);
   return {
     hand: {
-      emerald: 3,
-      sapphire: 3,
-      ruby: 3,
-      diamond: 3,
-      onyx: 3,
-      gold: 3,
+      emerald: start.perColor,
+      sapphire: start.perColor,
+      ruby: start.perColor,
+      diamond: start.perColor,
+      onyx: start.perColor,
+      gold: start.gold,
     },
     bonuses: emptyBonuses(),
     display,
     deck: rest,
     nobles: shuffle(noblesAll).slice(0, 3),
-    resetsLeft: 3,
+    initialResets: start.resets,
+    resetsLeft: start.resets,
     turns: 0,
     log: [],
     won: false,
@@ -88,9 +103,20 @@ export function FixedCapitalPractice() {
   const labels = useGemLabels();
   const purchaseFx = usePurchaseFx();
   const toast = useSoloToast();
-  const [state, setState] = useState<State>(createGame);
+  const { tier, setTier } = useSoloPracticeTier();
+  const [state, setState] = useState<State>(() => createGame(tier));
   const [history, setHistory] = useState<State[]>([]);
   const [bestTurns, setBestTurns] = useState<number | null>(() => readBest());
+  const tierBoot = useRef(true);
+
+  useEffect(() => {
+    if (tierBoot.current) {
+      tierBoot.current = false;
+      return;
+    }
+    setHistory([]);
+    setState(createGame(tier));
+  }, [tier]);
 
   useEffect(() => {
     if (!state.won) return;
@@ -104,8 +130,8 @@ export function FixedCapitalPractice() {
 
   const restart = useCallback(() => {
     setHistory([]);
-    setState(createGame());
-  }, []);
+    setState(createGame(tier));
+  }, [tier]);
 
   const undo = useCallback(() => {
     setHistory((h) => {
@@ -185,6 +211,10 @@ export function FixedCapitalPractice() {
       ? t('soloBestTurnsNone')
       : t('soloBestTurns', { turns: bestTurns });
 
+  const colors = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
+  const colorsAtFour = colors.filter((c) => state.bonuses[c] >= 4).length;
+  const maxColorStack = Math.max(...colors.map((c) => state.bonuses[c]));
+
   return (
     <PracticeShell
       title={t('soloFixedTitle')}
@@ -193,19 +223,30 @@ export function FixedCapitalPractice() {
       onUndo={undo}
       canUndo={history.length > 0 && !purchaseFx.isAnimating}
       recordLine={recordLine}
+      headerExtra={
+        <SoloPracticeTierPicker value={tier} onChange={setTier} />
+      }
     >
       {state.won && (
         <div className="panel p-4 border-gem-emerald/40 ring-1 ring-gem-emerald/30">
           <p className="font-serif text-splendor-velvet text-lg">
             {t('soloFixedWin', { turns: state.turns })}
           </p>
+          <PracticeCoaching
+            tips={buildFixedCoaching({
+              turns: state.turns,
+              resetsUsed: state.initialResets - state.resetsLeft,
+              colorsAtFour,
+              maxColorStack,
+            })}
+          />
         </div>
       )}
 
       <div className="grid lg:grid-cols-[1fr_16rem] gap-4 items-start">
         <BoardTable
           nobles={state.nobles}
-          spentNobleCount={3 - state.resetsLeft}
+          spentNobleCount={state.initialResets - state.resetsLeft}
           nobleSpendable={!state.won && state.resetsLeft > 0}
           onSpendNoble={resetRow}
           rows={[

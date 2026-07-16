@@ -33,28 +33,28 @@ Card value ≈ w_p·points + w_b·bonus + w_n·noble − w_c·netCost
 
 ## Scored Pair Drill
 
-Assume mid-game: contested noble needs **sapphire ×3**; your bonuses are sapphire ×2. Score each pair with mid-game weights (bonus + noble > raw points).
+Assume mid-game: contested noble needs **blue ×3**; your bonuses are blue ×2. Score each pair with mid-game weights (bonus + noble > raw points).
 
 ### Pair 1 — L1 noble finish vs L2 score
 
 | Card | Pts | Bonus | Net cost | Prefer |
 |------|----:|-------|----------|--------|
-| A | 0 | +1 sapphire | 2 mixed | **A** — completes noble (+3) next visit check |
-| B | 2 | +1 ruby | 3 mixed | B only if the noble is already lost |
+| A | 0 | +1 blue | 2 mixed | **A** — completes noble (+3) next visit check |
+| B | 2 | +1 red | 3 mixed | B only if the noble is already lost |
 
 ### Pair 2 — Cheap engine vs mono 5-cost
 
 | Card | Pts | Bonus | Net cost | Prefer |
 |------|----:|-------|----------|--------|
-| C | 0 | +1 emerald | 3 mixed | **C** early if emerald is on ≥2 nobles |
-| D | 0 | +1 diamond | 4 diamond (mono) | D when you already have diamond depth / 4/4 path |
+| C | 0 | +1 green | 3 mixed | **C** early if green is on ≥2 nobles |
+| D | 0 | +1 white | 4 white (mono) | D when you already have white depth / 4/4 path |
 
 ### Pair 3 — L2 flexible 2 vs L3 5-trap
 
 | Card | Pts | Bonus | Net cost | Prefer |
 |------|----:|-------|----------|--------|
-| E | 2 | +1 onyx | 2 after bonuses | **E** mid — points + color that still matter |
-| F | 5 | +1 sapphire | 6+ still owed | F only when you can buy it **this turn** near 15 |
+| E | 2 | +1 black | 2 after bonuses | **E** mid — points + color that still matter |
+| F | 5 | +1 blue | 6+ still owed | F only when you can buy it **this turn** near 15 |
 
 **Rule of thumb:** If a 0-pt card finishes a contested noble or unlocks two future buys, it often beats a 2–3 pt card that stalls the engine.
 
@@ -62,8 +62,8 @@ Assume mid-game: contested noble needs **sapphire ×3**; your bonuses are sapphi
 
 | Card | Points | Bonus | Cost after your bonuses | Read |
 |------|--------|-------|-------------------------|------|
-| X | 0 | +1 sapphire | 1 ruby + 1 onyx | Completes the noble next visit check |
-| Y | 3 | +1 ruby | 2 sapphire + 2 diamond | Scores now, but delays the noble |
+| X | 0 | +1 blue | 1 red + 1 black | Completes the noble next visit check |
+| Y | 3 | +1 red | 2 blue + 2 white | Scores now, but delays the noble |
 
 Early/mid game, **X often beats Y** if the noble is contested. Late game with a lead, **Y** can be correct.
 

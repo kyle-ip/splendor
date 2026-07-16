@@ -30,10 +30,10 @@ Every turn, scan in this order:
 
 ### Drill A — Next buy
 
-Opponent: sapphire ×2, ruby ×1 bonuses; tokens show 2 sapphire, 1 gold, 2 diamond.  
-Display: Level 1 +1 sapphire costing 3 sapphire before bonuses.
+Opponent: blue ×2, red ×1 bonuses; tokens show 2 blue, 1 gold, 2 white.  
+Display: Level 1 +1 blue costing 3 blue before bonuses.
 
-**Read:** Net cost is 1 sapphire—they can buy now (tokens + gold). If you need that card, contest it **this turn**.
+**Read:** Net cost is 1 blue—they can buy now (tokens + gold). If you need that card, contest it **this turn**.
 
 ### Drill B — Reserve threat
 
@@ -44,17 +44,17 @@ You: 13 prestige, can buy a 2-pt now or take gems toward a 5.
 
 ### Drill C — Noble race
 
-Two opponents share emerald/ruby on a 3/3/3; one has emerald ×2 ruby ×2, the other emerald ×3 ruby ×1.  
-Display shows cheap +1 ruby.
+Two opponents share green/red on a 3/3/3; one has green ×2 red ×2, the other green ×3 red ×1.  
+Display shows cheap +1 red.
 
-**Read:** Second player is one ruby from the noble. Buying or taking the last useful ruby gems is high leverage—especially in 2p.
+**Read:** Second player is one red from the noble. Buying or taking the last useful red gems is high leverage—especially in 2p.
 
 ## Board Example
 
-Opponent A: 2 sapphire and 2 ruby bonuses, 8 gems in hand (colors visible), 10 prestige.  
-Display: a 4-point card needing 3 sapphire 2 ruby—easy for them.
+Opponent A: 2 blue and 2 red bonuses, 8 gems in hand (colors visible), 10 prestige.  
+Display: a 4-point card needing 3 blue 2 red—easy for them.
 
-**Inference**: A will likely buy it next turn. Consider buying it first, reserving it, or taking bank sapphire.
+**Inference**: A will likely buy it next turn. Consider buying it first, reserving it, or taking bank blue.
 
 ## Caution
 

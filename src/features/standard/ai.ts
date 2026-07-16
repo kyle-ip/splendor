@@ -12,6 +12,7 @@ import {
 import type {
   Color,
   Difficulty,
+  AiStyle,
   GameAction,
   GameState,
   Seat,
@@ -120,8 +121,46 @@ const PERSONAS: Record<Difficulty, Persona> = {
   },
 };
 
-export function getPersona(difficulty: Difficulty): Persona {
-  return PERSONAS[difficulty];
+export function getPersona(
+  difficulty: Difficulty,
+  style: AiStyle = 'balanced',
+): Persona {
+  const base = PERSONAS[difficulty];
+  if (style === 'balanced') return base;
+
+  const w = { ...base.weights };
+  if (style === 'engine') {
+    w.bonus *= 1.35;
+    w.takeCoverage *= 1.25;
+    w.buyProgress *= 1.15;
+    w.prestige *= 0.9;
+    return {
+      ...base,
+      weights: w,
+      eagerBuyBias: base.eagerBuyBias + 1,
+      buyQualityFloor: Math.max(0, base.buyQualityFloor - 1),
+    };
+  }
+  if (style === 'deny') {
+    w.leaveThreat *= 1.4;
+    w.reserveValue *= 1.3;
+    w.bankBlock *= 1.25;
+    return {
+      ...base,
+      weights: w,
+      denyScale: base.denyScale * 1.35,
+      threatThreshold: Math.max(2, base.threatThreshold - 0.5),
+      useHardDenyPass: true,
+    };
+  }
+  // noble
+  w.denyNoble *= 1.45;
+  w.bonus *= 1.1;
+  return {
+    ...base,
+    weights: w,
+    denyScale: base.denyScale * 1.1,
+  };
 }
 
 function costGap(
@@ -463,7 +502,9 @@ export function chooseAiAction(
   rng: () => number = Math.random,
 ): GameAction | null {
   if (state.phase === 'discardGems') {
-    return autoDiscard(state);
+    return state.difficulty === 'hard'
+      ? chooseScoredDiscard(state, rng)
+      : autoDiscard(state);
   }
   if (state.phase === 'chooseNoble') {
     const me = currentSeat(state);
@@ -480,7 +521,7 @@ export function chooseAiAction(
   const actions = listLegalActions(state);
   if (actions.length === 0) return null;
 
-  const persona = getPersona(state.difficulty);
+  const persona = getPersona(state.difficulty, state.aiStyle ?? 'balanced');
   const ranked = actions
     .map((action) => ({
       action,
@@ -521,11 +562,91 @@ export function chooseAiAction(
     }
   }
 
+  // Hard: near endgame, prefer prestige buys and noble finishes among top candidates
+  if (state.difficulty === 'hard' && ranked.length > 0) {
+    const maxP = Math.max(...state.seats.map((s) => s.prestige));
+    if (maxP >= 11) {
+      const me = currentSeat(state);
+      for (const row of ranked.slice(0, 4)) {
+        if (row.action.type !== 'buy') continue;
+        const found = findCard(state, row.action.cardId);
+        if (!found) continue;
+        const bonusesAfter = {
+          ...me.bonuses,
+          [found.card.bonus]: me.bonuses[found.card.bonus] + 1,
+        };
+        const nobleFinish = state.nobles.some((n) => {
+          const before = COLORS.reduce(
+            (sum, c) => sum + Math.max(0, n.requirements[c] - me.bonuses[c]),
+            0,
+          );
+          const aft = COLORS.reduce(
+            (sum, c) =>
+              sum + Math.max(0, n.requirements[c] - bonusesAfter[c]),
+            0,
+          );
+          return before > 0 && aft === 0;
+        });
+        const boost =
+          (found.card.points >= 3 ? 1.5 : 0) +
+          (me.prestige + found.card.points >= 15 ? 2 : 0) +
+          (nobleFinish ? 1.5 : 0);
+        if (boost > 0 && row.score + boost > bestScore) {
+          bestScore = row.score + boost;
+          best = row.action;
+        }
+      }
+    }
+  }
+
   return best;
 }
 
+/** Persona-aware discard: keep gems that still cover near-term targets. */
+export function chooseScoredDiscard(
+  state: GameState,
+  rng: () => number = () => 0.5,
+): GameAction | null {
+  const options = listDiscardActions(state);
+  if (options.length === 0) return null;
+  const persona = getPersona(state.difficulty, state.aiStyle ?? 'balanced');
+  const me = currentSeat(state);
+  let best: GameAction | null = null;
+  let bestScore = -Infinity;
+
+  for (const opt of options) {
+    if (opt.type !== 'discard') continue;
+    let score = 0;
+    const hand = { ...me.hand };
+    for (const g of opt.gems) {
+      hand[g] -= 1;
+      if (g === 'gold') score -= 10 + persona.weights.goldValue;
+      else {
+        const targets = [...visibleCards(state), ...me.reserved];
+        let hurt = 0;
+        for (const card of targets) {
+          const before = costGap(card, me.hand, me.bonuses);
+          const after = costGap(card, hand, me.bonuses);
+          if (after > before) {
+            hurt += (after - before) * (card.points + 1) * 0.5;
+          }
+        }
+        score -= hurt;
+        // Mild preference to dump surplus colors
+        if (hand[g] >= 3) score += 1.5;
+      }
+    }
+    score += (rng() - 0.5) * persona.weights.noise * 0.3;
+    if (score > bestScore) {
+      bestScore = score;
+      best = opt;
+    }
+  }
+  return best ?? autoDiscard(state) ?? options[0];
+}
+
 export function chooseAiDiscard(state: GameState): GameAction | null {
-  return autoDiscard(state) ?? listDiscardActions(state)[0] ?? null;
+  return chooseScoredDiscard(state) ?? autoDiscard(state) ?? listDiscardActions(state)[0] ?? null;
 }
 
 /** Cards an opponent can currently afford (for UI hints). */
@@ -558,7 +679,7 @@ export function rankLegalActions(
   state: GameState,
   rng: () => number = () => 0.5,
 ): { action: GameAction; score: number }[] {
-  const persona = getPersona(state.difficulty);
+  const persona = getPersona(state.difficulty, state.aiStyle ?? 'balanced');
   return listLegalActions(state)
     .map((action) => ({
       action,

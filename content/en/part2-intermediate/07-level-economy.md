@@ -44,8 +44,8 @@ After ~3–4 bonuses in a color, another +1 of that color is often weak—unless
 | Fact | Value |
 |------|-------|
 | Your prestige | 10 |
-| Bonuses | emerald ×3, sapphire ×2, ruby ×1 |
-| Display | Level 2: 3 pts, +1 diamond, net cost 2; Level 3: 5 pts, +1 emerald, net cost 5 |
+| Bonuses | green ×3, blue ×2, red ×1 |
+| Display | Level 2: 3 pts, +1 white, net cost 2; Level 3: 5 pts, +1 green, net cost 5 |
 | Opponent | 12, acts after you, can buy 3 next turn |
 
 | Choice | Result |
@@ -58,4 +58,4 @@ After ~3–4 bonuses in a color, another +1 of that color is often weak—unless
 
 ## Practice Prompt
 
-With a mid-engine (e.g. +3 emerald +2 sapphire +1 ruby, hand 2 diamond + 1 gold), compare net cost of a Level 2 vs Level 3 from your table. Ask: *points per remaining gem turn.*
+With a mid-engine (e.g. +3 green +2 blue +1 red, hand 2 white + 1 gold), compare net cost of a Level 2 vs Level 3 from your table. Ask: *points per remaining gem turn.*

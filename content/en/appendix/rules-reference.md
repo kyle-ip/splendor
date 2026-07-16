@@ -14,7 +14,7 @@ Short index of core rule terms. For the **full guide glossary** (strategy terms,
 | Official term | Meaning |
 |---------------|---------|
 | Tokens | Gem / gold chips on the table |
-| Emerald / Sapphire / Ruby / Diamond / Onyx / Gold | The six token colors |
+| Green / Blue / Red / White / Black / Gold | The six token colors |
 | Gold (joker) | Substitutes for any one color when paying |
 | Development cards | Grant prestige points and **bonuses** when purchased |
 | Bonus | Top-right gem on a development card; reduces future costs; used for nobles |

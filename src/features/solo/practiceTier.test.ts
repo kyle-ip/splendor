@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  fixedCapitalStart,
   rollPracticeDie,
   starCountForTier,
   type SoloPracticeTier,
@@ -15,6 +16,24 @@ function seqRng(values: number[]): () => number {
 }
 
 describe('solo practice tiers', () => {
+  it('maps Mode 1 starting capital by tier', () => {
+    expect(fixedCapitalStart('easy')).toEqual({
+      perColor: 4,
+      gold: 4,
+      resets: 4,
+    });
+    expect(fixedCapitalStart('normal')).toEqual({
+      perColor: 3,
+      gold: 3,
+      resets: 3,
+    });
+    expect(fixedCapitalStart('hard')).toEqual({
+      perColor: 2,
+      gold: 2,
+      resets: 2,
+    });
+  });
+
   it('maps ★ counts for Mode 3', () => {
     const expected: Record<SoloPracticeTier, number> = {
       easy: 1,

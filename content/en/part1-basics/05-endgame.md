@@ -49,4 +49,4 @@ If you trigger at 16 and Opponent **already acted** this round, they get no extr
 
 ## Beginner Advice
 
-Near 15 points, prioritize actions that **add prestige now**, not stockpiling gems for a later purchase.
+Near 15, prefer **sure prestige**—but **count who still acts** after you trigger. If an opponent can overtake on their reply turn, delay the trigger or buy enough that their best reply still loses. Full seat-order math: [Endgame Calculation](/learn/intermediate/part2-intermediate-06-endgame-calc).

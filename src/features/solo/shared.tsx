@@ -121,6 +121,7 @@ export function SoloCardTile({
   onClick,
   affordable,
   contested,
+  suggested,
   badge,
   bonuses,
 }: {
@@ -130,6 +131,8 @@ export function SoloCardTile({
   affordable?: boolean;
   /** Opponent can currently afford this card (distinct from buyable gold ring) */
   contested?: boolean;
+  /** Practice AI recommends this card */
+  suggested?: boolean;
   badge?: string;
   /** Permanent gem bonuses — show (-N) on costs covered by owned cards */
   bonuses?: Omit<GemCounts, 'gold'>;
@@ -140,12 +143,17 @@ export function SoloCardTile({
   const clickable = Boolean(onClick);
 
   const ringClass = [
-    affordable
-      ? 'border-splendor-gold/80 shadow-[0_2px_8px_rgba(154,123,50,0.2),0_0_0_1px_rgba(154,123,50,0.35)] hover:scale-[1.01]'
+    suggested
+      ? 'border-gem-emerald/70 shadow-[0_2px_10px_rgba(60,120,80,0.22),0_0_0_1px_rgba(60,120,80,0.4)]'
+      : affordable
+        ? 'border-splendor-gold/80 shadow-[0_2px_8px_rgba(154,123,50,0.2),0_0_0_1px_rgba(154,123,50,0.35)] hover:scale-[1.01]'
       : contested
         ? 'border-splendor-velvet/55 shadow-[0_2px_8px_rgba(90,40,50,0.14),0_0_0_1px_rgba(90,40,50,0.28)]'
         : '',
-    affordable && contested ? 'ring-1 ring-offset-1 ring-splendor-velvet/45' : '',
+    affordable && contested && !suggested
+      ? 'ring-1 ring-offset-1 ring-splendor-velvet/45'
+      : '',
+    suggested ? 'ring-1 ring-offset-1 ring-gem-emerald/50' : '',
   ]
     .filter(Boolean)
     .join(' ');
@@ -157,6 +165,13 @@ export function SoloCardTile({
       onClick={onClick}
       className={`relative text-left pt-3 p-2 sm:pt-3.5 sm:p-2.5 bg-[var(--board-ivory)] w-full aspect-[63/88] max-h-[11.5rem] flex flex-col overflow-hidden rounded-sm transition-[border-color,box-shadow,transform] border border-splendor-ink/25 shadow-[0_1px_4px_rgba(44,36,28,0.08)] ${ringClass} ${clickable ? 'cursor-pointer' : 'cursor-default'}`}
     >
+      {suggested && (
+        <span
+          className="absolute top-2 left-1.5 z-[1] h-2 w-2 rounded-full bg-gem-emerald/90 ring-1 ring-gem-emerald/40"
+          title="Suggested"
+          aria-hidden
+        />
+      )}
       {contested && (
         <span
           className="absolute top-2 right-1.5 z-[1] h-2 w-2 rounded-full bg-splendor-velvet/85 ring-1 ring-splendor-velvet/40"

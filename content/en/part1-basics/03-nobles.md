@@ -13,8 +13,8 @@ The base game has **10** nobles. Half use each pattern:
 
 | Pattern | Count | Example |
 |---------|------:|---------|
-| **4 / 4** — four bonuses in each of **two** colors | 5 | Emerald ×4, ruby ×4 |
-| **3 / 3 / 3** — three bonuses in each of **three** colors | 5 | Emerald ×3, sapphire ×3, onyx ×3 |
+| **4 / 4** — four bonuses in each of **two** colors | 5 | Green ×4, red ×4 |
+| **3 / 3 / 3** — three bonuses in each of **three** colors | 5 | Green ×3, blue ×3, black ×3 |
 
 Both patterns score the same (+3). The 4/4 tiles push you toward a **taller** two-color engine; the 3/3/3 tiles reward a **wider** three-color spread.
 

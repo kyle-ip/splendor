@@ -41,11 +41,11 @@ You hold **9 tokens** and take **3 different**. Mid-turn you briefly have 12—t
 
 ### Forgetting bonuses
 
-A Level 2 costs **6 emerald**. You already have **+3 emerald** bonus and **2 emerald + 1 gold** in hand. Paying as if you need all 6 from the hand (and deciding you “cannot afford it”) is a common misread—net cost is **3 emerald**, so hand + gold covers it.
+A Level 2 costs **6 green**. You already have **+3 green** bonus and **2 green + 1 gold** in hand. Paying as if you need all 6 from the hand (and deciding you “cannot afford it”) is a common misread—net cost is **3 green**, so hand + gold covers it.
 
 ### Wrong noble race
 
-Nobles in play include **3 emerald / 3 sapphire / 3 onyx**. You buy a fourth **ruby** bonus while sitting on 2/2/2 toward that noble. The ruby card may be fine for points later, but this turn you delayed the +3 visit that was one focused buy away—scan noble gaps before “whatever is cheapest.”
+Nobles in play include **3 green / 3 blue / 3 black**. You buy a fourth **red** bonus while sitting on 2/2/2 toward that noble. The red card may be fine for points later, but this turn you delayed the +3 visit that was one focused buy away—scan noble gaps before “whatever is cheapest.”
 
 ## Chapter Takeaways
 

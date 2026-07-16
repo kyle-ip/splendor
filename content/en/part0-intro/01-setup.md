@@ -11,7 +11,7 @@ Correct setup avoids disputes. Adjust gem tokens and noble tiles by player count
 
 | Component | Description |
 |-----------|-------------|
-| Gem tokens | Emerald, sapphire, ruby, diamond, onyx; plus **gold** wild tokens (5) |
+| Gem tokens | Green, blue, red, white, black; plus **gold** wild tokens (5) |
 | Development cards | Level 1 ×40, Level 2 ×30, Level 3 ×20; shuffle each level face down |
 | Noble tiles | 10 different tiles; reveal **players + 1** |
 

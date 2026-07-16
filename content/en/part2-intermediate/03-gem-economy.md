@@ -53,19 +53,19 @@ Never take “because the bank is full” into a forced discard of your key colo
 
 | Fact | Value |
 |------|-------|
-| Opponent bonuses | sapphire ×2 |
-| Key display card | Level 1 +1 sapphire, cost 2 sapphire after their bonuses |
-| Bank sapphire | 3 left |
-| Your hand | Near empty; you also want sapphire |
+| Opponent bonuses | blue ×2 |
+| Key display card | Level 1 +1 blue, cost 2 blue after their bonuses |
+| Bank blue | 3 left |
+| Your hand | Near empty; you also want blue |
 
 | Choice | Result |
 |--------|--------|
-| Take 2 sapphire | Illegal—bank has only 3 (<4) |
-| Take 1 sapphire + 2 other colors | Slows them a little; you still advance |
+| Take 2 blue | Illegal—bank has only 3 (<4) |
+| Take 1 blue + 2 other colors | Slows them a little; you still advance |
 | Buy or reserve the card | Stops their buy if you can use the card |
 
 **Conclusion:** When you cannot take 2 of a contested color, either **split-take** to slow them or **contest the card** itself—don't waste the turn hoping the bank refills.
 
 ## Try it
 
-Practice a mid-engine pay on paper or at the table: +2 emerald +1 sapphire bonus, hand 1 ruby + 1 gold, cost 3 emerald + 2 sapphire + 2 ruby.
+Practice a mid-engine pay on paper or at the table: +2 green +1 blue bonus, hand 1 red + 1 gold, cost 3 green + 2 blue + 2 red.

@@ -13,7 +13,7 @@ Each purchased development card grants a **one-color bonus** (gem icon in the **
 
 - Bonuses are **never spent**; they apply on every future purchase
 - Each bonus of a color counts as one gem of that color toward cost
-- Example: cost 3 sapphire with 2 sapphire bonuses → pay only 1 sapphire token
+- Example: cost 3 blue with 2 blue bonuses → pay only 1 blue token
 - If bonuses cover the full cost, you may take the card without spending tokens
 
 ## Payment Rules
@@ -25,18 +25,18 @@ Each purchased development card grants a **one-color bonus** (gem icon in the **
 
 ## Worked Example
 
-| | Ruby | Onyx | Gold |
+| | Red | Black | Gold |
 |--|------|------|------|
 | Card cost | 2 | 2 | — |
 | Your bonuses | 1 | 0 | — |
 | Tokens in hand | 1 | 2 | 1 |
 
-**Pay:** 1 ruby + 2 onyx (the bonus covers 1 ruby).  
-**If you had 0 ruby:** spend 1 gold for the ruby shortfall, plus 2 onyx.
+**Pay:** 1 red + 2 black (the bonus covers 1 red).  
+**If you had 0 red:** spend 1 gold for the red shortfall, plus 2 black.
 
 ## Decision Snapshot
 
-Display: a Level 1 card (+1 emerald, 0 prestige, cost 1 ruby + 1 sapphire) vs a Level 2 card (3 prestige, cost 3 ruby + 3 sapphire + 2 onyx). You have few bonuses.
+Display: a Level 1 card (+1 green, 0 prestige, cost 1 red + 1 blue) vs a Level 2 card (3 prestige, cost 3 red + 3 blue + 2 black). You have few bonuses.
 
 - **Build:** buy the Level 1—cheaper now, stronger next turns
 - **Score:** buy the Level 2 only if you can already afford it without emptying your engine path
@@ -49,4 +49,4 @@ Display: a Level 1 card (+1 emerald, 0 prestige, cost 1 ruby + 1 sapphire) vs a 
 
 ## Try it
 
-Work the same example by hand: with +1 ruby bonus, hand of 1 ruby + 2 onyx + 1 gold, and a cost of 2 ruby + 2 onyx, you pay 1 ruby + 2 onyx + 1 gold (gold fills the missing ruby).
+Work the same example by hand: with +1 red bonus, hand of 1 red + 2 black + 1 gold, and a cost of 2 red + 2 black, you pay 1 red + 2 black + 1 gold (gold fills the missing red).

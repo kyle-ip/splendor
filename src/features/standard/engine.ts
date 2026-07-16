@@ -78,9 +78,10 @@ export function createGame(opts: CreateGameOptions): GameState {
     0,
     Math.min(opts.playerCount - 1, opts.humanSeat),
   );
-  const d1s = shuffle(LEVEL1_CARDS);
-  const d2s = shuffle(LEVEL2_CARDS);
-  const d3s = shuffle(LEVEL3_CARDS);
+  const rng = opts.rng ?? Math.random;
+  const d1s = shuffle(LEVEL1_CARDS, rng);
+  const d2s = shuffle(LEVEL2_CARDS, rng);
+  const d3s = shuffle(LEVEL3_CARDS, rng);
   const a = drawDisplay(d1s, 4);
   const b = drawDisplay(d2s, 4);
   const c = drawDisplay(d3s, 4);
@@ -126,7 +127,7 @@ export function createGame(opts: CreateGameOptions): GameState {
     d1: a.deck,
     d2: b.deck,
     d3: c.deck,
-    nobles: shuffle(noblesAll).slice(0, cfg.nobles),
+    nobles: shuffle(noblesAll, rng).slice(0, cfg.nobles),
     currentSeat: 0,
     phase: humanFirst ? 'human' : 'aiBusy',
     pendingNobles: [],
@@ -137,6 +138,7 @@ export function createGame(opts: CreateGameOptions): GameState {
     turn: 1,
     busyNonce: humanFirst ? 0 : 1,
     difficulty: opts.difficulty,
+    aiStyle: opts.aiStyle ?? 'balanced',
     pendingTake: [],
   };
 }

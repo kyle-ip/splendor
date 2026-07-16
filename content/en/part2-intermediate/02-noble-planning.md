@@ -12,16 +12,16 @@ Nobles are among Splendor's **most action-efficient** scoring plays (+3 prestige
 Before play starts, spend 30 seconds on all nobles:
 
 1. Count **4/4** vs **3/3/3** tiles on the table—two-color depth vs three-color width
-2. Which colors appear **≥2 times**? (e.g. three nobles all need sapphire)
+2. Which colors appear **≥2 times**? (e.g. three nobles all need blue)
 3. Which path has matching bonus cards in the **Level 1 display**?
 
 A color that sits on both a 4/4 and a 3/3/3 is especially “hot”: investing there can keep two noble paths alive.
 
 ## Working Backward
 
-**3/3/3 example:** emerald×3, ruby×3, onyx×3 → plan three cheap bonuses in those colors.
+**3/3/3 example:** green×3, red×3, black×3 → plan three cheap bonuses in those colors.
 
-**4/4 example:** emerald×4, ruby×4 → plan a taller green–red engine; random third colors dilute the sprint.
+**4/4 example:** green×4, red×4 → plan a taller green–red engine; random third colors dilute the sprint.
 
 Scan Level 1 for the **missing colors**, not just any cheap card.
 
@@ -29,16 +29,16 @@ Scan Level 1 for the **missing colors**, not just any cheap card.
 
 | Fact | Value |
 |------|-------|
-| Nobles on table | emerald×3 ruby×3 onyx×3; ruby×3 diamond×3 onyx×3; emerald×4 ruby×4 |
-| Level 1 display | Two cheap emerald bonuses, one cheap ruby, no onyx |
+| Nobles on table | green×3 red×3 black×3; red×3 white×3 black×3; green×4 red×4 |
+| Level 1 display | Two cheap green bonuses, one cheap red, no black |
 | Your bonuses | None yet |
 
 | Choice | Result |
 |--------|--------|
-| Chase emerald×3 ruby×3 onyx×3 hard | Emerald is open, but onyx is missing—sprint may stall |
-| Soft toward ruby×3 diamond×3 onyx×3 | Ruby is available; still need onyx (and diamond) from refills |
-| Lean emerald×4 ruby×4 | Emerald + ruby already show; 4/4 needs more depth but skips onyx for now |
-| Hybrid | Take one emerald + one ruby; wait one refill before locking a noble |
+| Chase green×3 red×3 black×3 hard | Green is open, but black is missing—sprint may stall |
+| Soft toward red×3 white×3 black×3 | Red is available; still need black (and white) from refills |
+| Lean green×4 red×4 | Green + red already show; 4/4 needs more depth but skips black for now |
+| Hybrid | Take one green + one red; wait one refill before locking a noble |
 
 **Conclusion:** Prefer the noble whose **missing colors already appear** in Level 1. If a color is absent, keep the path soft until the display refills—or pivot to a 4/4 that ignores that color.
 

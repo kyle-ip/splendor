@@ -3,6 +3,7 @@ import { LevelHeader } from '@/components/Layout';
 import { LessonPracticeCta } from '@/components/LessonPracticeCta';
 import { MarkdownContent } from '@/components/MarkdownContent';
 import { PageToc } from '@/components/PageToc';
+import { LessonDrills } from '@/features/drills/LessonDrills';
 import {
   getAdjacentLessons,
   getLessonById,
@@ -122,6 +123,7 @@ export function LessonPage() {
             <PageToc markdown={lesson.content} minItems={4} />
           </div>
           <MarkdownContent content={lesson.content} />
+          <LessonDrills lessonId={lesson.id} />
           <LessonPracticeCta lessonId={lesson.id} />
         </div>
 

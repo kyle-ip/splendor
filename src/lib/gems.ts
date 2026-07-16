@@ -2,11 +2,11 @@ import type { GemCounts } from '@/types';
 
 /** Fallback English labels; prefer useGemLabels() in UI. */
 export const GEM_LABELS: Record<keyof GemCounts, string> = {
-  emerald: 'Emerald',
-  sapphire: 'Sapphire',
-  ruby: 'Ruby',
-  diamond: 'Diamond',
-  onyx: 'Onyx',
+  emerald: 'Green',
+  sapphire: 'Blue',
+  ruby: 'Red',
+  diamond: 'White',
+  onyx: 'Black',
   gold: 'Gold',
 };
 

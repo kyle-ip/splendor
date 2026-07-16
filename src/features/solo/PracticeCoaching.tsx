@@ -1,12 +1,9 @@
 import { Link } from 'react-router-dom';
+import type { MessageKey } from '@/i18n/messages';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export type CoachingTip = {
-  messageKey:
-    | 'coachTakeHeavy'
-    | 'coachNoNobles'
-    | 'coachCardHeavy'
-    | 'coachLowCards';
+  messageKey: MessageKey;
   lessonPath: string;
 };
 
@@ -56,6 +53,7 @@ export function buildStandardCoaching(input: {
   oppCardCountAtLead: number;
   won: boolean;
   turns: number;
+  missedDenials?: number;
 }): CoachingTip[] {
   const tips: CoachingTip[] = [];
   if (input.turns >= 5 && input.takeActions >= input.buyActions + 2) {
@@ -83,7 +81,60 @@ export function buildStandardCoaching(input: {
       });
     }
   }
+  if ((input.missedDenials ?? 0) >= 2) {
+    tips.push({
+      messageKey: 'coachMissedDeny',
+      lessonPath: '/learn/advanced/part3-advanced-04-denial',
+    });
+  }
   return tips.slice(0, 3);
+}
+
+/** Mode 1 Fixed Capital — color coverage / pace tips. */
+export function buildFixedCoaching(input: {
+  turns: number;
+  resetsUsed: number;
+  /** How many colors reached ≥4 at win */
+  colorsAtFour: number;
+  /** Max bonus count among the five colors */
+  maxColorStack: number;
+}): CoachingTip[] {
+  const tips: CoachingTip[] = [];
+  if (input.turns >= 14) {
+    tips.push({
+      messageKey: 'coachFixedSlow',
+      lessonPath: '/learn/advanced/part3-advanced-01-card-evaluation',
+    });
+  }
+  if (input.resetsUsed >= 2) {
+    tips.push({
+      messageKey: 'coachFixedResets',
+      lessonPath: '/learn/intermediate/part2-intermediate-01-engine',
+    });
+  }
+  if (input.maxColorStack >= 6 && input.colorsAtFour < 5) {
+    tips.push({
+      messageKey: 'coachFixedNarrow',
+      lessonPath: '/learn/intermediate/part2-intermediate-07-level-economy',
+    });
+  }
+  return tips.slice(0, 3);
+}
+
+/** Mode 3 card automa — reuse race heuristics. */
+export function buildCardAutomaCoaching(input: {
+  playerPrestige: number;
+  autoPrestige: number;
+  playerWon: boolean;
+  takeLogCount: number;
+  buyLogCount: number;
+  playerNobles: number;
+  turns: number;
+}): CoachingTip[] {
+  return buildDiceCoaching({
+    ...input,
+    autoNobles: 0,
+  });
 }
 
 export function PracticeCoaching({ tips }: { tips: CoachingTip[] }) {

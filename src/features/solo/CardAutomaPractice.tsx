@@ -47,6 +47,10 @@ import {
   useSoloPracticeTier,
 } from './PracticeTierPicker';
 import { readSoloPracticeTier, starCountForTier } from './practiceTier';
+import {
+  PracticeCoaching,
+  buildCardAutomaCoaching,
+} from './PracticeCoaching';
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
 const noblesAll = noblesData as NobleRequirement[];
@@ -583,6 +587,30 @@ export function CardAutomaPractice() {
               automa: state.autoPrestige,
             })}
           </p>
+          <PracticeCoaching
+            tips={buildCardAutomaCoaching({
+              playerPrestige: state.prestige,
+              autoPrestige: state.autoPrestige,
+              playerWon: state.winner === 'player',
+              takeLogCount: state.log.filter(
+                (l) =>
+                  l.startsWith('Took ') ||
+                  l.includes('拿取 3') ||
+                  l.includes('拿取 2') ||
+                  l.includes('拿取2'),
+              ).length,
+              buyLogCount: state.log.filter(
+                (l) => l.startsWith('Bought ') || l.startsWith('购买发展卡'),
+              ).length,
+              playerNobles: state.log.filter(
+                (l) =>
+                  l.includes('noble visited you') ||
+                  l.includes('贵族来访') ||
+                  l === t('soloLogPlayerNoble'),
+              ).length,
+              turns: state.turn,
+            })}
+          />
         </div>
       )}
 

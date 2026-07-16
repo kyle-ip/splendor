@@ -1,11 +1,12 @@
 import type { MessageKey } from '@/i18n/messages';
-import type { Difficulty } from './types';
+import type { AiStyle, Difficulty } from './types';
 
 export type SetupValues = {
   playerCount: 2 | 3 | 4;
   /** 0-based human seat index */
   humanSeat: number;
   difficulty: Difficulty;
+  aiStyle: AiStyle;
 };
 
 const SEAT_PRESETS: Record<
@@ -28,6 +29,8 @@ const SEAT_PRESETS: Record<
     { labelKey: 'stdSeatLast', index: 3 },
   ],
 };
+
+const STYLES: AiStyle[] = ['balanced', 'engine', 'deny', 'noble'];
 
 export function SetupForm({
   value,
@@ -131,6 +134,47 @@ export function SetupForm({
               : value.difficulty === 'normal'
                 ? 'stdDiffHint_normal'
                 : 'stdDiffHint_hard',
+          )}
+        </p>
+      </div>
+
+      <div>
+        <p className="text-xs font-serif text-splendor-muted tracking-wide mb-3">
+          {t('stdSetupStyle')}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {STYLES.map((style) => (
+            <button
+              key={style}
+              type="button"
+              onClick={() => onChange({ ...value, aiStyle: style })}
+              className={`btn-outline text-sm ${
+                value.aiStyle === style
+                  ? 'border-splendor-gold/70 bg-splendor-gold/10 text-splendor-velvet'
+                  : ''
+              }`}
+            >
+              {t(
+                style === 'engine'
+                  ? 'stdStyle_engine'
+                  : style === 'deny'
+                    ? 'stdStyle_deny'
+                    : style === 'noble'
+                      ? 'stdStyle_noble'
+                      : 'stdStyle_balanced',
+              )}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-sm font-serif text-splendor-muted leading-relaxed">
+          {t(
+            value.aiStyle === 'engine'
+              ? 'stdStyleHint_engine'
+              : value.aiStyle === 'deny'
+                ? 'stdStyleHint_deny'
+                : value.aiStyle === 'noble'
+                  ? 'stdStyleHint_noble'
+                  : 'stdStyleHint_balanced',
           )}
         </p>
       </div>
