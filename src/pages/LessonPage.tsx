@@ -1,6 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
 import { LevelHeader } from '@/components/Layout';
-import { LessonPracticeCta } from '@/components/LessonPracticeCta';
 import { MarkdownContent } from '@/components/MarkdownContent';
 import { PageToc } from '@/components/PageToc';
 import { LessonDrills } from '@/features/drills/LessonDrills';
@@ -13,7 +12,7 @@ import {
 import { promo } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
 import { extractToc } from '@/lib/toc';
-import { InkRule } from '@/components/manuscript/WoodcutFrame';
+import { InkRule, Rubric } from '@/components/manuscript/WoodcutFrame';
 import type { LessonLevel } from '@/types';
 
 export function LevelPage() {
@@ -34,8 +33,8 @@ export function LevelPage() {
       {lessonLevel === 'intro' && (
         <div className="mb-10 animate-fade-up space-y-4">
           <h2 className="section-title-folio mb-2">{t('navIntro')}</h2>
-          <InkRule className="mx-auto mb-4 max-w-[10rem]" />
-          <figure>
+          <InkRule className="mx-auto mb-4 max-w-[10rem]" double />
+          <figure className="mx-auto max-w-[50%]">
             <div className="plate-window p-2 md:p-3">
               <img
                 src={promo.setup}
@@ -48,7 +47,7 @@ export function LevelPage() {
       )}
       <div className="mb-6 animate-fade-up">
         <h2 className="section-title-folio mb-2">{t('chapterIndex')}</h2>
-        <InkRule className="mx-auto mb-4 max-w-[10rem]" />
+        <InkRule className="mx-auto mb-4 max-w-[10rem]" double />
       </div>
       <nav
         aria-label={t('chapterIndex')}
@@ -107,16 +106,14 @@ export function LessonPage() {
       >
         <div className="panel p-5 md:p-7 lg:p-8 min-w-0">
           <header className="mb-8 text-center">
-            <p className="font-display text-[10px] tracking-[0.35em] uppercase text-splendor-accent mb-2">
-              {t('manuscript')}
-            </p>
+            <Rubric>{t('manuscript')}</Rubric>
             <h1 className="font-display text-3xl text-splendor-velvet tracking-woodcut">
               {lesson.title}
             </h1>
             <p className="text-sm text-splendor-muted mt-2 font-serif">
               {lesson.duration}
             </p>
-            <div className="ornament-line my-5 mx-auto max-w-xs" />
+            <InkRule className="my-5 mx-auto max-w-xs" knot="leaf" double />
           </header>
 
           <div className="mb-6 xl:hidden">
@@ -124,7 +121,6 @@ export function LessonPage() {
           </div>
           <MarkdownContent content={lesson.content} />
           <LessonDrills lessonId={lesson.id} />
-          <LessonPracticeCta lessonId={lesson.id} />
         </div>
 
         {showToc && (

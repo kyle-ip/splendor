@@ -1,7 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 
-/** Fade/slide content in on route change; scroll to top */
+/** Settle content like a page pressing into ink on route change; scroll to top */
 export function PageEnter({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
 

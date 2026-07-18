@@ -80,7 +80,7 @@ function flattenText(node: ReactNode): string {
 
 export function MarkdownContent({ content }: { content: string }) {
   return (
-    <div className="prose-splendor">
+    <div className="prose-splendor prose-splendor--dropcap">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

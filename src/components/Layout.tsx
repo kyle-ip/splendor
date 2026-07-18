@@ -7,7 +7,7 @@ import { LanguageSwitch } from '@/components/LanguageSwitch';
 import { ScrollProgress } from '@/components/PageTransition';
 import { PageEnter } from '@/components/PageEnter';
 import { DocumentTitle } from '@/components/DocumentTitle';
-import { InkRule, WoodcutMark } from '@/components/manuscript/WoodcutFrame';
+import { InkRule, Rubric, WoodcutMark } from '@/components/manuscript/WoodcutFrame';
 import type { LessonLevel } from '@/types';
 import { TOOL_VISIBILITY } from '@/lib/toolVisibility';
 
@@ -154,9 +154,9 @@ export function Layout() {
             gi > 0 ? 'mt-5 pt-4 border-t border-splendor-line/30' : 'mb-1'
           }
         >
-          <p className="px-3 mb-2 text-[10px] tracking-[0.22em] uppercase text-splendor-muted/80 font-serif text-center">
-            {group.label}
-          </p>
+          <div className="px-3 mb-2 text-center">
+            <Rubric className="!mb-0">{group.label}</Rubric>
+          </div>
           {group.items.map((item) => (
             <NavLink
               key={item.to}
@@ -169,7 +169,7 @@ export function Layout() {
             >
               {item.roman ? (
                 <span className="inline-flex items-baseline gap-2 min-w-0">
-                  <span className="font-display text-[11px] tracking-woodcut opacity-70 w-4 shrink-0">
+                  <span className="font-display text-[11px] tracking-woodcut text-splendor-vermilion/80 w-4 shrink-0">
                     {item.roman}
                   </span>
                   <span className="truncate">{item.label}</span>
@@ -309,11 +309,9 @@ export function LevelHeader({ level }: { level: LessonLevel }) {
   const info = getLevelInfo(locale, t)[level];
   return (
     <header className="mb-10 text-center md:text-left">
-      <p className="text-[11px] tracking-[0.28em] uppercase text-splendor-muted font-serif mb-2">
-        {t('chapterIndex')}
-      </p>
+      <Rubric className="md:text-left">{t('chapterIndex')}</Rubric>
       <h1 className="page-title">{info.title}</h1>
-      <InkRule className="my-5 md:mx-0 mx-auto" />
+      <InkRule className="my-5 md:mx-0 mx-auto" double knot="leaf" />
       <p className="font-serif text-lg text-splendor-muted leading-relaxed">
         {info.description}
       </p>

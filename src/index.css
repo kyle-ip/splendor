@@ -45,7 +45,7 @@ html[data-practice-focus] .practice-board {
   --gem-diamond: #8aa8bc;
   --gem-onyx: #2a2a2a;
   --gem-gold: #c9a24a;
-  /* Folio: white manuscript page */
+  /* Folio: cool white manuscript page */
   --vellum: #ffffff;
   --paper: #ffffff;
   --ink: #1c1612;
@@ -55,6 +55,10 @@ html[data-practice-focus] .practice-board {
   --velvet: #5c1a28;
   --line: #2c241c;
   --line-soft: rgba(44, 36, 28, 0.28);
+  /* Illumination accents (ornament only — not paper wash) */
+  --illum-gilt: #a8893e;
+  --illum-lapis: #1e3a4f;
+  --illum-vermilion: #8b2a1f;
   /* Practice table: soft linen / stone wash */
   --board-oak: #c4b8a4;
   --board-oak-mid: #d8cfc0;
@@ -97,9 +101,9 @@ html[data-practice-focus] .practice-board {
     inset: 0;
     pointer-events: none;
     z-index: 40;
-    opacity: 0.045;
+    opacity: 0.055;
     mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   /* Light hatch — engraved plate residue */
@@ -109,7 +113,7 @@ html[data-practice-focus] .practice-board {
     inset: 0;
     pointer-events: none;
     z-index: 39;
-    opacity: 0.028;
+    opacity: 0.038;
     background-image: repeating-linear-gradient(
       -12deg,
       transparent,
@@ -155,23 +159,30 @@ html[data-practice-focus] .practice-board {
     transition: opacity 0.25s ease;
   }
   .frame-corner-tl {
-    top: 4px;
-    left: 4px;
+    top: 3px;
+    left: 3px;
   }
   .frame-corner-tr {
-    top: 4px;
-    right: 4px;
+    top: 3px;
+    right: 3px;
     transform: scaleX(-1);
   }
   .frame-corner-bl {
-    bottom: 4px;
-    left: 4px;
+    bottom: 3px;
+    left: 3px;
     transform: scaleY(-1);
   }
   .frame-corner-br {
-    bottom: 4px;
-    right: 4px;
+    bottom: 3px;
+    right: 3px;
     transform: scale(-1);
+  }
+
+  /* Stroke-draw reveal for vine ornaments / ink rules */
+  .ink-draw-path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    animation: ink-draw 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   /* —— Panels: double ink line on white folio —— */
@@ -234,6 +245,19 @@ html[data-practice-focus] .practice-board {
     background: var(--ink-muted);
     opacity: 0.65;
   }
+  .ink-rule--double .ink-rule-line {
+    height: 3px;
+    background: linear-gradient(
+      180deg,
+      var(--ink-muted) 0%,
+      var(--ink-muted) 35%,
+      transparent 35%,
+      transparent 65%,
+      var(--ink-muted) 65%,
+      var(--ink-muted) 100%
+    );
+    opacity: 0.75;
+  }
   .ink-rule-knot {
     flex-shrink: 0;
   }
@@ -256,6 +280,62 @@ html[data-practice-focus] .practice-board {
     transform: translate(-50%, -50%) rotate(45deg);
   }
 
+  /* Rubrication — vermilion small-caps eyebrow */
+  .rubric {
+    @apply font-display text-[10px] tracking-[0.32em] uppercase mb-2;
+    display: block;
+    color: var(--illum-vermilion);
+  }
+
+  /* Illuminated drop-cap */
+  .illuminated-initial {
+    float: left;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.15rem;
+    height: 3.15rem;
+    margin: 0.15rem 0.7rem 0.2rem 0;
+    border: 1.5px solid var(--ink);
+    box-shadow:
+      inset 0 0 0 2.5px var(--paper),
+      inset 0 0 0 3.5px rgba(30, 58, 79, 0.35);
+    background:
+      linear-gradient(
+        145deg,
+        rgba(168, 137, 62, 0.12) 0%,
+        rgba(30, 58, 79, 0.08) 55%,
+        transparent 100%
+      ),
+      var(--paper);
+  }
+  .illuminated-initial-letter {
+    @apply font-display leading-none tracking-woodcut;
+    font-size: 1.85rem;
+    color: var(--velvet);
+  }
+
+  /* Drop-cap via CSS for first prose paragraph */
+  .prose-splendor--dropcap > p:first-of-type::first-letter {
+    float: left;
+    font-family: 'Cinzel Decorative', Cinzel, 'Noto Serif SC', serif;
+    font-size: 3.1rem;
+    line-height: 0.85;
+    padding: 0.35rem 0.45rem 0.1rem 0.35rem;
+    margin: 0.1rem 0.55rem 0.15rem 0;
+    color: var(--velvet);
+    border: 1.5px solid var(--ink);
+    box-shadow:
+      inset 0 0 0 2px var(--paper),
+      inset 0 0 0 3px rgba(30, 58, 79, 0.32);
+    background: linear-gradient(
+      145deg,
+      rgba(168, 137, 62, 0.14),
+      rgba(30, 58, 79, 0.07)
+    );
+    animation: ink-bloom 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
   /* —— Buttons: pressed woodblock (velvet fill; class name historical) —— */
   .btn-gilt,
   .btn-velvet {
@@ -263,13 +343,17 @@ html[data-practice-focus] .practice-board {
       tracking-wide text-[#f7f4ee] transition-all duration-250;
     background: var(--velvet);
     border: 2px solid var(--ink);
-    box-shadow: 2px 2px 0 rgba(28, 22, 18, 0.28);
+    box-shadow:
+      inset 0 0 0 1px rgba(168, 137, 62, 0.55),
+      2px 2px 0 rgba(28, 22, 18, 0.28);
   }
   .btn-gilt:hover,
   .btn-velvet:hover {
     filter: none;
     transform: translate(1px, 1px);
-    box-shadow: 1px 1px 0 rgba(28, 22, 18, 0.28);
+    box-shadow:
+      inset 0 0 0 1px rgba(168, 137, 62, 0.65),
+      1px 1px 0 rgba(28, 22, 18, 0.28);
     background: #6e2234;
   }
   .btn-gilt:active,
@@ -292,7 +376,7 @@ html[data-practice-focus] .practice-board {
   }
   .btn-outline:hover {
     border-color: var(--ink);
-    background: rgba(247, 244, 238, 0.9);
+    background: rgba(28, 22, 18, 0.04);
     box-shadow: inset 0 0 0 1px var(--ink-muted);
   }
 
@@ -405,8 +489,10 @@ html[data-practice-focus] .practice-board {
     color: var(--velvet);
   }
   .toc-roman {
-    @apply font-display text-sm tracking-woodcut shrink-0 text-splendor-ink/70;
+    @apply font-display text-sm tracking-woodcut shrink-0;
     min-width: 1.75rem;
+    color: var(--illum-vermilion);
+    opacity: 0.85;
   }
   .toc-title {
     @apply font-serif text-base md:text-lg text-splendor-ink shrink-0 transition-colors;
@@ -423,7 +509,10 @@ html[data-practice-focus] .practice-board {
   }
 
   .folio-caption {
-    @apply text-center text-xs font-serif text-splendor-muted tracking-wide;
+    @apply text-center text-xs font-serif tracking-wide;
+    color: var(--ink-muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
   }
 
   .index-row {
@@ -509,7 +598,9 @@ html[data-practice-focus] .practice-board {
     border: 2px solid var(--ink);
     box-shadow:
       inset 0 0 0 3px #1a1410,
-      inset 0 0 0 4.5px rgba(168, 137, 62, 0.35);
+      inset 0 0 0 4.5px rgba(168, 137, 62, 0.42),
+      0 0 0 1px rgba(28, 22, 18, 0.35),
+      0 2px 0 rgba(28, 22, 18, 0.12);
   }
 
   .woodcut-seal {
@@ -544,27 +635,48 @@ html[data-practice-focus] .practice-board {
 
   .page-enter {
     animation: page-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-origin: center top;
   }
 
   .stagger-1 {
-    animation-delay: 0.06s;
+    animation-delay: 0.05s;
   }
   .stagger-2 {
-    animation-delay: 0.12s;
+    animation-delay: 0.1s;
   }
   .stagger-3 {
-    animation-delay: 0.18s;
+    animation-delay: 0.15s;
   }
 }
 
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px) scaleY(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes ink-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ink-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -577,19 +689,29 @@ html[data-practice-focus] .practice-board {
 }
 .prose-splendor h2 {
   @apply font-serif text-xl text-splendor-ink mt-10 mb-3 font-semibold;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.55rem;
   border-bottom: none;
-  background-image: linear-gradient(
-    90deg,
-    var(--ink-muted) 0%,
-    var(--ink-muted) 46%,
-    transparent 46%,
-    transparent 54%,
-    var(--ink-muted) 54%,
-    var(--ink-muted) 100%
-  );
-  background-size: 100% 1.5px;
-  background-position: left bottom;
+  background-image:
+    linear-gradient(
+      90deg,
+      var(--ink-muted) 0%,
+      var(--ink-muted) 45%,
+      transparent 45%,
+      transparent 55%,
+      var(--ink-muted) 55%,
+      var(--ink-muted) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(44, 36, 28, 0.35) 0%,
+      rgba(44, 36, 28, 0.35) 45%,
+      transparent 45%,
+      transparent 55%,
+      rgba(44, 36, 28, 0.35) 55%,
+      rgba(44, 36, 28, 0.35) 100%
+    );
+  background-size: 100% 1.5px, 100% 1px;
+  background-position: left bottom, left calc(100% - 3.5px);
   background-repeat: no-repeat;
   position: relative;
 }
@@ -601,7 +723,8 @@ html[data-practice-focus] .practice-board {
   width: 7px;
   height: 7px;
   border: 1.3px solid var(--ink-muted);
-  background: var(--paper);
+  background: var(--illum-gilt);
+  opacity: 0.85;
   transform: translateX(-50%) rotate(45deg);
 }
 .prose-splendor h3 {
@@ -615,7 +738,22 @@ html[data-practice-focus] .practice-board {
   @apply text-splendor-ink/90 mb-4 pl-6 space-y-1.5;
 }
 .prose-splendor ul {
-  @apply list-disc;
+  list-style: none;
+  padding-left: 1.35rem;
+}
+.prose-splendor ul > li {
+  position: relative;
+}
+.prose-splendor ul > li::before {
+  content: '';
+  position: absolute;
+  left: -1.1rem;
+  top: 0.55em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border: 1.2px solid var(--ink-muted);
+  background: var(--paper);
+  transform: rotate(45deg);
 }
 .prose-splendor ol {
   @apply list-decimal;
@@ -641,8 +779,13 @@ html[data-practice-focus] .practice-board {
   background: rgba(44, 36, 28, 0.04);
 }
 .prose-splendor blockquote {
-  @apply pl-4 italic text-splendor-muted my-5;
-  border-left: 2.5px solid var(--ink-muted);
+  @apply italic text-splendor-muted my-5 py-1 pl-4 pr-2;
+  border-left: 3.5px solid var(--ink);
+  background: linear-gradient(
+    90deg,
+    rgba(28, 22, 18, 0.035) 0%,
+    transparent 100%
+  );
 }
 .prose-splendor a {
   @apply text-splendor-velvet underline decoration-splendor-ink/30 underline-offset-2

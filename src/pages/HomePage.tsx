@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { getLessons, getLevelInfo } from '@/lib/lessons';
 import { promo, gems } from '@/lib/assets';
 import { useI18n } from '@/i18n/I18nProvider';
-import { InkRule, WoodcutFrame } from '@/components/manuscript/WoodcutFrame';
+import { InkRule, Rubric, WoodcutFrame } from '@/components/manuscript/WoodcutFrame';
 import {
   TOOL_VISIBILITY,
   firstVisibleToolsPath,
@@ -35,9 +35,7 @@ export function HomePage() {
       {/* Title page */}
       <header className="mb-14 animate-fade-up text-center">
         <WoodcutFrame className="text-center">
-          <p className="font-serif text-[11px] tracking-[0.28em] uppercase text-splendor-muted mb-4">
-            {t('homeEyebrow')}
-          </p>
+          <Rubric className="mb-4">{t('homeEyebrow')}</Rubric>
           <img
             src={promo.logo}
             alt="Splendor"
@@ -46,7 +44,7 @@ export function HomePage() {
           <h1 className="font-display text-4xl md:text-[3.15rem] text-splendor-velvet leading-[1.12] tracking-woodcut">
             Splendor
           </h1>
-          <InkRule className="my-5 mx-auto max-w-[12rem]" />
+          <InkRule className="my-5 mx-auto max-w-[12rem]" knot="leaf" />
           <p className="font-body text-splendor-muted text-lg max-w-md mx-auto leading-relaxed">
             {t('homeTagline')}
           </p>
@@ -72,22 +70,12 @@ export function HomePage() {
             Splendor
           </figcaption>
         </figure>
-
-        <figure className="mt-6 mx-auto max-w-md">
-          <div className="plate-window p-2 md:p-3">
-            <img
-              src={promo.boardShot}
-              alt=""
-              className="w-full h-auto object-cover object-center max-h-40 mx-auto"
-            />
-          </div>
-        </figure>
       </header>
 
       {/* Engraved plate */}
       <section className="mb-14 animate-fade-up stagger-1">
         <h2 className="section-title-folio mb-2">{t('componentsOverview')}</h2>
-        <InkRule className="mx-auto mb-6 max-w-[10rem]" />
+        <InkRule className="mx-auto mb-6 max-w-[10rem]" double knot="cross" />
         <figure>
           <div className="plate-window p-2 md:p-3">
             <img
@@ -115,7 +103,7 @@ export function HomePage() {
       {/* Table of contents */}
       <section className="mb-14 animate-fade-up stagger-2">
         <h2 className="section-title-folio mb-2">{t('learningPath')}</h2>
-        <InkRule className="mx-auto mb-6 max-w-[10rem]" />
+        <InkRule className="mx-auto mb-6 max-w-[10rem]" double />
         <nav aria-label={t('learningPath')} className="border-y border-splendor-line/35 py-1">
           {paths.map(({ level, roman }) => {
             const info = levelInfo[level];
@@ -141,7 +129,7 @@ export function HomePage() {
       {/* Quick start — early, like a primer note */}
       <section className="mb-14 animate-fade-up stagger-2">
         <h2 className="section-title-folio mb-2">{t('quickStart')}</h2>
-        <InkRule className="mx-auto mb-6 max-w-[10rem]" />
+        <InkRule className="mx-auto mb-6 max-w-[10rem]" double />
         <ol className="space-y-3 text-splendor-ink/90 font-body list-none pl-0">
           {[
             { to: '/learn/intro', label: t('navIntro'), external: false },
@@ -189,7 +177,7 @@ export function HomePage() {
       {/* Tools index */}
       <section className="mb-14 animate-fade-up stagger-3">
         <h2 className="section-title-folio mb-2">{t('merchantTools')}</h2>
-        <InkRule className="mx-auto mb-6 max-w-[10rem]" />
+        <InkRule className="mx-auto mb-6 max-w-[10rem]" double />
         <div className="border-y border-splendor-line/35 py-1">
           {(
             [
@@ -230,7 +218,7 @@ export function HomePage() {
       {/* Colophon-style BGA note */}
       <section className="animate-fade-up stagger-3 text-center">
         <h2 className="section-title-folio mb-2">{t('bgaResources')}</h2>
-        <InkRule className="mx-auto mb-5 max-w-[10rem]" />
+        <InkRule className="mx-auto mb-5 max-w-[10rem]" knot="cross" />
         <p className="text-sm text-splendor-muted font-body leading-relaxed mb-5 max-w-md mx-auto">
           {t('bgaNote')}
         </p>

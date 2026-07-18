@@ -7,7 +7,6 @@ export const promo = {
   title: `${assetBase}/promo/title.png`,
   setup: `${assetBase}/promo/setup.jpg`,
   banner: `${assetBase}/promo/bga-banner.jpg`,
-  boardShot: `${assetBase}/promo/board-shot.jpg`,
   rulesPdf: `${assetBase}/promo/rules.pdf`,
 };
 

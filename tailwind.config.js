@@ -17,6 +17,9 @@ export default {
           lapis: '#1e3a4f',
           line: '#2c241c',
           rule: '#5c4a3a',
+          vermilion: '#8b2a1f',
+          'illum-gilt': '#a8893e',
+          'illum-lapis': '#1e3a4f',
         },
         gem: {
           emerald: '#1f6b45',
@@ -38,17 +41,22 @@ export default {
       },
       keyframes: {
         'fade-up': {
-          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         'ink-bloom': {
           '0%': { opacity: '0', transform: 'scale(0.6)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
         },
+        'ink-draw': {
+          '0%': { strokeDashoffset: '1' },
+          '100%': { strokeDashoffset: '0' },
+        },
       },
       animation: {
-        'fade-up': 'fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
+        'fade-up': 'fade-up 0.42s cubic-bezier(0.22, 1, 0.36, 1) both',
         'ink-bloom': 'ink-bloom 0.45s cubic-bezier(0.22, 1, 0.36, 1) both',
+        'ink-draw': 'ink-draw 0.55s cubic-bezier(0.22, 1, 0.36, 1) both',
       },
       transitionDuration: {
         250: '250ms',
