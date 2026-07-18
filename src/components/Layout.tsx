@@ -31,11 +31,13 @@ export function Layout() {
   const toggleSidebar = () => {
     setSidebarCollapsed((c) => {
       const next = !c;
-      try {
-        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next ? '1' : '0');
-      } catch {
-        /* ignore */
-      }
+      queueMicrotask(() => {
+        try {
+          localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next ? '1' : '0');
+        } catch {
+          /* ignore */
+        }
+      });
       return next;
     });
   };
@@ -183,7 +185,13 @@ export function Layout() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row relative z-0">
+    <div
+      className={`min-h-screen flex flex-col md:flex-row relative z-0 ${
+        sidebarCollapsed
+          ? 'layout-shell--sidebar-collapsed'
+          : 'layout-shell--sidebar-open'
+      }`}
+    >
       <DocumentTitle />
       <ScrollProgress />
 
@@ -219,35 +227,41 @@ export function Layout() {
         />
       )}
 
-      {/* Collapsed desktop rail */}
-      {sidebarCollapsed && (
-        <aside
-          className="sidebar-ledger hidden md:flex md:fixed md:h-full md:w-11 z-40 flex-col items-center border-b-0 py-4"
+      {/* Collapsed desktop rail — always mounted; opacity only (no layout thrash) */}
+      <aside
+        className={`sidebar-ledger layout-sidebar-rail hidden md:flex md:fixed md:inset-y-0 md:left-0 md:h-full md:w-11 z-40 flex-col items-center border-b-0 py-4 ${
+          sidebarCollapsed
+            ? 'opacity-100'
+            : 'opacity-0 pointer-events-none'
+        }`}
+        aria-hidden={!sidebarCollapsed}
+      >
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          className="p-1 text-splendor-ink/70 hover:text-splendor-ink transition-colors"
+          title={t('expandSidebar')}
           aria-label={t('expandSidebar')}
+          aria-expanded={false}
+          tabIndex={sidebarCollapsed ? 0 : -1}
         >
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            className="p-1 text-splendor-ink/70 hover:text-splendor-ink transition-colors"
-            title={t('expandSidebar')}
-            aria-label={t('expandSidebar')}
-            aria-expanded={false}
-          >
-            <WoodcutMark />
-          </button>
-        </aside>
-      )}
+          <WoodcutMark />
+        </button>
+      </aside>
 
+      {/* Full sidebar — slide with transform on desktop (compositor-friendly) */}
       <aside
         id="mobile-nav"
-        className={`sidebar-ledger md:h-full flex-shrink-0 z-40 border-b md:border-b-0
+        className={`sidebar-ledger layout-sidebar-panel z-40 border-b md:border-b-0
           max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:w-[15.5rem]
-          max-md:transition-transform max-md:duration-200
+          max-md:transition-transform max-md:duration-200 max-md:ease-out
+          md:fixed md:inset-y-0 md:left-0 md:h-full md:w-[15.5rem]
+          md:transition-transform md:duration-200 md:ease-out
           ${menuOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'}
           ${
             sidebarCollapsed
-              ? 'md:hidden'
-              : 'md:fixed md:w-[15.5rem] md:translate-x-0'
+              ? 'md:-translate-x-full md:pointer-events-none'
+              : 'md:translate-x-0'
           }`}
       >
         <div className="p-5 border-b border-splendor-line/50 hidden md:block">
@@ -259,32 +273,16 @@ export function Layout() {
         {navLinks}
       </aside>
 
-      <main
-        className={`flex-1 relative z-0 transition-[margin] duration-200 ${
-          sidebarCollapsed ? 'md:ml-11' : 'md:ml-[15.5rem]'
-        }`}
-      >
-        <div className="px-2 md:px-4 py-5 md:py-8">
-          <div
-            className={`ledger-sheet mx-auto px-4 md:px-8 py-6 md:py-10 ${
-              sidebarCollapsed
-                ? 'max-w-6xl xl:max-w-7xl'
-                : 'max-w-5xl xl:max-w-6xl'
-            }`}
-          >
+      <main className="layout-main flex-1 relative z-0 min-w-0">
+        <div className="px-2 md:px-4 py-5 md:py-8 practice-focus-main">
+          <div className="ledger-sheet mx-auto px-4 md:px-8 py-6 md:py-10 practice-focus-sheet max-w-6xl xl:max-w-7xl">
             <PageEnter>
               <Outlet />
             </PageEnter>
           </div>
         </div>
-        <footer
-          className={`mx-auto px-4 md:px-8 pb-10 ${
-            sidebarCollapsed
-              ? 'max-w-6xl xl:max-w-7xl'
-              : 'max-w-5xl xl:max-w-6xl'
-          }`}
-        >
-          <InkRule className="mb-6 max-w-xs" />
+        <footer className="mx-auto px-4 md:px-8 pb-10 text-center practice-focus-footer max-w-6xl xl:max-w-7xl">
+          <InkRule className="mb-6 mx-auto max-w-xs" />
           <div className="text-[11px] text-splendor-muted/80 font-serif leading-relaxed space-y-2">
             <p>{t('footerArt')}</p>
             <p>

@@ -7,7 +7,7 @@ import {
   opponentAffordable,
   rankLegalActions,
 } from './ai';
-import type { Color, GameAction, GameState } from './types';
+import type { GameAction, GameState } from './types';
 
 export type MoveHint = {
   action: GameAction;
@@ -17,10 +17,6 @@ export type MoveHint = {
   /** Card to highlight on the board when buy/reserve */
   highlightCardId?: string;
 };
-
-function formatColors(colors: Color[]): string {
-  return colors.join(' · ');
-}
 
 function reasonForAction(
   state: GameState,
@@ -99,7 +95,6 @@ export function recommendHumanMove(state: GameState): MoveHint | null {
     return {
       action,
       actionKey: 'hintActionTake',
-      actionParams: { colors: formatColors(action.colors) },
       reasonKey: reasonForAction(state, action),
     };
   }

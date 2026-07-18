@@ -68,7 +68,7 @@ function IconCountRow({
     : COLORS;
 
   const chips = (
-    <div className="flex flex-nowrap items-center gap-1 min-w-0">
+    <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 min-w-0">
       {keys.map((k) => {
         const count = (values as GemCounts)[k] ?? 0;
         return (
@@ -82,7 +82,7 @@ function IconCountRow({
             <img
               src={gems[k]}
               alt={labels[k]}
-              className="w-4 h-4 sm:w-[1.125rem] sm:h-[1.125rem] object-contain"
+              className="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain"
             />
             {count}
           </span>
@@ -103,7 +103,7 @@ function IconCountRow({
   }
 
   return (
-    <div className="flex flex-nowrap items-center gap-x-2 min-w-0">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0">
       <span className="text-xs font-serif text-splendor-muted shrink-0 tracking-wide">
         {label}
       </span>
@@ -119,6 +119,8 @@ export function SeatStatLines({
   showHand = true,
   reservedCount,
   stackedRows = false,
+  prestigeTarget,
+  prestigeSeatId,
 }: {
   prestige: number;
   bonuses: Omit<GemCounts, 'gold'>;
@@ -126,6 +128,8 @@ export function SeatStatLines({
   showHand?: boolean;
   reservedCount?: number;
   stackedRows?: boolean;
+  prestigeTarget?: 'player' | 'opponent';
+  prestigeSeatId?: number;
 }) {
   const { t } = useI18n();
 
@@ -135,7 +139,13 @@ export function SeatStatLines({
         <span className="text-xs text-splendor-muted tracking-wide">
           {t('soloPrestige')}
         </span>
-        <span className="tabular-nums font-display text-base text-splendor-velvet">
+        <span
+          className="tabular-nums font-display text-base text-splendor-velvet"
+          {...(prestigeTarget ? { 'data-prestige': prestigeTarget } : {})}
+          {...(prestigeSeatId != null
+            ? { 'data-prestige-seat': prestigeSeatId }
+            : {})}
+        >
           {prestige}
         </span>
         {reservedCount != null && reservedCount > 0 && (
@@ -183,24 +193,32 @@ export function SeatPanel({
       className={`std-seat relative p-2 sm:p-2.5 space-y-1.5 min-w-0 ${
         seat.isHuman ? 'std-seat--human' : 'std-seat--ai'
       } ${isCurrent ? 'std-seat--current' : ''} ${compact ? 'w-full' : ''}`}
+      data-seat-id={seat.id}
+      data-seat-target={seat.isHuman ? 'player' : 'opponent'}
     >
       <div className="flex items-center gap-2 min-w-0">
         <img
           src={avatar}
           alt=""
-          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg object-cover object-top shrink-0 border border-splendor-ink/20 shadow-[0_1px_4px_rgba(44,36,28,0.1)] sepia-[0.2] ${
+          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-sm object-cover object-top shrink-0 border border-splendor-ink/20 shadow-[0_1px_4px_rgba(44,36,28,0.1)] sepia-[0.2] ${
             seat.isHuman
               ? 'border-[#7a3a28]/70'
               : 'border-[var(--lapis)]/70'
           }`}
           draggable={false}
         />
-        <p className="font-serif text-splendor-ink text-sm leading-snug truncate min-w-0">
-          {name}
-          {isCurrent ? (
-            <span className="text-splendor-velvet"> · {t('stdActing')}</span>
-          ) : null}
-        </p>
+        <div className="min-w-0 flex-1">
+          <p className="font-serif text-splendor-ink text-sm leading-snug truncate">
+            {name}
+          </p>
+          <p
+            className={`text-[11px] font-serif leading-none mt-0.5 ${
+              isCurrent ? 'text-splendor-velvet' : 'invisible'
+            }`}
+          >
+            {t('stdActing')}
+          </p>
+        </div>
       </div>
       <SeatStatLines
         prestige={seat.prestige}
@@ -208,6 +226,8 @@ export function SeatPanel({
         hand={seat.hand}
         showHand={showTokens}
         stackedRows={compact}
+        prestigeTarget={seat.isHuman ? 'player' : 'opponent'}
+        prestigeSeatId={seat.id}
         reservedCount={
           !seat.isHuman && seat.reserved.length > 0
             ? seat.reserved.length
@@ -232,15 +252,15 @@ export function SideTable({
   footer?: ReactNode;
 }) {
   return (
-    <div className="std-sides space-y-3">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(11rem,13rem)_minmax(0,1fr)_minmax(11rem,13rem)] gap-3 items-start">
-        <div className="std-sides__west order-2 lg:order-1 flex flex-col gap-2 min-w-0">
+    <div className="std-sides space-y-2">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(9.5rem,11.5rem)_minmax(0,1fr)_minmax(9.5rem,11.5rem)] gap-2 items-start">
+        <div className="std-sides__west order-2 lg:order-1 flex flex-col gap-1.5 min-w-0">
           {west}
         </div>
         <div className="std-sides__center order-1 lg:order-2 min-w-0">
           {center}
         </div>
-        <div className="std-sides__east order-3 flex flex-col gap-2 min-w-0">
+        <div className="std-sides__east order-3 flex flex-col gap-1.5 min-w-0">
           {east}
         </div>
       </div>

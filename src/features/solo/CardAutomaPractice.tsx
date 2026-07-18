@@ -20,11 +20,11 @@ import {
 import { useGemLabels } from '@/i18n/useGemLabels';
 import { useI18n } from '@/i18n/I18nProvider';
 import { pushCappedHistory } from '@/lib/practiceHistory';
+import { preserveScroll } from '@/lib/preserveScroll';
 import { loadSession, saveSession, clearSession } from '@/lib/practiceSession';
 import { discardNeeded } from '@/lib/splendorRules';
 import {
   PracticeShell,
-  SoloActionLog,
   TokenRow,
   ReservedHand,
 } from './shared';
@@ -40,8 +40,14 @@ import {
 } from './Board';
 import { useSoloToast } from './SoloToast';
 import { useSoloHints } from './SoloHints';
-import { useBankTakeFx } from './BankTakeFx';
+import { useBankTakeFx, bankTakeManyDuration } from './BankTakeFx';
 import { usePurchaseFx } from './PurchaseFx';
+import {
+  useCeremonyFx,
+  useTurnPulseOnChange,
+  useWinCelebrateOnce,
+} from './CeremonyFx';
+import { useScrollLock } from '@/lib/useScrollLock';
 import {
   SoloPracticeTierPicker,
   useSoloPracticeTier,
@@ -181,6 +187,7 @@ export function CardAutomaPractice() {
   const hints = useSoloHints();
   const bankFx = useBankTakeFx();
   const purchaseFx = usePurchaseFx();
+  const ceremonyFx = useCeremonyFx();
   const { tier, setTier } = useSoloPracticeTier();
   const [state, setState] = useState<State>(() => {
     const saved = loadSession<State>(SESSION_KEY);
@@ -188,6 +195,18 @@ export function CardAutomaPractice() {
   });
   const [history, setHistory] = useState<State[]>([]);
   const [discardPick, setDiscardPick] = useState<(keyof GemCounts)[]>([]);
+  const pendingAutomaTakeRef = useRef<TakeColor[]>([]);
+
+  useWinCelebrateOnce(Boolean(state.winner), state.winner === 'player', 'player');
+  useTurnPulseOnChange(
+    state.winner
+      ? null
+      : state.phase === 'automa'
+        ? `a-${state.turn}`
+        : `p-${state.turn}`,
+    state.phase === 'automa' ? 'opponent' : 'player',
+  );
+  useScrollLock(!state.winner);
 
   useEffect(() => {
     if (state.winner) clearSession(SESSION_KEY);
@@ -229,13 +248,21 @@ export function CardAutomaPractice() {
       const stack = [...next.stack];
       const bank = { ...next.bank };
       const taken: string[] = [];
+      const takenColors: TakeColor[] = [];
       for (const num of band.nums) {
         const color = NUM_TO_COLOR[num as 1 | 2 | 3 | 4 | 5];
         if (bank[color] > 0) {
           bank[color] -= 1;
           stack.push(num);
           taken.push(labels[color]);
+          takenColors.push(color);
         }
+      }
+      if (takenColors.length > 0) {
+        // FX + delayed player turn are handled by the automa effect.
+        pendingAutomaTakeRef.current = takenColors;
+      } else {
+        pendingAutomaTakeRef.current = [];
       }
       return {
         ...next,
@@ -248,6 +275,7 @@ export function CardAutomaPractice() {
       };
     }
 
+    pendingAutomaTakeRef.current = [];
     const rowKey = band.level === 1 ? 'l1' : band.level === 2 ? 'l2' : 'l3';
     const deckKey = band.level === 1 ? 'd1' : band.level === 2 ? 'd2' : 'd3';
     let row = [...next[rowKey]];
@@ -334,15 +362,6 @@ export function CardAutomaPractice() {
   const resolveNoblesOrContinue = (s: State): State => {
     const eligible = eligibleNobles(s.bonuses, s.nobles);
     if (eligible.length === 0) return advanceAfterPlayer(s);
-    if (eligible.length === 1) {
-      const noble = eligible[0];
-      return advanceAfterPlayer({
-        ...s,
-        nobles: s.nobles.filter((n) => n.id !== noble.id),
-        prestige: s.prestige + 3,
-        log: [t('soloLogPlayerNoble'), ...s.log].slice(0, 14),
-      });
-    }
     return { ...s, phase: 'chooseNoble', pendingNobles: eligible };
   };
 
@@ -357,6 +376,7 @@ export function CardAutomaPractice() {
   useEffect(() => {
     if (state.phase !== 'automa' || state.winner) return;
     const timer = window.setTimeout(() => {
+      let takenForFx: TakeColor[] = [];
       setState((s) => {
         if (s.phase !== 'automa') return s;
         let deck = [...s.deck];
@@ -374,43 +394,61 @@ export function CardAutomaPractice() {
           band,
           card.id,
         );
+        takenForFx = pendingAutomaTakeRef.current;
+        pendingAutomaTakeRef.current = [];
+        if (takenForFx.length > 0) {
+          // Stay on automa until take FX finishes.
+          return { ...after, phase: 'automa' };
+        }
         return startPlayerTurn(after);
       });
-    }, 420);
+      if (takenForFx.length > 0) {
+        queueMicrotask(() =>
+          bankFx.takeMany(takenForFx, { toward: 'up' }),
+        );
+        window.setTimeout(() => {
+          setState((s) =>
+            s.phase === 'automa' && !s.winner ? startPlayerTurn(s) : s,
+          );
+        }, bankTakeManyDuration(takenForFx.length, 'up') + 280);
+      }
+    }, 520);
     return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.phase, state.turn, state.winner]);
 
   const pickGem = (color: TakeColor) => {
     if (state.phase !== 'player' || state.winner) return;
-    const reason = getTakeRejectionReason(state.pending, color, state.bank);
-    if (reason) {
-      toast.show(t(reason, { color: labels[color] } as { color: string }));
-      setState((s) => ({ ...s, pending: [] }));
-      return;
-    }
-    bankFx.take(color, { toward: 'down' });
-    setState((s) => {
-      const pending = [...s.pending, color];
-      if (!isTakeComplete(pending)) return { ...s, pending };
-      const hand = { ...s.hand };
-      const bank = { ...s.bank };
-      for (const c of pending) {
-        hand[c] += 1;
-        bank[c] -= 1;
+    preserveScroll(() => {
+      const reason = getTakeRejectionReason(state.pending, color, state.bank);
+      if (reason) {
+        toast.show(t(reason, { color: labels[color] } as { color: string }));
+        setState((s) => ({ ...s, pending: [] }));
+        return;
       }
-      pushHistory(s);
-      return resolveAfterMain({
-        ...s,
-        hand,
-        bank,
-        pending: [],
-        log: [
-          pending.length === 2
-            ? t('soloLogTake2', { color: labels[pending[0]] })
-            : t('soloLogTake3'),
-          ...s.log,
-        ].slice(0, 14),
+      bankFx.take(color, { toward: 'down' });
+      setState((s) => {
+        const pending = [...s.pending, color];
+        if (!isTakeComplete(pending)) return { ...s, pending };
+        const hand = { ...s.hand };
+        const bank = { ...s.bank };
+        for (const c of pending) {
+          hand[c] += 1;
+          bank[c] -= 1;
+        }
+        pushHistory(s);
+        return resolveAfterMain({
+          ...s,
+          hand,
+          bank,
+          pending: [],
+          log: [
+            pending.length === 2
+              ? t('soloLogTake2', { color: labels[pending[0]] })
+              : t('soloLogTake3'),
+            ...s.log,
+          ].slice(0, 14),
+        });
       });
     });
   };
@@ -438,6 +476,7 @@ export function CardAutomaPractice() {
       if (bank.gold > 0) {
         bank = { ...bank, gold: bank.gold - 1 };
         hand = { ...hand, gold: hand.gold + 1 };
+        queueMicrotask(() => bankFx.take('gold', { toward: 'down' }));
       }
       pushHistory(s);
       return resolveAfterMain({
@@ -460,7 +499,9 @@ export function CardAutomaPractice() {
     if (state.phase !== 'player' || state.winner || state.pending.length > 0) {
       return;
     }
-    if (!payForCard(state.hand, card.cost, state.bonuses)) return;
+    const paidPreview = payForCard(state.hand, card.cost, state.bonuses);
+    if (!paidPreview) return;
+    bankFx.spendDiff(state.hand, paidPreview);
     purchaseFx.run(card.id, 'player', () => {
       setState((s) => {
         const paid = payForCard(s.hand, card.cost, s.bonuses);
@@ -540,18 +581,33 @@ export function CardAutomaPractice() {
   };
 
   const claimNoble = (id: number) => {
-    setState((s) => {
-      if (s.phase !== 'chooseNoble') return s;
-      if (!s.pendingNobles.some((n) => n.id === id)) return s;
-      return advanceAfterPlayer({
-        ...s,
-        nobles: s.nobles.filter((n) => n.id !== id),
-        prestige: s.prestige + 3,
-        pendingNobles: [],
-        log: [t('soloLogPlayerNoble'), ...s.log].slice(0, 14),
+    if (state.phase !== 'chooseNoble') return;
+    if (!state.pendingNobles.some((n) => n.id === id)) return;
+    ceremonyFx.nobleVisit(id, 'player', () => {
+      setState((s) => {
+        if (s.phase !== 'chooseNoble') return s;
+        if (!s.pendingNobles.some((n) => n.id === id)) return s;
+        return advanceAfterPlayer({
+          ...s,
+          nobles: s.nobles.filter((n) => n.id !== id),
+          prestige: s.prestige + 3,
+          pendingNobles: [],
+          log: [t('soloLogPlayerNoble'), ...s.log].slice(0, 14),
+        });
       });
     });
   };
+
+  // Auto-claim when only one noble is eligible (visit FX then commit).
+  useEffect(() => {
+    if (state.phase !== 'chooseNoble' || state.pendingNobles.length !== 1) {
+      return;
+    }
+    const id = state.pendingNobles[0].id;
+    const timer = window.setTimeout(() => claimNoble(id), 120);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.phase, state.pendingNobles]);
 
   const playerActive =
     state.phase === 'player' && !state.winner && !purchaseFx.isAnimating;
@@ -563,6 +619,7 @@ export function CardAutomaPractice() {
       onReset={restart}
       onUndo={undo}
       canUndo={history.length > 0 && (playerActive || state.phase === 'discardGems')}
+      focusBoard
       headerExtra={
         <SoloPracticeTierPicker value={tier} onChange={setTier} />
       }
@@ -700,9 +757,10 @@ export function CardAutomaPractice() {
         />
 
         <aside className="space-y-3">
-          <div className="panel p-3 space-y-2">
+          <div className="panel p-3 space-y-2" data-seat-target="player">
             <p className="font-serif text-splendor-velvet text-sm">
-              {t('soloYou')} · {t('soloPrestige')}: {state.prestige}
+              {t('soloYou')} · {t('soloPrestige')}:{' '}
+              <span data-prestige="player">{state.prestige}</span>
             </p>
             <TokenRow
               values={state.bonuses}
@@ -743,9 +801,10 @@ export function CardAutomaPractice() {
             ) : undefined}
           </ReserveDropZone>
 
-          <div className="panel p-3 space-y-2">
+          <div className="panel p-3 space-y-2" data-seat-target="opponent">
             <p className="font-serif text-splendor-velvet text-sm">
-              {t('soloAutoma')} · {t('soloPrestige')}: {state.autoPrestige}
+              {t('soloAutoma')} · {t('soloPrestige')}:{' '}
+              <span data-prestige="opponent">{state.autoPrestige}</span>
             </p>
             <p className="text-xs font-serif text-splendor-muted">
               {t('solo3Stack', { n: state.stack.length })}
@@ -753,16 +812,16 @@ export function CardAutomaPractice() {
                 ? ` · AI-${state.lastCardId}`
                 : ''}
             </p>
-            {state.phase === 'automa' && (
-              <p className="text-xs font-serif text-splendor-velvet">
-                {t('solo3AutomaActing')}
-              </p>
-            )}
+            <p
+              className={`text-xs font-serif text-splendor-velvet ${
+                state.phase === 'automa' ? '' : 'invisible'
+              }`}
+            >
+              {t('solo3AutomaActing')}
+            </p>
           </div>
         </aside>
       </div>
-
-      <SoloActionLog lines={state.log} />
     </PracticeShell>
   );
 }

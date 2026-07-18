@@ -10,10 +10,12 @@ import {
 import { createPortal } from 'react-dom';
 import { gems } from '@/lib/assets';
 import type { SoloCard } from '@/data/solo-cards';
+import { prefersReducedMotion } from './CeremonyFx';
 
 export type PurchaseBuyer = 'player' | 'automa' | 'ai';
 
 const PURCHASE_MS = 520;
+const REDUCED_MS = 40;
 
 type ExitFx = { cardId: string; buyer: PurchaseBuyer };
 
@@ -55,6 +57,10 @@ export function PurchaseFxProvider({ children }: { children: ReactNode }) {
 
   const run = useCallback(
     (cardId: string, buyer: PurchaseBuyer, onDone: () => void) => {
+      if (prefersReducedMotion()) {
+        window.setTimeout(onDone, REDUCED_MS);
+        return;
+      }
       const bonusEl = document.querySelector(
         `[data-solo-card="${cardId}"] [data-solo-card-bonus]`,
       ) as HTMLImageElement | null;

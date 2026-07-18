@@ -15,9 +15,10 @@ import { useGemLabels } from '@/i18n/useGemLabels';
 import { useI18n } from '@/i18n/I18nProvider';
 import { gems } from '@/lib/assets';
 import { pushCappedHistory } from '@/lib/practiceHistory';
+import { preserveScroll } from '@/lib/preserveScroll';
 import { loadSession, saveSession, clearSession } from '@/lib/practiceSession';
 import { discardNeeded } from '@/lib/splendorRules';
-import { PracticeShell, SoloActionLog, TokenRow, ReservedHand } from './shared';
+import { PracticeShell, TokenRow, ReservedHand } from './shared';
 import {
   PracticeCoaching,
   buildDiceCoaching,
@@ -37,6 +38,12 @@ import {
 import { useSoloToast } from './SoloToast';
 import { useSoloHints } from './SoloHints';
 import { useBankTakeFx } from './BankTakeFx';
+import {
+  useCeremonyFx,
+  useTurnPulseOnChange,
+  useWinCelebrateOnce,
+} from './CeremonyFx';
+import { useScrollLock } from '@/lib/useScrollLock';
 import {
   SoloPracticeTierPicker,
   useSoloPracticeTier,
@@ -256,6 +263,7 @@ function applyAutomaBuy(
   buyLevel: 1 | 2 | 3,
   logLine: string,
   nobleLogLine: string,
+  deferNoble = false,
 ): State {
   const leftGold = automaPay(card, s.autoBonuses, s.autoGold);
   if (leftGold === null) return s;
@@ -284,11 +292,15 @@ function applyAutomaBuy(
   }
 
   log = [logLine, ...log];
-  const claimed = claimNoble(autoBonuses, nobles);
-  if (claimed.noble) {
-    nobles = claimed.rest;
-    autoPrestige += 3;
-    log = [nobleLogLine, ...log];
+  let autoNobles = s.stats.autoNobles;
+  if (!deferNoble) {
+    const claimed = claimNoble(autoBonuses, nobles);
+    if (claimed.noble) {
+      nobles = claimed.rest;
+      autoPrestige += 3;
+      log = [nobleLogLine, ...log];
+      autoNobles += 1;
+    }
   }
 
   return {
@@ -307,10 +319,10 @@ function applyAutomaBuy(
     log: log.slice(0, 14),
     lastDice: null,
     pending: [],
-    turn: s.turn + 1,
+    turn: deferNoble ? s.turn : s.turn + 1,
     stats: {
       ...s.stats,
-      autoNobles: claimed.noble ? s.stats.autoNobles + 1 : s.stats.autoNobles,
+      autoNobles,
     },
   };
 }
@@ -320,6 +332,7 @@ function applyAutomaFreeTake(
   card: SoloCard,
   freeLogLine: string,
   nobleLogLine: string,
+  deferNoble = false,
 ): State {
   let { l1, d1, autoBonuses, autoPrestige, nobles, log } = s;
 
@@ -332,11 +345,15 @@ function applyAutomaFreeTake(
   ({ row: l1, deck: d1 } = refill(l1, d1));
   log = [freeLogLine, ...log];
 
-  const claimed = claimNoble(autoBonuses, nobles);
-  if (claimed.noble) {
-    nobles = claimed.rest;
-    autoPrestige += 3;
-    log = [nobleLogLine, ...log];
+  let autoNobles = s.stats.autoNobles;
+  if (!deferNoble) {
+    const claimed = claimNoble(autoBonuses, nobles);
+    if (claimed.noble) {
+      nobles = claimed.rest;
+      autoPrestige += 3;
+      log = [nobleLogLine, ...log];
+      autoNobles += 1;
+    }
   }
 
   return {
@@ -347,11 +364,12 @@ function applyAutomaFreeTake(
     autoPrestige,
     nobles,
     log: log.slice(0, 14),
+    lastDice: null,
     pending: [],
-    turn: s.turn + 1,
+    turn: deferNoble ? s.turn : s.turn + 1,
     stats: {
       ...s.stats,
-      autoNobles: claimed.noble ? s.stats.autoNobles + 1 : s.stats.autoNobles,
+      autoNobles,
     },
   };
 }
@@ -402,6 +420,7 @@ export function DiceAutomaPractice() {
   const toast = useSoloToast();
   const hints = useSoloHints();
   const bankFx = useBankTakeFx();
+  const ceremonyFx = useCeremonyFx();
   const { tier, setTier } = useSoloPracticeTier();
   const pendingAutomaFx = useRef<PendingAutomaFx | null>(null);
   const pendingDiceRef = useRef<number | null>(null);
@@ -413,6 +432,17 @@ export function DiceAutomaPractice() {
   const [history, setHistory] = useState<State[]>([]);
   const [record, setRecord] = useState(() => readDiceRecord());
   const [discardPick, setDiscardPick] = useState<(keyof GemCounts)[]>([]);
+
+  useWinCelebrateOnce(Boolean(state.winner), state.winner === 'player', 'player');
+  useTurnPulseOnChange(
+    state.winner
+      ? null
+      : state.phase === 'busy'
+        ? `a-${state.turn}`
+        : `p-${state.turn}`,
+    state.phase === 'busy' ? 'opponent' : 'player',
+  );
+  useScrollLock(!state.winner);
 
   useEffect(() => {
     if (state.winner) clearSession(DICE_SESSION_KEY);
@@ -507,9 +537,40 @@ export function DiceAutomaPractice() {
       let { autoBonuses, autoPrestige, nobles } = s;
       const claimed = claimNoble(autoBonuses, nobles);
       if (claimed.noble) {
-        nobles = claimed.rest;
-        autoPrestige += 3;
-        log = [t('soloLogAutoNoble'), ...log];
+        // Keep noble on board for visit FX, then finish in microtask.
+        const nobleId = claimed.noble.id;
+        queueMicrotask(() => {
+          ceremonyFx.nobleVisit(nobleId, 'opponent', () => {
+            setState((curr) => {
+              if (!curr.nobles.some((n) => n.id === nobleId)) {
+                return curr;
+              }
+              const next: State = {
+                ...curr,
+                nobles: curr.nobles.filter((n) => n.id !== nobleId),
+                autoPrestige: curr.autoPrestige + 3,
+                stats: {
+                  ...curr.stats,
+                  autoNobles: curr.stats.autoNobles + 1,
+                },
+                log: [t('soloLogAutoNoble'), ...curr.log].slice(0, 14),
+                turn: curr.turn + 1,
+                phase: 'player',
+                pending: [],
+              };
+              return { ...next, ...finishIfNeeded(next, false) };
+            });
+          });
+        });
+        return {
+          ...s,
+          bank,
+          autoGold,
+          log: log.slice(0, 14),
+          lastDice: dice,
+          pending: [],
+          phase: 'busy',
+        };
       }
       const next: State = {
         ...s,
@@ -531,9 +592,37 @@ export function DiceAutomaPractice() {
     let { autoBonuses, autoPrestige, nobles } = s;
     const claimed = claimNoble(autoBonuses, nobles);
     if (claimed.noble) {
-      nobles = claimed.rest;
-      autoPrestige += 3;
-      log = [t('soloLogAutoNoble'), ...log];
+      const nobleId = claimed.noble.id;
+      queueMicrotask(() => {
+        ceremonyFx.nobleVisit(nobleId, 'opponent', () => {
+          setState((curr) => {
+            if (!curr.nobles.some((n) => n.id === nobleId)) {
+              return curr;
+            }
+            const next: State = {
+              ...curr,
+              nobles: curr.nobles.filter((n) => n.id !== nobleId),
+              autoPrestige: curr.autoPrestige + 3,
+              stats: {
+                ...curr.stats,
+                autoNobles: curr.stats.autoNobles + 1,
+              },
+              log: [t('soloLogAutoNoble'), ...curr.log].slice(0, 14),
+              turn: curr.turn + 1,
+              phase: 'player',
+              pending: [],
+            };
+            return { ...next, ...finishIfNeeded(next, false) };
+          });
+        });
+      });
+      return {
+        ...s,
+        log: log.slice(0, 14),
+        lastDice: dice,
+        pending: [],
+        phase: 'busy',
+      };
     }
 
     const next: State = {
@@ -584,17 +673,6 @@ export function DiceAutomaPractice() {
   const resolveNoblesOrContinue = (s: State): State => {
     const eligible = eligibleNobles(s.bonuses, s.nobles);
     if (eligible.length === 0) return continueAfterPlayer(s);
-    if (eligible.length === 1) {
-      const noble = eligible[0];
-      return continueAfterPlayer({
-        ...s,
-        nobles: s.nobles.filter((n) => n.id !== noble.id),
-        prestige: s.prestige + 3,
-        pendingNobles: [],
-        stats: { ...s.stats, playerNobles: s.stats.playerNobles + 1 },
-        log: [t('soloLogPlayerNoble'), ...s.log].slice(0, 14),
-      });
-    }
     return {
       ...s,
       phase: 'chooseNoble',
@@ -626,7 +704,7 @@ export function DiceAutomaPractice() {
       diceFx.run(dice, () => {
         setState((s) => {
           if (dice >= 5 && s.bank.gold > 0) {
-            queueMicrotask(() => bankFx.take('gold', { toward: 'out' }));
+            queueMicrotask(() => bankFx.take('gold', { toward: 'up' }));
           }
           return applyDiceOutcome(s, dice);
         });
@@ -653,61 +731,124 @@ export function DiceAutomaPractice() {
 
     purchaseFx.run(card.id, 'automa', () => {
       setState((s) => {
-        let next: State;
+        let afterBuy: State;
         if (pending.kind === 'buy') {
           const found = findCardOnBoard(s, pending.cardId, pending.level);
           if (!found) return { ...s, phase: 'player' };
-          next = applyAutomaBuy(
+          afterBuy = applyAutomaBuy(
             s,
             found,
             pending.level,
             t('soloLogAutoBuy', { level: pending.level, points: found.points }),
             t('soloLogAutoNoble'),
+            true,
           );
         } else {
           const found = s.l1.find((c) => c.id === pending.cardId);
           if (!found) return { ...s, phase: 'player' };
-          next = applyAutomaFreeTake(
+          afterBuy = applyAutomaFreeTake(
             s,
             found,
             t('soloLogAutoFree', { slot: s.lastDice ?? 0 }),
             t('soloLogAutoNoble'),
+            true,
           );
         }
-        return { ...next, phase: 'player', ...finishIfNeeded(next, false) };
+
+        const match = eligibleNobles(afterBuy.autoBonuses, afterBuy.nobles)[0];
+        if (match) {
+          queueMicrotask(() => {
+            ceremonyFx.nobleVisit(match.id, 'opponent', () => {
+              setState((curr) => {
+                if (!curr.nobles.some((n) => n.id === match.id)) {
+                  const fallback = {
+                    ...curr,
+                    turn: curr.turn + 1,
+                    phase: 'player' as const,
+                  };
+                  return {
+                    ...fallback,
+                    ...finishIfNeeded(fallback, false),
+                  };
+                }
+                const next: State = {
+                  ...curr,
+                  nobles: curr.nobles.filter((n) => n.id !== match.id),
+                  autoPrestige: curr.autoPrestige + 3,
+                  stats: {
+                    ...curr.stats,
+                    autoNobles: curr.stats.autoNobles + 1,
+                  },
+                  log: [t('soloLogAutoNoble'), ...curr.log].slice(0, 14),
+                  turn: curr.turn + 1,
+                  phase: 'player',
+                  pending: [],
+                  lastDice: null,
+                };
+                return { ...next, ...finishIfNeeded(next, false) };
+              });
+            });
+          });
+          return {
+            ...afterBuy,
+            phase: 'busy',
+            pending: [],
+            lastDice: null,
+          };
+        }
+
+        const done: State = {
+          ...afterBuy,
+          turn: s.turn + 1,
+          phase: 'player',
+          pending: [],
+          lastDice: null,
+        };
+        return { ...done, ...finishIfNeeded(done, false) };
       });
     });
-  }, [state.phase, state.busyNonce, state.l1, diceFx, purchaseFx, bankFx, t]);
+  }, [
+    state.phase,
+    state.busyNonce,
+    state.l1,
+    diceFx,
+    purchaseFx,
+    bankFx,
+    ceremonyFx,
+    t,
+  ]);
 
   const pickGem = (color: TakeColor) => {
     if (state.phase !== 'player' || state.winner) return;
 
-    const reason = getTakeRejectionReason(state.pending, color, state.bank);
-    if (reason) {
-      toast.show(
-        t(reason, {
-          color: labels[color],
-        } as { color: string }),
-      );
-      setState((s) => ({ ...s, pending: [] }));
-      return;
-    }
-
-    bankFx.take(color, { toward: 'down' });
-
-    setState((s) => {
-      const pending = [...s.pending, color];
-      if (!isTakeComplete(pending)) {
-        return { ...s, pending };
+    preserveScroll(() => {
+      const reason = getTakeRejectionReason(state.pending, color, state.bank);
+      if (reason) {
+        toast.show(
+          t(reason, {
+            color: labels[color],
+          } as { color: string }),
+        );
+        setState((s) => ({ ...s, pending: [] }));
+        return;
       }
-      const logLine =
-        pending.length === 2
-          ? t('soloLogTake2', { color: labels[pending[0]] })
-          : t('soloLogTake3');
-      pushHistory(s);
-      return resolveAfterMainAction(
-        applyTake({ ...s, pending: [] }, pending, logLine),
-      );
+
+      bankFx.take(color, { toward: 'down' });
+
+      setState((s) => {
+        const pending = [...s.pending, color];
+        if (!isTakeComplete(pending)) {
+          return { ...s, pending };
+        }
+        const logLine =
+          pending.length === 2
+            ? t('soloLogTake2', { color: labels[pending[0]] })
+            : t('soloLogTake3');
+        pushHistory(s);
+        return resolveAfterMainAction(
+          applyTake({ ...s, pending: [] }, pending, logLine),
+        );
+      });
     });
   };
 
@@ -835,7 +976,9 @@ export function DiceAutomaPractice() {
       return;
     }
     if (purchaseFx.isAnimating) return;
-    if (!payForCard(state.hand, card.cost, state.bonuses)) return;
+    const paidPreview = payForCard(state.hand, card.cost, state.bonuses);
+    if (!paidPreview) return;
+    bankFx.spendDiff(state.hand, paidPreview);
 
     purchaseFx.run(card.id, 'player', () => {
       setState((s) => {
@@ -876,19 +1019,31 @@ export function DiceAutomaPractice() {
 
   const claimPlayerNoble = (nobleId: number) => {
     if (state.phase !== 'chooseNoble') return;
-    setState((s) => {
-      const noble = s.pendingNobles.find((n) => n.id === nobleId);
-      if (!noble) return s;
-      return continueAfterPlayer({
-        ...s,
-        nobles: s.nobles.filter((n) => n.id !== nobleId),
-        prestige: s.prestige + 3,
-        pendingNobles: [],
-        stats: { ...s.stats, playerNobles: s.stats.playerNobles + 1 },
-        log: [t('soloLogPlayerNoble'), ...s.log].slice(0, 14),
+    ceremonyFx.nobleVisit(nobleId, 'player', () => {
+      setState((s) => {
+        const noble = s.pendingNobles.find((n) => n.id === nobleId);
+        if (!noble) return s;
+        return continueAfterPlayer({
+          ...s,
+          nobles: s.nobles.filter((n) => n.id !== nobleId),
+          prestige: s.prestige + 3,
+          pendingNobles: [],
+          stats: { ...s.stats, playerNobles: s.stats.playerNobles + 1 },
+          log: [t('soloLogPlayerNoble'), ...s.log].slice(0, 14),
+        });
       });
     });
   };
+
+  useEffect(() => {
+    if (state.phase !== 'chooseNoble' || state.pendingNobles.length !== 1) {
+      return;
+    }
+    const id = state.pendingNobles[0].id;
+    const timer = window.setTimeout(() => claimPlayerNoble(id), 120);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.phase, state.pendingNobles]);
 
   const playerActive =
     state.phase === 'player' &&
@@ -906,6 +1061,7 @@ export function DiceAutomaPractice() {
       onReset={restart}
       onUndo={undo}
       canUndo={history.length > 0 && (playerActive || humanDiscarding || humanChoosingNoble)}
+      focusBoard
       recordLine={t('soloDiceRecord', {
         wins: record.wins,
         losses: record.losses,
@@ -1071,9 +1227,10 @@ export function DiceAutomaPractice() {
         />
 
         <aside className="space-y-3">
-          <div className="panel p-3 space-y-2">
+          <div className="panel p-3 space-y-2" data-seat-target="player">
             <p className="font-serif text-splendor-velvet text-sm">
-              {t('soloYou')} · {t('soloPrestige')}: {state.prestige}
+              {t('soloYou')} · {t('soloPrestige')}:{' '}
+              <span data-prestige="player">{state.prestige}</span>
             </p>
             <TokenRow
               values={state.bonuses}
@@ -1115,9 +1272,10 @@ export function DiceAutomaPractice() {
             ) : undefined}
           </ReserveDropZone>
 
-          <div className="panel p-3 space-y-2">
+          <div className="panel p-3 space-y-2" data-seat-target="opponent">
             <p className="font-serif text-splendor-velvet text-sm">
-              {t('soloAutoma')} · {t('soloPrestige')}: {state.autoPrestige}
+              {t('soloAutoma')} · {t('soloPrestige')}:{' '}
+              <span data-prestige="opponent">{state.autoPrestige}</span>
             </p>
             <TokenRow
               values={state.autoBonuses}
@@ -1146,8 +1304,6 @@ export function DiceAutomaPractice() {
           </div>
         </aside>
       </div>
-
-      <SoloActionLog lines={state.log} />
     </PracticeShell>
   );
 }

@@ -8,6 +8,36 @@ html {
   user-select: none;
 }
 
+html.scroll-locked,
+html.viewport-stable {
+  scroll-behavior: auto;
+  overflow-anchor: none;
+}
+
+/* Practice focus: enlarge board, hide site footer */
+html[data-practice-focus] .practice-focus-main {
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+html[data-practice-focus] .practice-focus-sheet {
+  max-width: 100rem;
+  padding-left: 0.35rem;
+  padding-right: 0.35rem;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+html[data-practice-focus] .practice-focus-footer {
+  display: none;
+}
+html[data-practice-focus] .practice-board {
+  padding: 0.5rem;
+}
+@media (min-width: 640px) {
+  html[data-practice-focus] .practice-board {
+    padding: 0.75rem;
+  }
+}
+
 :root {
   --gem-emerald: #1f6b45;
   --gem-sapphire: #1e4a8a;
@@ -60,32 +90,32 @@ html {
     user-select: text;
   }
 
-  /* Soft parchment grain */
+  /* Soft paper grain — neutral ink, no warm tint */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 40;
-    opacity: 0.03;
+    opacity: 0.045;
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Very light hatch — engraved plate residue */
+  /* Light hatch — engraved plate residue */
   body::after {
     content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 39;
-    opacity: 0.015;
+    opacity: 0.028;
     background-image: repeating-linear-gradient(
       -12deg,
       transparent,
       transparent 4px,
-      rgba(28, 22, 18, 0.4) 4px,
-      rgba(28, 22, 18, 0.4) 5px
+      rgba(28, 22, 18, 0.35) 4px,
+      rgba(28, 22, 18, 0.35) 5px
     );
   }
 
@@ -329,19 +359,28 @@ html {
       0 1px 0 rgba(28, 22, 18, 0.04);
   }
 
-  /* Practice playfield — soft linen table, hairline ink edge */
+  /* Practice playfield — soft linen table vs white page */
   .practice-board {
     position: relative;
+    overflow-anchor: none;
     color: var(--ink);
     background:
       radial-gradient(ellipse 85% 70% at 50% 30%, rgba(255, 252, 247, 0.55), transparent 65%),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 11px,
+        rgba(44, 36, 28, 0.018) 11px,
+        rgba(44, 36, 28, 0.018) 12px
+      ),
       linear-gradient(165deg, var(--board-baize) 0%, var(--board-baize-deep) 100%);
     border: 1.5px solid var(--line-soft);
     border-radius: 0.25rem;
     box-shadow:
       inset 0 0 0 1px rgba(255, 255, 255, 0.45),
       inset 0 0 0 3px rgba(216, 207, 192, 0.4),
-      0 1px 8px rgba(44, 36, 28, 0.05);
+      0 0 0 1px rgba(44, 36, 28, 0.06),
+      0 2px 10px rgba(44, 36, 28, 0.06);
   }
   .practice-board .panel,
   .practice-board .panel-soft {
@@ -419,7 +458,7 @@ html {
 
   .input-vintage {
     @apply w-full px-3 py-2 text-splendor-ink font-body focus:outline-none;
-    background: rgba(250, 244, 232, 0.75);
+    background: #ffffff;
     border: 1px solid rgba(61, 50, 40, 0.4);
     border-bottom: 2px solid var(--ink-muted);
     border-radius: 0;
@@ -440,6 +479,29 @@ html {
       linear-gradient(180deg, #ffffff 0%, #faf9f7 100%);
     border-right: 2px solid var(--ink-muted);
     backdrop-filter: none;
+  }
+
+  /* Sidebar open/collapse: offset main instantly; panel slides via transform */
+  .layout-shell--sidebar-open {
+    --layout-sidebar-offset: 15.5rem;
+  }
+  .layout-shell--sidebar-rail {
+    --layout-sidebar-offset: 2.75rem;
+  }
+  .layout-main {
+    margin-left: 0;
+  }
+  @media (min-width: 768px) {
+    .layout-main {
+      margin-left: var(--layout-sidebar-offset);
+    }
+  }
+  .layout-sidebar-panel,
+  .layout-sidebar-rail {
+    will-change: transform;
+  }
+  .layout-sidebar-rail {
+    transition: opacity 0.15s ease;
   }
 
   .plate-window {
@@ -576,7 +638,7 @@ html {
   @apply text-splendor-ink font-serif font-semibold;
 }
 .prose-splendor tr:nth-child(even) td {
-  background: rgba(235, 226, 208, 0.45);
+  background: rgba(44, 36, 28, 0.04);
 }
 .prose-splendor blockquote {
   @apply pl-4 italic text-splendor-muted my-5;
@@ -624,12 +686,12 @@ html {
   width: 4.25rem;
   height: 5.75rem;
   border: 1px solid rgba(44, 36, 28, 0.18);
-  background: linear-gradient(160deg, #fffcf7, #f7f2ea);
+  background: linear-gradient(160deg, #ffffff, #f4f2ef);
   box-shadow: 0 8px 20px rgba(44, 36, 28, 0.16);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.75rem;
+  border-radius: 0.125rem;
 }
 .drag-ghost-hot {
   transform: translate(-50%, -60%) scale(1.16) rotate(-2deg);
@@ -647,8 +709,8 @@ html {
 .drop-zone-live.is-armed {
   box-shadow:
     0 0 0 2px var(--ink-muted),
-    inset 0 0 20px rgba(250, 244, 232, 0.5);
-  background-color: rgba(250, 244, 232, 0.95);
+    inset 0 0 20px rgba(44, 36, 28, 0.04);
+  background-color: rgba(255, 255, 255, 0.96);
   animation: drop-zone-breathe 1.4s ease-in-out infinite;
 }
 .drop-zone-live.is-armed::after {
@@ -671,6 +733,8 @@ html {
   transition:
     transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
     filter 0.2s ease;
+  /* Keep pop/hover transforms from expanding the scrollport */
+  transform: translateZ(0);
 }
 .bank-stack-lift:hover:not(:disabled) {
   transform: translateY(-4px) scale(1.06);
@@ -704,7 +768,8 @@ html {
   pointer-events: none;
   width: 0;
   height: 0;
-  animation: bank-gem-fly 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: bank-gem-fly var(--fly-ms, 0.52s) cubic-bezier(0.22, 1, 0.36, 1)
+    both;
 }
 .bank-take-flyer img {
   position: absolute;
@@ -741,6 +806,14 @@ html {
   0% {
     opacity: 1;
     transform: translate(0, 0) scale(1);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(
+        calc(var(--dx) * 0.55),
+        calc(var(--dy) * 0.55)
+      )
+      scale(0.75);
   }
   100% {
     opacity: 0;
@@ -983,10 +1056,10 @@ html {
 .dice-roll-face {
   width: 6.5rem;
   height: 6.5rem;
-  border-radius: 1.15rem;
+  border-radius: 0.25rem;
   background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.22) 0%, transparent 42%),
-    linear-gradient(145deg, #fffdf8 0%, #efe4d2 48%, #d9c9b0 100%);
+    linear-gradient(155deg, rgba(255, 255, 255, 0.35) 0%, transparent 42%),
+    linear-gradient(145deg, #ffffff 0%, #f0eeeb 48%, #ddd9d3 100%);
   box-shadow:
     0 18px 40px rgba(26, 20, 16, 0.34),
     0 4px 10px rgba(26, 20, 16, 0.18),
@@ -1147,8 +1220,8 @@ html {
 .solo-toast {
   width: 100%;
   padding: 0.85rem 1.1rem;
-  border-radius: 0.75rem;
-  background: linear-gradient(160deg, #fffdf8 0%, #f5ebe0 100%);
+  border-radius: 0.125rem;
+  background: #ffffff;
   border: 1px solid rgba(139, 58, 58, 0.35);
   box-shadow:
     0 10px 32px rgba(26, 20, 16, 0.22),
@@ -1241,6 +1314,253 @@ html {
     linear-gradient(165deg, #f8fafb 0%, #e8eef4 50%, #d5e0ea 100%);
 }
 
+/* —— Deck backs (woodcut wash) —— */
+.deck-back {
+  position: relative;
+}
+.deck-back--l1 {
+  background: linear-gradient(165deg, #7a9a86 0%, #5a7a66 55%, #4a6a56 100%);
+}
+.deck-back--l2 {
+  background: linear-gradient(165deg, #d4b87a 0%, #b89858 55%, #9a7b32 100%);
+}
+.deck-back--l3 {
+  background: linear-gradient(165deg, #7a90a8 0%, #5a7088 55%, #4a6078 100%);
+}
+.deck-back-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      -18deg,
+      transparent,
+      transparent 5px,
+      rgba(28, 22, 18, 0.35) 5px,
+      rgba(28, 22, 18, 0.35) 6px
+    ),
+    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(255, 255, 255, 0.18), transparent 70%);
+}
+
+/* —— Ceremony FX —— */
+.noble-visit-flyer {
+  position: fixed;
+  z-index: 80;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  animation: noble-visit-arc 0.68s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.noble-visit-tile {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: -2.25rem 0 0 -2.25rem;
+  border-radius: 0.2rem;
+  overflow: hidden;
+  border: 2px solid rgba(28, 22, 18, 0.55);
+  box-shadow: 0 6px 20px rgba(28, 22, 18, 0.35);
+  background: #3a322c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.noble-visit-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  filter: sepia(0.3);
+}
+.noble-visit-vp {
+  position: absolute;
+  right: 0.2rem;
+  top: 0.15rem;
+  font-family: Cinzel, serif;
+  font-size: 0.85rem;
+  color: #faf4e8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+@keyframes noble-visit-arc {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(
+        calc(var(--dx) * 0.55),
+        calc(var(--dy) * 0.45 - 28px)
+      )
+      scale(1.08)
+      rotate(-6deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.55) rotate(8deg);
+  }
+}
+
+.prestige-tick {
+  position: fixed;
+  z-index: 81;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  font-family: Cinzel, serif;
+  font-size: 1.15rem;
+  color: var(--velvet);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  animation: prestige-tick-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes prestige-tick-rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -160%);
+  }
+}
+.prestige-pulse {
+  animation: prestige-pulse 0.55s ease-out;
+}
+@keyframes prestige-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.28);
+    color: var(--gilt);
+  }
+}
+
+.seat-turn-pulse {
+  animation: seat-turn-pulse 0.9s ease-out;
+}
+@keyframes seat-turn-pulse {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(154, 123, 50, 0.55),
+      inset 0 0 0 1px rgba(154, 123, 50, 0.35);
+  }
+  40% {
+    box-shadow:
+      0 0 0 6px rgba(154, 123, 50, 0.18),
+      inset 0 0 0 2px rgba(154, 123, 50, 0.55);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(154, 123, 50, 0),
+      inset 0 0 0 1px transparent;
+  }
+}
+
+.seat-win-glow {
+  animation: seat-win-glow 1.6s ease-out;
+}
+@keyframes seat-win-glow {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+  35% {
+    box-shadow:
+      0 0 0 3px rgba(92, 26, 40, 0.35),
+      inset 0 0 0 2px rgba(154, 123, 50, 0.55);
+  }
+}
+
+.win-celebrate {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: win-celebrate-fade 1.6s ease-out both;
+}
+.win-celebrate-bit {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  background: var(--gilt);
+  opacity: 0.85;
+  transform: rotate(var(--a)) translateY(0) scale(0.4);
+  animation: win-celebrate-burst 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.win-celebrate--won .win-celebrate-bit:nth-child(odd) {
+  background: var(--velvet);
+}
+.win-celebrate--lost .win-celebrate-bit {
+  background: var(--ink-muted);
+  opacity: 0.45;
+}
+@keyframes win-celebrate-burst {
+  0% {
+    transform: rotate(var(--a)) translateY(0) scale(0.3);
+    opacity: 0.9;
+  }
+  100% {
+    transform: rotate(var(--a)) translateY(-120px) scale(1);
+    opacity: 0;
+  }
+}
+@keyframes win-celebrate-fade {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Development cards — print ratio 63×88 */
+.solo-card-face {
+  aspect-ratio: 63 / 88;
+  width: 100%;
+  height: auto;
+}
+
+/* Market grid: equal row/column gap between card faces */
+.solo-card-market {
+  --solo-card-gap: 0.375rem;
+  --solo-card-max-h: 12.25rem;
+  display: grid;
+  grid-template-columns: repeat(
+    5,
+    minmax(0, calc(var(--solo-card-max-h) * 63 / 88))
+  );
+  gap: var(--solo-card-gap);
+  justify-content: center;
+  width: 100%;
+}
+
+html[data-practice-focus] .solo-card-market {
+  --solo-card-max-h: 13.5rem;
+}
+
+/* Focus-visible — woodcut ink ring */
+.btn-gilt:focus-visible,
+.btn-velvet:focus-visible,
+.btn-outline:focus-visible,
+.bank-stack-lift:focus-visible,
+.solo-card-tile:focus-visible,
+.drop-zone-live:focus-within {
+  outline: 2px solid var(--gilt);
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .drag-ghost,
   .drop-zone-live.is-armed,
@@ -1260,7 +1580,14 @@ html {
   .drag-ghost-gem::after,
   .bank-stack-lift.is-taken,
   .bank-take-flyer,
-  .bank-take-spark {
+  .bank-take-spark,
+  .noble-visit-flyer,
+  .prestige-tick,
+  .prestige-pulse,
+  .seat-turn-pulse,
+  .seat-win-glow,
+  .win-celebrate,
+  .win-celebrate-bit {
     animation: none !important;
   }
   .btn-gilt:hover,

@@ -1,15 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { MessageKey } from '@/i18n/messages';
 import { useGemLabels } from '@/i18n/useGemLabels';
 import { useI18n } from '@/i18n/I18nProvider';
 import { gems } from '@/lib/assets';
 import { pushCappedHistory } from '@/lib/practiceHistory';
+import { preserveScroll } from '@/lib/preserveScroll';
 import { loadSession, saveSession, clearSession } from '@/lib/practiceSession';
 import type { SoloCard } from '@/data/solo-cards';
 import { payForCard } from '@/data/solo-cards';
 import {
   PracticeShell,
-  SoloActionLog,
   ReservedHand,
 } from '@/features/solo/shared';
 import {
@@ -20,6 +20,11 @@ import { usePurchaseFx } from '@/features/solo/PurchaseFx';
 import { useSoloToast } from '@/features/solo/SoloToast';
 import { useSoloHints } from '@/features/solo/SoloHints';
 import { useBankTakeFx } from '@/features/solo/BankTakeFx';
+import {
+  useCeremonyFx,
+  useTurnPulseOnChange,
+  useWinCelebrateOnce,
+} from '@/features/solo/CeremonyFx';
 import {
   BoardTable,
   BuyableCard,
@@ -53,7 +58,9 @@ import {
   seatsToSides,
 } from './SeatPanel';
 import { StandardTipBanner } from './StandardTipBanner';
-import type { AiStyle, Color, GameState, GemKey, LogEntry } from './types';
+import { InkRule } from '@/components/manuscript/WoodcutFrame';
+import { useScrollLock } from '@/lib/useScrollLock';
+import type { AiStyle, Color, GameState, GemKey } from './types';
 
 const AI_DELAY_MS = 420;
 const AI_FAST_MS = 160;
@@ -75,45 +82,6 @@ function normalizeState(state: GameState): GameState {
   return { ...state, aiStyle: 'balanced' as AiStyle };
 }
 
-function formatLog(
-  entry: LogEntry,
-  state: GameState,
-  t: (key: MessageKey, vars?: Record<string, string | number>) => string,
-  labels: Record<string, string>,
-): string {
-  const who = (id: number) => {
-    const seat = state.seats[id];
-    if (!seat) return '?';
-    return seatDisplayName(seat, t);
-  };
-
-  switch (entry.kind) {
-    case 'take3':
-      return t('stdLogTake3', { who: who(entry.seat) });
-    case 'take2':
-      return t('stdLogTake2', {
-        who: who(entry.seat),
-        color: labels[entry.color] ?? entry.color,
-      });
-    case 'buy':
-      return t('stdLogBuy', {
-        who: who(entry.seat),
-        points: entry.points,
-        bonus: labels[entry.bonus] ?? entry.bonus,
-      });
-    case 'reserve':
-      return t('stdLogReserve', { who: who(entry.seat) });
-    case 'noble':
-      return t('stdLogNoble', { who: who(entry.seat) });
-    case 'discard':
-      return t('stdLogDiscard', { who: who(entry.seat) });
-    case 'gameOver':
-      return t('stdLogGameOver');
-    default:
-      return '';
-  }
-}
-
 function difficultyKey(d: SetupValues['difficulty']): MessageKey {
   if (d === 'easy') return 'stdDiff_easy';
   if (d === 'normal') return 'stdDiff_normal';
@@ -127,6 +95,7 @@ export function StandardPractice() {
   const toast = useSoloToast();
   const hints = useSoloHints();
   const bankFx = useBankTakeFx();
+  const ceremonyFx = useCeremonyFx();
 
   const [setup, setSetup] = useState<SetupValues>(() => {
     const saved = loadSession<StdSession>(STD_SESSION_KEY);
@@ -150,7 +119,18 @@ export function StandardPractice() {
     () => new Set(),
   );
   const [missedDenials, setMissedDenials] = useState(0);
-  const aiLockRef = useRef(false);
+
+  useWinCelebrateOnce(
+    Boolean(state && state.phase === 'done'),
+    Boolean(state?.winnerIds.includes(0)),
+    0,
+  );
+  useTurnPulseOnChange(
+    state && state.phase !== 'done'
+      ? `${state.currentSeat}-${state.turn}`
+      : null,
+    state?.currentSeat ?? 'player',
+  );
 
   useEffect(() => {
     if (!playing || !state) {
@@ -163,7 +143,6 @@ export function StandardPractice() {
 
   const startGame = () => {
     setHistory([]);
-    aiLockRef.current = false;
     setDiscardPick([]);
     setDismissedTips(new Set());
     setMissedDenials(0);
@@ -177,7 +156,6 @@ export function StandardPractice() {
     setPlaying(false);
     setState(null);
     setHistory([]);
-    aiLockRef.current = false;
     setDiscardPick([]);
     setDismissedTips(new Set());
     setMissedDenials(0);
@@ -205,7 +183,6 @@ export function StandardPractice() {
   const undo = () => {
     setHistory((h) => {
       if (h.length === 0) return h;
-      aiLockRef.current = false;
       setDiscardPick([]);
       setState(h[h.length - 1]);
       return h.slice(0, -1);
@@ -218,22 +195,26 @@ export function StandardPractice() {
   const isHumanSeat =
     Boolean(state && humanSeat && state.currentSeat === humanSeat.id);
 
+  // Only block on the human's own purchase FX — AI card-exit FX must not
+  // freeze the human seat after the turn has already advanced.
   const humanMainTurn =
     isHumanSeat &&
     state?.phase === 'human' &&
-    !purchaseFx.isAnimating &&
-    !aiLockRef.current;
+    purchaseFx.exitBuyer !== 'player';
 
   const humanChoosingNoble =
-    isHumanSeat && state?.phase === 'chooseNoble' && !purchaseFx.isAnimating;
+    isHumanSeat &&
+    state?.phase === 'chooseNoble' &&
+    purchaseFx.exitBuyer !== 'player';
 
   const humanDiscarding =
-    isHumanSeat && state?.phase === 'discardGems' && !purchaseFx.isAnimating;
+    isHumanSeat &&
+    state?.phase === 'discardGems' &&
+    purchaseFx.exitBuyer !== 'player';
 
-  const logLines = useMemo(() => {
-    if (!state) return [];
-    return state.log.map((e) => formatLog(e, state, t, labels));
-  }, [state, t, labels]);
+  /** Keep viewport from auto-jumping on gem takes; manual scroll still works. */
+  const lockScroll = Boolean(playing && state && state.phase !== 'done');
+  useScrollLock(lockScroll);
 
   const contestedIds = useMemo(() => {
     if (!state || !humanSeat || !hints.enabled) return new Set<string>();
@@ -242,7 +223,7 @@ export function StandardPractice() {
 
   const moveHint = useMemo(() => {
     if (!state || !humanSeat || !hints.enabled || !humanMainTurn) return null;
-    if (state.pendingTake.length > 0) return null;
+    // Keep banner mounted during gem picking so the page height does not jump.
     return recommendHumanMove(state);
   }, [state, humanSeat, hints.enabled, humanMainTurn]);
 
@@ -266,12 +247,11 @@ export function StandardPractice() {
     if (state.phase === 'human') return;
     if (state.phase === 'chooseNoble' && currentSeat(state).isHuman) return;
     if (state.phase === 'discardGems' && currentSeat(state).isHuman) return;
-    if (aiLockRef.current || purchaseFx.isAnimating) return;
+    // Wait only for the human's purchase FX — never for AI animation locks.
+    if (purchaseFx.exitBuyer === 'player') return;
 
     const delay = fastAi ? AI_FAST_MS : AI_DELAY_MS;
     const timer = window.setTimeout(() => {
-      if (aiLockRef.current) return;
-
       setState((s) => {
         if (!s || s.phase === 'done' || s.phase === 'human') return s;
         if (
@@ -286,27 +266,51 @@ export function StandardPractice() {
           return passTurn(s);
         }
 
+        const seatId = currentSeat(s).id;
+
         if (action.type === 'take') {
+          const colors = action.colors;
           queueMicrotask(() =>
-            bankFx.takeMany(action.colors, { toward: 'out', staggerMs: 80 }),
+            bankFx.takeMany(colors, {
+              toward: 'up',
+              seatId,
+            }),
+          );
+          return applyAction(s, action) ?? s;
+        }
+
+        if (action.type === 'reserve' && s.bank.gold > 0) {
+          queueMicrotask(() =>
+            bankFx.take('gold', { toward: 'up', seatId }),
           );
         }
-        if (action.type === 'reserve' && s.bank.gold > 0) {
-          queueMicrotask(() => bankFx.take('gold', { toward: 'out' }));
+
+        if (action.type === 'claimNoble') {
+          queueMicrotask(() => {
+            ceremonyFx.nobleVisit(action.nobleId, seatId);
+          });
+          return applyAction(s, action) ?? s;
         }
 
         if (action.type === 'buy') {
           const found = findCard(s, action.cardId);
           if (found) {
-            aiLockRef.current = true;
-            purchaseFx.run(found.card.id, 'ai', () => {
-              setState((cur) => {
-                aiLockRef.current = false;
-                if (!cur) return cur;
-                return applyAction(cur, action) ?? cur;
-              });
+            const paidPreview = payForCard(
+              currentSeat(s).hand,
+              found.card.cost,
+              currentSeat(s).bonuses,
+            );
+            if (paidPreview) {
+              queueMicrotask(() =>
+                bankFx.spendDiff(currentSeat(s).hand, paidPreview, {
+                  fromSeatId: seatId,
+                }),
+              );
+            }
+            queueMicrotask(() => {
+              purchaseFx.run(found.card.id, 'ai', () => {});
             });
-            return s;
+            return applyAction(s, action) ?? s;
           }
         }
 
@@ -322,43 +326,47 @@ export function StandardPractice() {
     state?.discardNeeded,
     state?.pendingNobles.length,
     fastAi,
-    purchaseFx.isAnimating,
+    purchaseFx.exitBuyer,
     bankFx,
+    ceremonyFx,
+    purchaseFx,
   ]);
 
   const pickGem = (color: TakeColor) => {
     if (!state || !humanMainTurn) return;
-    const reason = getTakeRejectionReason(
-      state.pendingTake as TakeColor[],
-      color,
-      state.bank,
-    );
-    if (reason) {
-      toast.show(
-        t(reason, {
-          color: labels[color],
-        } as { color: string }),
+    preserveScroll(() => {
+      const reason = getTakeRejectionReason(
+        state.pendingTake as TakeColor[],
+        color,
+        state.bank,
       );
-      setState((s) => (s ? setPendingTake(s, []) : s));
-      return;
-    }
-
-    bankFx.take(color, { toward: 'down' });
-
-    setState((s) => {
-      if (!s) return s;
-      const pending = [...s.pendingTake, color] as Color[];
-      if (!isTakeComplete(pending as TakeColor[])) {
-        return setPendingTake(s, pending);
+      if (reason) {
+        toast.show(
+          t(reason, {
+            color: labels[color],
+          } as { color: string }),
+        );
+        setState((s) => (s ? setPendingTake(s, []) : s));
+        return;
       }
-      if (humanSeat) {
-        noteMissedDenial(s, humanSeat.id, { type: 'take' });
-      }
-      pushHistory(s);
-      return (
-        applyAction({ ...s, pendingTake: [] }, { type: 'take', colors: pending }) ??
-        s
-      );
+
+      bankFx.take(color, { toward: 'down' });
+
+      setState((s) => {
+        if (!s) return s;
+        const pending = [...s.pendingTake, color] as Color[];
+        if (!isTakeComplete(pending as TakeColor[])) {
+          return setPendingTake(s, pending);
+        }
+        if (humanSeat) {
+          noteMissedDenial(s, humanSeat.id, { type: 'take' });
+        }
+        pushHistory(s);
+        return (
+          applyAction({ ...s, pendingTake: [] }, { type: 'take', colors: pending }) ??
+          s
+        );
+      });
     });
   };
 
@@ -390,11 +398,13 @@ export function StandardPractice() {
     level?: 1 | 2 | 3,
   ) => {
     if (!state || !humanMainTurn || state.pendingTake.length > 0) return;
-    if (purchaseFx.isAnimating) return;
+    if (purchaseFx.exitBuyer === 'player') return;
     if (!humanSeat) return;
-    if (!payForCard(humanSeat.hand, card.cost, humanSeat.bonuses)) return;
+    const paidPreview = payForCard(humanSeat.hand, card.cost, humanSeat.bonuses);
+    if (!paidPreview) return;
 
     noteMissedDenial(state, humanSeat.id, { type: 'buy', cardId: card.id });
+    bankFx.spendDiff(humanSeat.hand, paidPreview);
     purchaseFx.run(card.id, 'player', () => {
       setState((s) => {
         if (!s) return s;
@@ -412,12 +422,25 @@ export function StandardPractice() {
   };
 
   const claimNoble = (nobleId: number) => {
-    setState((s) => {
-      if (!s || s.phase !== 'chooseNoble') return s;
-      pushHistory(s);
-      return applyAction(s, { type: 'claimNoble', nobleId }) ?? s;
+    if (!state || state.phase !== 'chooseNoble') return;
+    ceremonyFx.nobleVisit(nobleId, 'player', () => {
+      setState((s) => {
+        if (!s || s.phase !== 'chooseNoble') return s;
+        pushHistory(s);
+        return applyAction(s, { type: 'claimNoble', nobleId }) ?? s;
+      });
     });
   };
+
+  useEffect(() => {
+    if (!state || state.phase !== 'chooseNoble') return;
+    if (!currentSeat(state).isHuman) return;
+    if (state.pendingNobles.length !== 1) return;
+    const id = state.pendingNobles[0].id;
+    const timer = window.setTimeout(() => claimNoble(id), 120);
+    return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.phase, state?.pendingNobles, state?.currentSeat]);
 
   const toggleDiscard = (gem: GemKey) => {
     if (!state || !humanDiscarding) return;
@@ -444,7 +467,7 @@ export function StandardPractice() {
             {t('navStandardPractice')}
           </p>
           <h1 className="page-title">{t('stdTitle')}</h1>
-          <div className="ornament-line my-4" />
+          <InkRule className="my-4" />
           <p className="font-serif text-splendor-muted leading-relaxed max-w-2xl">
             {t('stdIntro')}
           </p>
@@ -515,6 +538,57 @@ export function StandardPractice() {
               />
             ) : undefined}
           </ReserveDropZone>
+          {hints.enabled && (
+            <div className="border-t border-splendor-line/25 pt-2 h-[6.75rem] overflow-y-auto overscroll-contain space-y-1.5 [scrollbar-width:thin]">
+              <p className="text-[10px] font-serif text-splendor-muted/80 leading-snug px-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
+                <span className="inline-flex items-center gap-1">
+                  <svg
+                    viewBox="0 0 12 11"
+                    className="w-2.5 h-2 shrink-0"
+                    aria-hidden
+                  >
+                    <polygon
+                      points="6,0.75 11.25,10.25 0.75,10.25"
+                      fill="var(--gem-emerald)"
+                      stroke="#fff"
+                      strokeWidth="1"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  {t('hintDotSuggested')}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <svg
+                    viewBox="0 0 12 11"
+                    className="w-2.5 h-2 shrink-0"
+                    aria-hidden
+                  >
+                    <polygon
+                      points="0.75,0.75 11.25,0.75 6,10.25"
+                      fill="var(--velvet)"
+                      stroke="#fff"
+                      strokeWidth="1"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  {t('hintDotContested')}
+                </span>
+              </p>
+              {moveHint && <MoveHintBanner hint={moveHint} compact />}
+              {activeTip && (
+                <StandardTipBanner
+                  tip={activeTip}
+                  onDismiss={dismissTip}
+                  compact
+                />
+              )}
+              {!moveHint && !activeTip && (
+                <p className="text-[10px] font-serif text-splendor-muted/70 leading-snug px-0.5">
+                  {t('hintSeatIdle')}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       )}
     </SeatPanel>
@@ -531,6 +605,7 @@ export function StandardPractice() {
       onReset={backToSetup}
       onUndo={undo}
       canUndo={history.length > 0 && Boolean(humanMainTurn)}
+      focusBoard
       recordLine={
         state.endingRound && state.phase !== 'done'
           ? t('stdEndingRound')
@@ -608,12 +683,6 @@ export function StandardPractice() {
             })()}
           />
         </div>
-      )}
-
-      {moveHint && <MoveHintBanner hint={moveHint} />}
-
-      {activeTip && (
-        <StandardTipBanner tip={activeTip} onDismiss={dismissTip} />
       )}
 
       {humanChoosingNoble && (
@@ -722,8 +791,6 @@ export function StandardPractice() {
           />
         }
       />
-
-      <SoloActionLog lines={logLines} />
     </PracticeShell>
   );
 }

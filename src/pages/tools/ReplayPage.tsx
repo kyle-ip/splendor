@@ -2,6 +2,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ReplayTemplate } from '@/features/tools/ReplayTemplate';
 import { useI18n } from '@/i18n/I18nProvider';
 import { getLessonById } from '@/lib/lessons';
+import { InkRule } from '@/components/manuscript/WoodcutFrame';
 
 export function ReplayPage() {
   const { locale, t } = useI18n();
@@ -18,7 +19,7 @@ export function ReplayPage() {
           {t('ledgerTool')}
         </p>
         <h1 className="page-title">{t('replayTitle')}</h1>
-        <div className="ornament-line my-4 max-w-sm" />
+        <InkRule className="my-4 max-w-sm" />
         {fromLesson && (
           <p className="mt-2">
             <Link

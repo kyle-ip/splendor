@@ -9,6 +9,8 @@ import { DiceFxProvider } from '@/features/solo/DiceFx';
 import { SoloToastProvider } from '@/features/solo/SoloToast';
 import { SoloHintsProvider } from '@/features/solo/SoloHints';
 import { BankTakeFxProvider } from '@/features/solo/BankTakeFx';
+import { CeremonyFxProvider } from '@/features/solo/CeremonyFx';
+import { InkRule } from '@/components/manuscript/WoodcutFrame';
 
 function SoloPracticeShell({ children }: { children: React.ReactNode }) {
   return (
@@ -16,9 +18,11 @@ function SoloPracticeShell({ children }: { children: React.ReactNode }) {
       <BankTakeFxProvider>
         <PurchaseFxProvider>
           <DiceFxProvider>
-            <SoloToastProvider>
-              <SoloHintsProvider>{children}</SoloHintsProvider>
-            </SoloToastProvider>
+            <CeremonyFxProvider>
+              <SoloToastProvider>
+                <SoloHintsProvider>{children}</SoloHintsProvider>
+              </SoloToastProvider>
+            </CeremonyFxProvider>
           </DiceFxProvider>
         </PurchaseFxProvider>
       </BankTakeFxProvider>
@@ -35,7 +39,7 @@ export function SoloPracticeHubPage() {
           {t('ledgerTool')}
         </p>
         <h1 className="page-title">{t('soloHubTitle')}</h1>
-        <div className="ornament-line my-4" />
+        <InkRule className="my-4" />
         <p className="font-serif text-splendor-muted leading-relaxed max-w-2xl">
           {t('soloHubIntro')}
         </p>

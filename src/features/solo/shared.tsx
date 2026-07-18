@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import type { GemCounts } from '@/types';
 import type { SoloCard } from '@/data/solo-cards';
@@ -8,6 +8,7 @@ import { useGemLabels } from '@/i18n/useGemLabels';
 import { useI18n } from '@/i18n/I18nProvider';
 import { payForCard } from '@/data/solo-cards';
 import { getLessonById } from '@/lib/lessons';
+import { InkRule } from '@/components/manuscript/WoodcutFrame';
 import { useSoloHintsOptional } from './SoloHints';
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
@@ -68,48 +69,6 @@ export function TokenRow({
   );
 }
 
-export function SoloActionLog({ lines }: { lines: string[] }) {
-  const { t } = useI18n();
-  const [open, setOpen] = useState(false);
-
-  if (lines.length === 0) return null;
-
-  return (
-    <section className="panel-soft overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-white/40 transition-colors"
-      >
-        <span className="text-xs font-serif text-splendor-muted tracking-wide shrink-0">
-          {t('soloLog')}
-        </span>
-        <span className="flex items-center gap-2 min-w-0">
-          {!open && (
-            <span className="text-sm font-body text-splendor-ink/70 truncate">
-              {lines[0]}
-            </span>
-          )}
-          <span
-            className="text-splendor-muted text-xs shrink-0"
-            aria-hidden
-          >
-            {open ? '▲' : '▼'}
-          </span>
-        </span>
-      </button>
-      {open && (
-        <ul className="px-4 pb-4 space-y-1 border-t border-splendor-line/25 pt-3">
-          {lines.map((line, i) => (
-            <LogLine key={i}>{line}</LogLine>
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
-
 const LEVEL_BAND: Record<1 | 2 | 3, string> = {
   1: 'bg-[#6b8f78]',
   2: 'bg-[#c4a96a]',
@@ -138,6 +97,7 @@ export function SoloCardTile({
   bonuses?: Omit<GemCounts, 'gold'>;
 }) {
   const labels = useGemLabels();
+  const { t } = useI18n();
   const costBits = COLORS.filter((c) => card.cost[c] > 0);
 
   const clickable = Boolean(onClick);
@@ -163,36 +123,63 @@ export function SoloCardTile({
       type="button"
       disabled={!onClick}
       onClick={onClick}
-      className={`relative text-left pt-3 p-2 sm:pt-3.5 sm:p-2.5 bg-[var(--board-ivory)] w-full aspect-[63/88] max-h-[11.5rem] flex flex-col overflow-hidden rounded-sm transition-[border-color,box-shadow,transform] border border-splendor-ink/25 shadow-[0_1px_4px_rgba(44,36,28,0.08)] ${ringClass} ${clickable ? 'cursor-pointer' : 'cursor-default'}`}
+      onMouseDown={(e) => {
+        if (onClick) e.preventDefault();
+      }}
+      className={`solo-card-tile solo-card-face relative text-left pt-3.5 p-2 sm:pt-4 sm:p-2.5 bg-[var(--board-ivory)] flex flex-col overflow-hidden rounded-sm transition-[border-color,box-shadow,transform] border border-splendor-ink/30 shadow-[0_1px_4px_rgba(44,36,28,0.08)] ${ringClass} ${clickable ? 'cursor-pointer' : 'cursor-default'}`}
     >
-      {suggested && (
-        <span
-          className="absolute top-2 left-1.5 z-[1] h-2 w-2 rounded-full bg-gem-emerald/90 ring-1 ring-gem-emerald/40"
-          title="Suggested"
-          aria-hidden
-        />
-      )}
-      {contested && (
-        <span
-          className="absolute top-2 right-1.5 z-[1] h-2 w-2 rounded-full bg-splendor-velvet/85 ring-1 ring-splendor-velvet/40"
-          title="Contested"
-          aria-hidden
-        />
-      )}
       <span
-        className={`absolute inset-x-0 top-0 h-1.5 ${LEVEL_BAND[card.level]}`}
+        className={`absolute inset-x-0 top-0 h-2.5 ${LEVEL_BAND[card.level]}`}
         aria-hidden
       />
-      <div className="flex justify-between items-start gap-1 mb-1">
-        <span className="font-display text-lg sm:text-xl text-splendor-velvet leading-none tabular-nums">
-          {card.points || ''}
+      {(suggested || contested) && (
+        <span className="absolute right-1.5 top-1/2 z-[1] -translate-y-1/2 flex flex-col items-center gap-1.5 pointer-events-none">
+          {suggested && (
+            <svg
+              viewBox="0 0 12 11"
+              className="w-3 h-[0.6875rem]"
+              role="img"
+              aria-label={t('hintDotSuggested')}
+            >
+              <title>{t('hintDotSuggested')}</title>
+              <polygon
+                points="6,0.75 11.25,10.25 0.75,10.25"
+                fill="var(--gem-emerald)"
+                stroke="#fff"
+                strokeWidth="1"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+          {contested && (
+            <svg
+              viewBox="0 0 12 11"
+              className="w-3 h-[0.6875rem]"
+              role="img"
+              aria-label={t('hintDotContested')}
+            >
+              <title>{t('hintDotContested')}</title>
+              <polygon
+                points="0.75,0.75 11.25,0.75 6,10.25"
+                fill="var(--velvet)"
+                stroke="#fff"
+                strokeWidth="1"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+        </span>
+      )}
+      <div className="flex justify-between items-start gap-1 mb-1 min-h-0 shrink">
+        <span className="font-display text-lg sm:text-xl text-splendor-velvet leading-none tabular-nums font-semibold tracking-woodcut">
+          {card.points || '\u00a0'}
         </span>
         <span className="inline-flex items-center shrink-0">
           <img
             data-solo-card-bonus
             src={gems[card.bonus]}
             alt={labels[card.bonus]}
-            className="w-8 h-8 sm:w-9 sm:h-9 object-contain"
+            className="w-8 h-8 sm:w-9 sm:h-9 object-contain drop-shadow-[0_1px_2px_rgba(44,36,28,0.28)]"
           />
         </span>
       </div>
@@ -201,11 +188,12 @@ export function SoloCardTile({
           {badge}
         </p>
       )}
-      <div className="mt-auto flex flex-col gap-0.5">
+      <div className="mt-auto pt-1 flex flex-col gap-0.5 shrink-0 min-h-0">
         {costBits.map((c) => {
           const base = card.cost[c];
           const covered =
             bonuses && base > 0 ? Math.min(bonuses[c], base) : 0;
+          const remaining = Math.max(0, base - covered);
           return (
             <span
               key={c}
@@ -216,16 +204,18 @@ export function SoloCardTile({
                 alt=""
                 className="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain shrink-0"
               />
-              <span className={covered > 0 ? 'text-splendor-muted/75' : ''}>
-                {base}
-              </span>
-              {covered > 0 && (
-                <span
-                  className="text-[10px] sm:text-[11px] font-serif font-semibold text-gem-emerald leading-none"
-                  title={`-${covered}`}
-                >
-                  (-{covered})
-                </span>
+              {covered > 0 ? (
+                <>
+                  <span className="text-splendor-ink tabular-nums">{remaining}</span>
+                  <span
+                    className="text-[10px] sm:text-[11px] font-serif font-semibold text-gem-emerald leading-none whitespace-nowrap"
+                    title={`${base}−${covered}`}
+                  >
+                    (−{covered})
+                  </span>
+                </>
+              ) : (
+                <span>{base}</span>
               )}
             </span>
           );
@@ -305,19 +295,39 @@ export function ReservedHand({
                 {card.points || '·'}
               </span>
               <span className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 min-w-0 flex-1">
-                {costBits.map((c) => (
-                  <span
-                    key={c}
-                    className="inline-flex items-center gap-0.5 text-xs font-serif tabular-nums text-splendor-ink/85"
-                  >
-                    <img
-                      src={gems[c]}
-                      alt=""
-                      className="w-3.5 h-3.5 object-contain"
-                    />
-                    {card.cost[c]}
-                  </span>
-                ))}
+                {costBits.map((c) => {
+                  const base = card.cost[c];
+                  const covered =
+                    showHints && base > 0
+                      ? Math.min(bonuses[c], base)
+                      : 0;
+                  const remaining = Math.max(0, base - covered);
+                  return (
+                    <span
+                      key={c}
+                      className="inline-flex items-center gap-0.5 text-xs font-serif tabular-nums text-splendor-ink/85"
+                    >
+                      <img
+                        src={gems[c]}
+                        alt=""
+                        className="w-3.5 h-3.5 object-contain"
+                      />
+                      {covered > 0 ? (
+                        <>
+                          <span>{remaining}</span>
+                          <span
+                            className="text-[10px] font-semibold text-gem-emerald whitespace-nowrap"
+                            title={`${base}−${covered}`}
+                          >
+                            (−{covered})
+                          </span>
+                        </>
+                      ) : (
+                        base
+                      )}
+                    </span>
+                  );
+                })}
               </span>
               {canBuyNow && (
                 <span className="text-[10px] font-serif tracking-wide text-splendor-velvet shrink-0">
@@ -332,12 +342,6 @@ export function ReservedHand({
   );
 }
 
-export function LogLine({ children }: { children: ReactNode }) {
-  return (
-    <li className="text-sm text-splendor-ink/85 font-body leading-snug">{children}</li>
-  );
-}
-
 export function PracticeShell({
   title,
   subtitle,
@@ -347,6 +351,7 @@ export function PracticeShell({
   recordLine,
   eyebrow,
   headerExtra,
+  focusBoard = false,
   children,
 }: {
   title: string;
@@ -359,6 +364,8 @@ export function PracticeShell({
   eyebrow?: string;
   /** Rendered after the hints toggle (e.g. AI speed) */
   headerExtra?: ReactNode;
+  /** Collapse chrome and enlarge the board while a game is in progress. */
+  focusBoard?: boolean;
   children: ReactNode;
 }) {
   const { locale, t } = useI18n();
@@ -368,65 +375,118 @@ export function PracticeShell({
   const fromLesson = fromLessonId
     ? getLessonById(locale, fromLessonId)
     : undefined;
+  const [chromeOpen, setChromeOpen] = useState(!focusBoard);
+
+  useEffect(() => {
+    if (!focusBoard) {
+      setChromeOpen(true);
+      return;
+    }
+    setChromeOpen(false);
+    document.documentElement.setAttribute('data-practice-focus', '1');
+    return () => {
+      document.documentElement.removeAttribute('data-practice-focus');
+    };
+  }, [focusBoard]);
+
+  const controls = (
+    <div className="flex flex-wrap items-center gap-2">
+      <button type="button" onClick={onReset} className="btn-outline text-sm">
+        {t('soloRestart')}
+      </button>
+      {onUndo && (
+        <button
+          type="button"
+          onClick={onUndo}
+          disabled={!canUndo}
+          className="btn-outline text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+          title={t('soloUndoCapHint')}
+        >
+          {t('soloUndo')}
+        </button>
+      )}
+      {onUndo && !focusBoard && (
+        <span className="text-xs font-serif text-splendor-muted">
+          {t('soloUndoCapHint')}
+        </span>
+      )}
+      {hints && (
+        <button
+          type="button"
+          onClick={hints.toggle}
+          aria-pressed={hints.enabled}
+          className={`btn-outline text-sm ${
+            hints.enabled
+              ? 'border-splendor-gold/70 bg-splendor-gold/10 text-splendor-velvet'
+              : ''
+          }`}
+        >
+          {hints.enabled ? t('soloHintsOn') : t('soloHintsOff')}
+        </button>
+      )}
+      {headerExtra}
+    </div>
+  );
+
+  const titleBlock = (
+    <>
+      <p className="font-serif text-[11px] tracking-[0.22em] uppercase text-splendor-muted mb-2">
+        {eyebrow ?? t('soloPractice')}
+      </p>
+      <h1 className="page-title">{title}</h1>
+      <InkRule className="my-4" />
+      <p className="font-serif text-splendor-muted leading-relaxed">{subtitle}</p>
+      {fromLesson && (
+        <p className="mt-2">
+          <Link
+            to={`/learn/${fromLesson.level}/${fromLesson.id}`}
+            className="text-sm font-serif text-splendor-velvet underline decoration-splendor-ink/25 hover:decoration-splendor-velvet"
+          >
+            ← {t('practiceBackToLesson')}: {fromLesson.title}
+          </Link>
+        </p>
+      )}
+      {recordLine && (
+        <p className="mt-2 text-sm font-serif text-splendor-ink/70">{recordLine}</p>
+      )}
+    </>
+  );
+
+  if (focusBoard) {
+    return (
+      <div className="space-y-1.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => setChromeOpen((o) => !o)}
+            aria-expanded={chromeOpen}
+            className="btn-outline text-sm"
+          >
+            {chromeOpen ? t('practiceHideChrome') : t('practiceShowChrome')}
+          </button>
+          {!chromeOpen && (
+            <p className="text-xs font-serif text-splendor-muted truncate min-w-0">
+              {title}
+              {recordLine ? ` · ${recordLine}` : ''}
+            </p>
+          )}
+        </div>
+        {chromeOpen && (
+          <header className="panel-soft p-3 sm:p-4 space-y-3">
+            {titleBlock}
+            {controls}
+          </header>
+        )}
+        <div className="ledger-sheet p-1 sm:p-2 space-y-2">{children}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <header>
-        <p className="font-serif text-[11px] tracking-[0.22em] uppercase text-splendor-muted mb-2">
-          {eyebrow ?? t('soloPractice')}
-        </p>
-        <h1 className="page-title">{title}</h1>
-        <div className="ornament-line my-4" />
-        <p className="font-serif text-splendor-muted leading-relaxed">{subtitle}</p>
-        {fromLesson && (
-          <p className="mt-2">
-            <Link
-              to={`/learn/${fromLesson.level}/${fromLesson.id}`}
-              className="text-sm font-serif text-splendor-velvet underline decoration-splendor-ink/25 hover:decoration-splendor-velvet"
-            >
-              ← {t('practiceBackToLesson')}: {fromLesson.title}
-            </Link>
-          </p>
-        )}
-        {recordLine && (
-          <p className="mt-2 text-sm font-serif text-splendor-ink/70">{recordLine}</p>
-        )}
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <button type="button" onClick={onReset} className="btn-outline text-sm">
-            {t('soloRestart')}
-          </button>
-          {onUndo && (
-            <button
-              type="button"
-              onClick={onUndo}
-              disabled={!canUndo}
-              className="btn-outline text-sm disabled:opacity-40 disabled:cursor-not-allowed"
-              title={t('soloUndoCapHint')}
-            >
-              {t('soloUndo')}
-            </button>
-          )}
-          {onUndo && (
-            <span className="text-xs font-serif text-splendor-muted">
-              {t('soloUndoCapHint')}
-            </span>
-          )}
-          {hints && (
-            <button
-              type="button"
-              onClick={hints.toggle}
-              aria-pressed={hints.enabled}
-              className={`btn-outline text-sm ${
-                hints.enabled
-                  ? 'border-splendor-gold/70 bg-splendor-gold/10 text-splendor-velvet'
-                  : ''
-              }`}
-            >
-              {hints.enabled ? t('soloHintsOn') : t('soloHintsOff')}
-            </button>
-          )}
-          {headerExtra}
-        </div>
+        {titleBlock}
+        <div className="mt-4">{controls}</div>
       </header>
       <div className="ledger-sheet p-3 sm:p-5 space-y-4">{children}</div>
     </div>

@@ -31,10 +31,10 @@ const TAKE_COLORS: TakeColor[] = [
   'ruby',
 ];
 
-const DECK_STYLE: Record<1 | 2 | 3, { bg: string; border: string }> = {
-  1: { bg: 'bg-[#6b8f78]', border: 'border-[#5a7a66]' },
-  2: { bg: 'bg-[#c4a96a]', border: 'border-[#a89055]' },
-  3: { bg: 'bg-[#6a8098]', border: 'border-[#5a6e84]' },
+const DECK_STYLE: Record<1 | 2 | 3, { tone: string; band: string }> = {
+  1: { tone: 'deck-back--l1', band: '#6b8f78' },
+  2: { tone: 'deck-back--l2', band: '#c4a96a' },
+  3: { tone: 'deck-back--l3', band: '#6a8098' },
 };
 
 export function canAddTakeGem(
@@ -94,18 +94,24 @@ export function DeckBack({
   const style = DECK_STYLE[level];
   return (
     <div
-      className={`relative aspect-[63/88] w-full max-h-[11.5rem] rounded-sm border border-splendor-ink/30 ${style.bg} shadow-[0_1px_4px_rgba(44,36,28,0.1),inset_0_1px_0_rgba(255,255,255,0.15)] flex flex-col items-center justify-end pb-2 select-none overflow-hidden`}
+      className={`deck-back solo-card-face relative rounded-sm border border-splendor-ink/35 ${style.tone} shadow-[0_1px_4px_rgba(44,36,28,0.12),inset_0_1px_0_rgba(255,255,255,0.2)] flex flex-col items-center justify-end pb-2 select-none overflow-hidden`}
       title={`${count}`}
     >
-      <div className="mb-auto mt-2.5 px-1.5 w-[88%] flex justify-center">
+      <div
+        className="absolute inset-x-0 top-0 h-1.5 z-[1]"
+        style={{ background: style.band }}
+        aria-hidden
+      />
+      <div className="deck-back-pattern" aria-hidden />
+      <div className="relative z-[1] mb-auto mt-3 px-1.5 w-[72%] flex justify-center">
         <img
           src={promo.title}
           alt="Splendor"
-          className="w-full h-auto object-contain drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)]"
+          className="w-full h-auto object-contain drop-shadow-[0_1px_3px_rgba(0,0,0,0.35)]"
           draggable={false}
         />
       </div>
-      <div className="flex gap-1 mb-1">
+      <div className="relative z-[1] flex gap-1 mb-1">
         {Array.from({ length: level }).map((_, i) => (
           <span
             key={i}
@@ -113,7 +119,9 @@ export function DeckBack({
           />
         ))}
       </div>
-      <span className="text-[10px] font-serif text-white/80 tabular-nums">{count}</span>
+      <span className="relative z-[1] text-[10px] font-serif text-white/85 tabular-nums">
+        {count}
+      </span>
     </div>
   );
 }
@@ -136,7 +144,7 @@ export function NobleTile({
 
   const portrait = noblePortraitUrl(noble.id);
   const interactive = Boolean(!spent && spendable && onSpend);
-  const className = `relative aspect-square w-[5.75rem] sm:w-[6.75rem] rounded-sm overflow-hidden border-2 border-splendor-ink/35 shadow-[0_1px_6px_rgba(44,36,28,0.12),inset_0_0_0_1px_rgba(232,223,200,0.35)] ${
+  const className = `relative aspect-square w-[7rem] sm:w-[8rem] rounded-sm overflow-hidden border-2 border-splendor-ink/35 shadow-[0_1px_6px_rgba(44,36,28,0.12),inset_0_0_0_1px_rgba(232,223,200,0.35)] ${
     portrait
       ? 'bg-[#3a322c]'
       : 'bg-gradient-to-br from-[#6a584e] via-[#4a3d36] to-[#322a26]'
@@ -145,6 +153,8 @@ export function NobleTile({
       ? 'cursor-pointer transition-[transform,box-shadow] hover:scale-[1.02] hover:border-splendor-gold/70 hover:shadow-[0_2px_10px_rgba(154,123,50,0.25)]'
       : ''
   }`;
+
+  const attrs = { 'data-noble-id': noble.id };
 
   const inner = (
     <>
@@ -159,20 +169,20 @@ export function NobleTile({
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25 pointer-events-none" />
-      <div className="relative z-[1] h-full p-1.5 sm:p-2 flex flex-col justify-between">
-        <span className="font-display text-base sm:text-lg text-[#faf4e8] leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]">
+      <div className="relative z-[1] h-full p-2 sm:p-2.5 flex flex-col justify-between">
+        <span className="font-display text-lg sm:text-xl text-[#faf4e8] leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]">
           3
         </span>
         <div className="flex flex-row flex-wrap items-center justify-center gap-x-1 gap-y-0.5">
           {reqs.map((c) => (
             <span
               key={c}
-              className="inline-flex items-center gap-0.5 text-xs sm:text-sm font-serif font-medium tabular-nums text-[#f5efe6] drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]"
+              className="inline-flex items-center gap-0.5 text-sm sm:text-base font-serif font-medium tabular-nums text-[#f5efe6] drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]"
             >
               <img
                 src={gems[c]}
                 alt=""
-                className="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain shrink-0 drop-shadow-sm"
+                className="w-4 h-4 sm:w-[1.125rem] sm:h-[1.125rem] object-contain shrink-0 drop-shadow-sm"
               />
               {noble.requirements[c]}
             </span>
@@ -184,13 +194,22 @@ export function NobleTile({
 
   if (interactive) {
     return (
-      <button type="button" className={`${className} text-left`} onClick={onSpend}>
+      <button
+        type="button"
+        className={`${className} text-left`}
+        onClick={onSpend}
+        {...attrs}
+      >
         {inner}
       </button>
     );
   }
 
-  return <div className={className}>{inner}</div>;
+  return (
+    <div className={className} {...attrs}>
+      {inner}
+    </div>
+  );
 }
 
 export function BankStack({
@@ -237,7 +256,7 @@ export function BankStack({
         fx?.endDrag();
       }}
       onClick={onClick}
-      className={`bank-stack-lift relative flex flex-col items-center gap-1.5 p-1 rounded-md ${
+      className={`bank-stack-lift relative flex flex-col items-center gap-1.5 p-1 rounded-sm ${
         canInteract
           ? 'cursor-grab active:cursor-grabbing'
           : 'cursor-default'
@@ -252,7 +271,7 @@ export function BankStack({
             key={i}
             src={gems[color]}
             alt=""
-            className="absolute w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow"
+            className="absolute w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_2px_3px_rgba(44,36,28,0.35),0_1px_0_rgba(255,255,255,0.35)]"
             style={{
               left: i * 3,
               top: (2 - i) * 3,
@@ -342,29 +361,28 @@ export function HandDropZone({
   };
 
   const armed = Boolean(fx?.state.active && fx.state.kind === 'gem' && fx.state.overHand);
-  const showPendingChrome = pending.length > 0;
+  // When hand is shown elsewhere, always reserve pending chrome so the seat
+  // column does not grow on the first gem click (that jumps the page scroll).
+  const showPendingChrome = hideHandDisplay || pending.length > 0;
   const showHandHeader = !hideHandDisplay || showPendingChrome;
 
   return (
     <div
       ref={zoneRef}
+      data-hand-zone=""
       onDragOver={onDragOver}
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
       className={`drop-zone-live ${
-        hideHandDisplay && !showPendingChrome
-          ? `min-h-[2.5rem] rounded-md border border-dashed border-splendor-line/50 ${
-              active ? 'bg-white/30' : 'bg-transparent'
+        hideHandDisplay
+          ? `panel-soft p-3 min-h-[5.5rem] ${
+              active ? 'ring-1 ring-splendor-line/80' : ''
             }`
-          : `panel-soft p-3 ${
-              hideHandDisplay ? 'min-h-[3.5rem]' : 'min-h-[7rem] sm:p-4'
+          : `panel-soft p-3 min-h-[7rem] sm:p-4 ${
+              active ? 'ring-1 ring-splendor-line/80' : ''
             }`
-      } ${
-        !hideHandDisplay || showPendingChrome
-          ? `${active ? 'ring-1 ring-splendor-line/80' : ''} `
-          : ''
-      }${armed ? 'is-armed' : ''} ${shakeKey > 0 ? 'shake-illegal' : ''}`}
+      }${armed ? ' is-armed' : ''}${shakeKey > 0 ? ' shake-illegal' : ''}`}
       onAnimationEnd={(e) => {
         if (e.animationName === 'shake-illegal') setShakeKey(0);
       }}
@@ -387,19 +405,25 @@ export function HandDropZone({
         </div>
       )}
 
-      {pending.length > 0 && (
-        <div key={landKey} className="flex flex-wrap items-center gap-2 mb-3">
-          {pending.map((c, i) => (
-            <img
-              key={`${c}-${i}-${landKey}`}
-              src={gems[c]}
-              alt={labels[c]}
-              className="w-8 h-8 sm:w-9 sm:h-9 object-contain gem-land"
-            />
-          ))}
-          <span className="text-sm sm:text-base font-display tabular-nums text-splendor-ink">
-            ({pending.length}/3)
-          </span>
+      {(hideHandDisplay || pending.length > 0) && (
+        <div key={landKey} className="flex flex-wrap items-center gap-2 mb-3 min-h-[2.25rem]">
+          {pending.length > 0 ? (
+            <>
+              {pending.map((c, i) => (
+                <img
+                  key={`${c}-${i}-${landKey}`}
+                  src={gems[c]}
+                  alt={labels[c]}
+                  className="w-8 h-8 sm:w-9 sm:h-9 object-contain gem-land"
+                />
+              ))}
+              <span className="text-sm sm:text-base font-display tabular-nums text-splendor-ink">
+                ({pending.length}/3)
+              </span>
+            </>
+          ) : (
+            <span className="text-xs font-serif text-splendor-muted/60">—</span>
+          )}
         </div>
       )}
 
@@ -452,8 +476,8 @@ export function CardRow({
   const purchaseFx = usePurchaseFxOptional();
 
   return (
-    <div className="grid grid-cols-5 gap-2 sm:gap-3 items-start">
-      <div className="min-w-0">
+    <>
+      <div className="min-w-0 flex justify-center">
         <DeckBack level={level} count={deckCount} />
       </div>
       {Array.from({ length: 4 }).map((_, i) => {
@@ -461,11 +485,14 @@ export function CardRow({
         const exiting = card && purchaseFx?.isExiting(card.id);
         const exitBuyer = purchaseFx?.exitBuyer;
         return (
-          <div key={card?.id ?? `empty-${level}-${i}`} className="min-w-0">
+          <div
+            key={card?.id ?? `empty-${level}-${i}`}
+            className="min-w-0 flex justify-center"
+          >
             {card ? (
               <div
                 data-solo-card={card.id}
-                className={`relative transition-none ${
+                className={`relative transition-none w-full ${
                   exiting && exitBuyer
                     ? `card-purchase-exit card-purchase-exit--${exitBuyer}`
                     : ''
@@ -474,12 +501,12 @@ export function CardRow({
                 {renderCard(card, i)}
               </div>
             ) : (
-              <div className="aspect-[63/88] max-h-[11.5rem] w-full rounded-sm border border-dashed border-splendor-line/35 bg-white/50 card-slot-refill" />
+              <div className="solo-card-face rounded-sm border border-dashed border-splendor-line/35 bg-white/50 card-slot-refill" />
             )}
           </div>
         );
       })}
-    </div>
+    </>
   );
 }
 
@@ -510,8 +537,8 @@ export function BoardTable({
   children?: ReactNode;
 }) {
   return (
-    <div className="practice-board p-3 sm:p-5 space-y-4 sm:space-y-5">
-      <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+    <div className="practice-board p-2 sm:p-3 space-y-2.5 sm:space-y-3">
+      <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
         {nobles.map((n, i) => (
           <NobleTile
             key={n.id}
@@ -523,7 +550,8 @@ export function BoardTable({
         ))}
       </div>
 
-      <div className="space-y-2.5 sm:space-y-3">
+      {/* One grid so row/column gaps stay identical between card faces */}
+      <div className="solo-card-market">
         {rows.map((row) => (
           <CardRow
             key={row.level}
@@ -536,8 +564,8 @@ export function BoardTable({
       </div>
 
       {bank && (
-        <div className="pt-2 border-t border-splendor-line/25">
-          <div className="flex flex-wrap justify-center items-end gap-1 sm:gap-3">
+        <div className="pt-1.5 border-t border-splendor-line/25 overflow-hidden">
+          <div className="flex flex-wrap justify-center items-end gap-1 sm:gap-2 py-0.5">
             {BANK_ORDER.map((color) => {
               const isGold = color === 'gold';
               const interactive =

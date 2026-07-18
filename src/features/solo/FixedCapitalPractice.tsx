@@ -12,10 +12,13 @@ import {
 import { useGemLabels } from '@/i18n/useGemLabels';
 import { useI18n } from '@/i18n/I18nProvider';
 import { pushCappedHistory } from '@/lib/practiceHistory';
-import { PracticeShell, SoloActionLog, TokenRow } from './shared';
+import { PracticeShell, TokenRow } from './shared';
 import { BoardTable, BuyableCard } from './Board';
 import { usePurchaseFx } from './PurchaseFx';
 import { useSoloToast } from './SoloToast';
+import { useBankTakeFx } from './BankTakeFx';
+import { useWinCelebrateOnce } from './CeremonyFx';
+import { useScrollLock } from '@/lib/useScrollLock';
 import {
   PracticeCoaching,
   buildFixedCoaching,
@@ -102,12 +105,16 @@ export function FixedCapitalPractice() {
   const { t } = useI18n();
   const labels = useGemLabels();
   const purchaseFx = usePurchaseFx();
+  const bankFx = useBankTakeFx();
   const toast = useSoloToast();
   const { tier, setTier } = useSoloPracticeTier();
   const [state, setState] = useState<State>(() => createGame(tier));
   const [history, setHistory] = useState<State[]>([]);
   const [bestTurns, setBestTurns] = useState<number | null>(() => readBest());
   const tierBoot = useRef(true);
+
+  useWinCelebrateOnce(state.won, true);
+  useScrollLock(!state.won);
 
   useEffect(() => {
     if (tierBoot.current) {
@@ -173,7 +180,9 @@ export function FixedCapitalPractice() {
 
   const buy = (card: SoloCard) => {
     if (state.won || purchaseFx.isAnimating) return;
-    if (!payForCard(state.hand, card.cost, state.bonuses)) return;
+    const paidPreview = payForCard(state.hand, card.cost, state.bonuses);
+    if (!paidPreview) return;
+    bankFx.spendDiff(state.hand, paidPreview);
 
     purchaseFx.run(card.id, 'player', () => {
       setState((s) => {
@@ -222,6 +231,7 @@ export function FixedCapitalPractice() {
       onReset={restart}
       onUndo={undo}
       canUndo={history.length > 0 && !purchaseFx.isAnimating}
+      focusBoard
       recordLine={recordLine}
       headerExtra={
         <SoloPracticeTierPicker value={tier} onChange={setTier} />
@@ -268,7 +278,7 @@ export function FixedCapitalPractice() {
         />
 
         <aside className="space-y-3">
-          <div className="panel p-3 space-y-3">
+          <div className="panel p-3 space-y-3" data-hand-zone="" data-seat-target="player">
             <TokenRow values={state.hand} title={t('soloYourTokens')} />
             <TokenRow
               values={state.bonuses}
@@ -295,8 +305,6 @@ export function FixedCapitalPractice() {
           </div>
         </aside>
       </div>
-
-      <SoloActionLog lines={state.log} />
     </PracticeShell>
   );
 }

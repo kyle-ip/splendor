@@ -41,7 +41,7 @@ export function HomePage() {
           <img
             src={promo.logo}
             alt="Splendor"
-            className="h-12 md:h-14 w-auto object-contain mx-auto mb-3"
+            className="h-11 md:h-14 w-auto object-contain mx-auto mb-3 animate-ink-bloom"
           />
           <h1 className="font-display text-4xl md:text-[3.15rem] text-splendor-velvet leading-[1.12] tracking-woodcut">
             Splendor
@@ -71,6 +71,16 @@ export function HomePage() {
           <figcaption className="folio-caption mt-3 tracking-[0.12em] uppercase">
             Splendor
           </figcaption>
+        </figure>
+
+        <figure className="mt-6 mx-auto max-w-md">
+          <div className="plate-window p-2 md:p-3">
+            <img
+              src={promo.boardShot}
+              alt=""
+              className="w-full h-auto object-cover object-center max-h-40 mx-auto"
+            />
+          </div>
         </figure>
       </header>
 
