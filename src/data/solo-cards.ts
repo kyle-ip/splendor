@@ -1,4 +1,5 @@
-import type { GemCounts } from '@/types';
+import type { GemCounts, NobleRequirement } from '@/types';
+import cardPool from './card-pool.json';
 
 export type SoloCard = {
   id: string;
@@ -10,142 +11,103 @@ export type SoloCard = {
 };
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
-type Color = (typeof COLORS)[number];
 
-function card(
-  id: string,
-  level: 1 | 2 | 3,
-  points: number,
-  bonus: Color,
-  cost: Partial<Record<Color, number>>,
-): SoloCard {
+/** Pool JSON color keys → mineral keys used by the engine. */
+const POOL_TO_GEM = {
+  green: 'emerald',
+  white: 'diamond',
+  blue: 'sapphire',
+  black: 'onyx',
+  red: 'ruby',
+} as const;
+
+type PoolColor = keyof typeof POOL_TO_GEM;
+
+const POOL_COLORS: PoolColor[] = [
+  'green',
+  'white',
+  'blue',
+  'black',
+  'red',
+];
+
+const ID_LETTER: Record<PoolColor, string> = {
+  green: 'e',
+  white: 'd',
+  blue: 's',
+  black: 'o',
+  red: 'r',
+};
+
+type PoolEntry = {
+  green: number;
+  white: number;
+  blue: number;
+  black: number;
+  red: number;
+  prestige: number;
+};
+
+type PoolByColor = Record<PoolColor, PoolEntry[]>;
+
+function costFromPool(entry: PoolEntry): Omit<GemCounts, 'gold'> {
   return {
-    id,
-    name: id,
-    level,
-    points,
-    bonus,
-    cost: {
-      emerald: cost.emerald ?? 0,
-      sapphire: cost.sapphire ?? 0,
-      ruby: cost.ruby ?? 0,
-      diamond: cost.diamond ?? 0,
-      onyx: cost.onyx ?? 0,
-    },
+    emerald: entry.green,
+    diamond: entry.white,
+    sapphire: entry.blue,
+    onyx: entry.black,
+    ruby: entry.red,
   };
 }
 
-/** Full Level 1 pool (40/40). */
-export const LEVEL1_CARDS: SoloCard[] = [
-  card('l1-e1', 1, 0, 'emerald', { ruby: 2, diamond: 1 }),
-  card('l1-e2', 1, 0, 'emerald', { sapphire: 1, onyx: 2 }),
-  card('l1-e3', 1, 0, 'emerald', { diamond: 3 }),
-  card('l1-e4', 1, 0, 'emerald', { ruby: 1, diamond: 1, onyx: 1 }),
-  card('l1-e5', 1, 0, 'emerald', { sapphire: 2, ruby: 2 }),
-  card('l1-e6', 1, 0, 'emerald', { onyx: 4 }),
-  card('l1-e7', 1, 1, 'emerald', { sapphire: 2, diamond: 2, onyx: 1 }),
-  card('l1-e8', 1, 0, 'emerald', { sapphire: 1, ruby: 1, diamond: 1, onyx: 1 }),
-  card('l1-s1', 1, 0, 'sapphire', { emerald: 1, onyx: 2 }),
-  card('l1-s2', 1, 0, 'sapphire', { ruby: 1, diamond: 2 }),
-  card('l1-s3', 1, 0, 'sapphire', { emerald: 3 }),
-  card('l1-s4', 1, 0, 'sapphire', { emerald: 1, ruby: 1, diamond: 1 }),
-  card('l1-s5', 1, 0, 'sapphire', { emerald: 2, onyx: 2 }),
-  card('l1-s6', 1, 0, 'sapphire', { diamond: 4 }),
-  card('l1-s7', 1, 1, 'sapphire', { emerald: 2, ruby: 1, onyx: 2 }),
-  card('l1-s8', 1, 0, 'sapphire', { emerald: 1, ruby: 1, diamond: 1, onyx: 1 }),
-  card('l1-r1', 1, 0, 'ruby', { emerald: 2, sapphire: 1 }),
-  card('l1-r2', 1, 0, 'ruby', { diamond: 1, onyx: 2 }),
-  card('l1-r3', 1, 0, 'ruby', { onyx: 3 }),
-  card('l1-r4', 1, 0, 'ruby', { emerald: 1, sapphire: 1, diamond: 1 }),
-  card('l1-r5', 1, 0, 'ruby', { sapphire: 2, diamond: 2 }),
-  card('l1-r6', 1, 0, 'ruby', { emerald: 4 }),
-  card('l1-r7', 1, 1, 'ruby', { emerald: 1, sapphire: 2, diamond: 2 }),
-  card('l1-r8', 1, 0, 'ruby', { emerald: 1, sapphire: 1, diamond: 1, onyx: 1 }),
-  card('l1-d1', 1, 0, 'diamond', { sapphire: 2, ruby: 1 }),
-  card('l1-d2', 1, 0, 'diamond', { emerald: 2, onyx: 1 }),
-  card('l1-d3', 1, 0, 'diamond', { ruby: 3 }),
-  card('l1-d4', 1, 0, 'diamond', { emerald: 1, sapphire: 1, onyx: 1 }),
-  card('l1-d5', 1, 0, 'diamond', { emerald: 2, ruby: 2 }),
-  card('l1-d6', 1, 0, 'diamond', { sapphire: 4 }),
-  card('l1-d7', 1, 1, 'diamond', { emerald: 2, sapphire: 1, ruby: 2 }),
-  card('l1-d8', 1, 0, 'diamond', { emerald: 1, sapphire: 1, ruby: 1, onyx: 1 }),
-  card('l1-o1', 1, 0, 'onyx', { emerald: 1, diamond: 2 }),
-  card('l1-o2', 1, 0, 'onyx', { sapphire: 1, ruby: 2 }),
-  card('l1-o3', 1, 0, 'onyx', { sapphire: 3 }),
-  card('l1-o4', 1, 0, 'onyx', { emerald: 1, sapphire: 1, ruby: 1 }),
-  card('l1-o5', 1, 0, 'onyx', { sapphire: 2, diamond: 2 }),
-  card('l1-o6', 1, 0, 'onyx', { ruby: 4 }),
-  card('l1-o7', 1, 1, 'onyx', { emerald: 2, ruby: 2, diamond: 1 }),
-  card('l1-o8', 1, 0, 'onyx', { emerald: 1, sapphire: 1, ruby: 1, diamond: 1 }),
-];
+function buildLevel(
+  level: 1 | 2 | 3,
+  byColor: PoolByColor,
+): SoloCard[] {
+  const cards: SoloCard[] = [];
+  for (const poolColor of POOL_COLORS) {
+    const bonus = POOL_TO_GEM[poolColor];
+    const letter = ID_LETTER[poolColor];
+    byColor[poolColor].forEach((entry, i) => {
+      const id = `l${level}-${letter}${i + 1}`;
+      cards.push({
+        id,
+        name: id,
+        level,
+        points: entry.prestige,
+        bonus,
+        cost: costFromPool(entry),
+      });
+    });
+  }
+  return cards;
+}
 
-/** Full Level 2 pool (30/30). Source: official print distribution. */
-export const LEVEL2_CARDS: SoloCard[] = [
-  // Emerald
-  card('l2-e1', 2, 1, 'emerald', { emerald: 2, ruby: 3, diamond: 3 }),
-  card('l2-e2', 2, 1, 'emerald', { onyx: 2, sapphire: 3, diamond: 2 }),
-  card('l2-e3', 2, 2, 'emerald', { onyx: 1, sapphire: 2, diamond: 4 }),
-  card('l2-e4', 2, 2, 'emerald', { sapphire: 5, emerald: 3 }),
-  card('l2-e5', 2, 2, 'emerald', { emerald: 5 }),
-  card('l2-e6', 2, 3, 'emerald', { emerald: 6 }),
-  // Sapphire
-  card('l2-s1', 2, 1, 'sapphire', { sapphire: 2, emerald: 2, ruby: 3 }),
-  card('l2-s2', 2, 1, 'sapphire', { onyx: 3, sapphire: 2, emerald: 3 }),
-  card('l2-s3', 2, 2, 'sapphire', { sapphire: 3, diamond: 5 }),
-  card('l2-s4', 2, 2, 'sapphire', { onyx: 4, ruby: 1, diamond: 2 }),
-  card('l2-s5', 2, 2, 'sapphire', { sapphire: 5 }),
-  card('l2-s6', 2, 3, 'sapphire', { sapphire: 6 }),
-  // Ruby
-  card('l2-r1', 2, 1, 'ruby', { onyx: 3, ruby: 2, diamond: 2 }),
-  card('l2-r2', 2, 1, 'ruby', { onyx: 3, sapphire: 3, ruby: 2 }),
-  card('l2-r3', 2, 2, 'ruby', { sapphire: 4, emerald: 2, diamond: 1 }),
-  card('l2-r4', 2, 2, 'ruby', { onyx: 5, diamond: 3 }),
-  card('l2-r5', 2, 2, 'ruby', { onyx: 5 }),
-  card('l2-r6', 2, 3, 'ruby', { ruby: 6 }),
-  // Diamond
-  card('l2-d1', 2, 1, 'diamond', { onyx: 2, emerald: 3, ruby: 2 }),
-  card('l2-d2', 2, 1, 'diamond', { sapphire: 3, ruby: 3, diamond: 2 }),
-  card('l2-d3', 2, 2, 'diamond', { onyx: 2, emerald: 1, ruby: 4 }),
-  card('l2-d4', 2, 2, 'diamond', { onyx: 3, ruby: 5 }),
-  card('l2-d5', 2, 2, 'diamond', { ruby: 5 }),
-  card('l2-d6', 2, 3, 'diamond', { diamond: 6 }),
-  // Onyx
-  card('l2-o1', 2, 1, 'onyx', { sapphire: 2, emerald: 2, diamond: 3 }),
-  card('l2-o2', 2, 1, 'onyx', { onyx: 2, emerald: 3, diamond: 3 }),
-  card('l2-o3', 2, 2, 'onyx', { sapphire: 1, emerald: 4, ruby: 2 }),
-  card('l2-o4', 2, 2, 'onyx', { emerald: 5, ruby: 3 }),
-  card('l2-o5', 2, 2, 'onyx', { diamond: 5 }),
-  card('l2-o6', 2, 3, 'onyx', { onyx: 6 }),
-];
+function buildNobles(entries: PoolEntry[]): NobleRequirement[] {
+  return entries.map((entry, i) => ({
+    id: i + 1,
+    requirements: costFromPool(entry),
+  }));
+}
 
-/** Full Level 3 pool (20/20). Source: official print distribution. */
-export const LEVEL3_CARDS: SoloCard[] = [
-  // Emerald
-  card('l3-e1', 3, 3, 'emerald', { onyx: 3, sapphire: 3, ruby: 3, diamond: 5 }),
-  card('l3-e2', 3, 4, 'emerald', { sapphire: 7 }),
-  card('l3-e3', 3, 4, 'emerald', { sapphire: 6, emerald: 3, diamond: 3 }),
-  card('l3-e4', 3, 5, 'emerald', { sapphire: 7, emerald: 3 }),
-  // Sapphire
-  card('l3-s1', 3, 3, 'sapphire', { onyx: 5, emerald: 3, ruby: 3, diamond: 3 }),
-  card('l3-s2', 3, 4, 'sapphire', { diamond: 7 }),
-  card('l3-s3', 3, 4, 'sapphire', { onyx: 3, sapphire: 3, diamond: 6 }),
-  card('l3-s4', 3, 5, 'sapphire', { sapphire: 3, diamond: 7 }),
-  // Ruby
-  card('l3-r1', 3, 3, 'ruby', { onyx: 3, sapphire: 5, emerald: 3, diamond: 3 }),
-  card('l3-r2', 3, 4, 'ruby', { emerald: 7 }),
-  card('l3-r3', 3, 4, 'ruby', { sapphire: 3, emerald: 6, ruby: 3 }),
-  card('l3-r4', 3, 5, 'ruby', { emerald: 7, ruby: 3 }),
-  // Diamond
-  card('l3-d1', 3, 3, 'diamond', { onyx: 3, sapphire: 3, emerald: 3, ruby: 5 }),
-  card('l3-d2', 3, 4, 'diamond', { onyx: 7 }),
-  card('l3-d3', 3, 4, 'diamond', { onyx: 6, ruby: 3, diamond: 3 }),
-  card('l3-d4', 3, 5, 'diamond', { onyx: 7, diamond: 3 }),
-  // Onyx
-  card('l3-o1', 3, 3, 'onyx', { sapphire: 3, emerald: 5, ruby: 3, diamond: 3 }),
-  card('l3-o2', 3, 4, 'onyx', { ruby: 7 }),
-  card('l3-o3', 3, 4, 'onyx', { onyx: 3, emerald: 3, ruby: 6 }),
-  card('l3-o4', 3, 5, 'onyx', { onyx: 3, ruby: 7 }),
-];
+/** Full Level 1–3 pools from `card-pool.json`. */
+export const LEVEL1_CARDS: SoloCard[] = buildLevel(
+  1,
+  cardPool.level1 as PoolByColor,
+);
+export const LEVEL2_CARDS: SoloCard[] = buildLevel(
+  2,
+  cardPool.level2 as PoolByColor,
+);
+export const LEVEL3_CARDS: SoloCard[] = buildLevel(
+  3,
+  cardPool.level3 as PoolByColor,
+);
+
+/** Full noble pool from `card-pool.json`. */
+export const NOBLES: NobleRequirement[] = buildNobles(
+  cardPool.nobles as PoolEntry[],
+);
 
 export function shuffle<T>(items: T[], rng = Math.random): T[] {
   const arr = [...items];

@@ -1,10 +1,10 @@
-import noblesData from '@/data/nobles.json';
 import setupTable from '@/data/setup-table.json';
 import type { GemCounts, NobleRequirement, SetupConfig } from '@/types';
 import {
   LEVEL1_CARDS,
   LEVEL2_CARDS,
   LEVEL3_CARDS,
+  NOBLES,
   drawDisplay,
   emptyBonuses,
   payForCard,
@@ -30,7 +30,7 @@ export const COLORS: Color[] = [
   'onyx',
 ];
 
-const noblesAll = noblesData as NobleRequirement[];
+const noblesAll = NOBLES;
 const setups = setupTable as SetupConfig[];
 
 const AI_NAME_KEYS: SeatNameKey[] = [

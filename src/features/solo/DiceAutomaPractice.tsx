@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import noblesData from '@/data/nobles.json';
 import type { GemCounts, NobleRequirement } from '@/types';
 import {
   LEVEL1_CARDS,
   LEVEL2_CARDS,
   LEVEL3_CARDS,
+  NOBLES,
   drawDisplay,
   emptyBonuses,
   payForCard,
@@ -44,7 +44,7 @@ import {
 import { rollPracticeDie } from './practiceTier';
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
-const noblesAll = noblesData as NobleRequirement[];
+const noblesAll = NOBLES;
 
 type Phase = 'player' | 'discardGems' | 'chooseNoble' | 'busy' | 'done';
 

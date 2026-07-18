@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import noblesData from '@/data/nobles.json';
 import type { GemCounts, NobleRequirement } from '@/types';
 import {
   LEVEL1_CARDS,
   LEVEL2_CARDS,
   LEVEL3_CARDS,
+  NOBLES,
   drawDisplay,
   emptyBonuses,
   payForCard,
@@ -53,7 +53,7 @@ import {
 } from './PracticeCoaching';
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
-const noblesAll = noblesData as NobleRequirement[];
+const noblesAll = NOBLES;
 const SESSION_KEY = 'splendor-solo-card-automa';
 
 type Phase = 'automa' | 'player' | 'discardGems' | 'chooseNoble' | 'done';

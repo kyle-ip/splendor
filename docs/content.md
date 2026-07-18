@@ -50,4 +50,6 @@ Runs Vitest unit tests (currently `src/lib/gems.test.ts` for purchase affordabil
 
 ## Solo practice decks
 
-`src/data/solo-cards.ts` ships full print pools: Level 1 ×40, Level 2 ×30, Level 3 ×20.
+Authoritative pool: `src/data/card-pool.json` (Level 1 ×40, Level 2 ×30, Level 3 ×20, nobles ×10).
+
+`src/data/solo-cards.ts` loads that file at runtime and exports `LEVEL1_CARDS` / `LEVEL2_CARDS` / `LEVEL3_CARDS` / `NOBLES` for all practice modes.

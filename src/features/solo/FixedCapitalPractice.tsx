@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import noblesData from '@/data/nobles.json';
 import type { GemCounts, NobleRequirement } from '@/types';
 import {
   LEVEL1_CARDS,
+  NOBLES,
   drawDisplay,
   emptyBonuses,
   payForCard,
@@ -29,7 +29,7 @@ import {
   type SoloPracticeTier,
 } from './practiceTier';
 
-const noblesAll = noblesData as NobleRequirement[];
+const noblesAll = NOBLES;
 const BEST_KEY = 'splendor-solo-fixed-best-turns';
 
 type State = {
