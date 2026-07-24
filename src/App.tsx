@@ -12,6 +12,7 @@ import {
   SoloPracticeHubPage,
 } from '@/pages/tools/SoloPracticePage';
 import { StandardPracticePage } from '@/pages/tools/StandardPracticePage';
+import { DuelPracticePage } from '@/pages/tools/DuelPracticePage';
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="tools/solo/dice" element={<SoloDicePage />} />
         <Route path="tools/solo/card" element={<SoloCardAutomaPage />} />
         <Route path="tools/standard" element={<StandardPracticePage />} />
+        <Route path="tools/duel" element={<DuelPracticePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

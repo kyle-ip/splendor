@@ -64,4 +64,4 @@ For the “**10 prestige in one color**” win, a **copy-color** card counts as 
 4. Discard down to 10 tokens if needed
 5. Check all three victory conditions
 
-After reading, sketch one ability chain in [replay notes](/tools/replay)—Duel has no browser opponent yet, so logging Extra-turn / Crown timing from table games is the best practice loop.
+Practice the full rules in the browser: [Duel practice](/tools/duel) (vs AI or hotseat).

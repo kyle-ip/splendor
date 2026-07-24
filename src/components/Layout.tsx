@@ -80,6 +80,10 @@ export function Layout() {
               to: '/tools/standard',
               label: t('navStandardPractice'),
             },
+            TOOL_VISIBILITY.duel && {
+              to: '/tools/duel',
+              label: t('navDuelPractice'),
+            },
           ] as (NavItem | false)[]
         ).filter((item): item is NavItem => Boolean(item)),
       },

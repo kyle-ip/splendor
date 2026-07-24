@@ -54,6 +54,8 @@ export function DocumentTitle() {
       page = t('navSoloPractice');
     } else if (pathname.startsWith('/tools/standard')) {
       page = t('navStandardPractice');
+    } else if (pathname.startsWith('/tools/duel')) {
+      page = t('navDuelPractice');
     } else {
       page = t('notFoundPage');
     }

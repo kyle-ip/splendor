@@ -1,5 +1,11 @@
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import type { GemCounts } from '@/types';
 import type { SoloCard } from '@/data/solo-cards';
@@ -12,6 +18,19 @@ import { InkRule } from '@/components/manuscript/WoodcutFrame';
 import { useSoloHintsOptional } from './SoloHints';
 
 const COLORS = ['emerald', 'sapphire', 'ruby', 'diamond', 'onyx'] as const;
+
+type PracticeChromeApi = {
+  chromeOpen: boolean;
+  toggleChrome: () => void;
+  /** Compact title line when chrome is collapsed (for inline toolbars). */
+  collapsedLabel: string | null;
+};
+
+const PracticeChromeContext = createContext<PracticeChromeApi | null>(null);
+
+export function usePracticeChromeOptional(): PracticeChromeApi | null {
+  return useContext(PracticeChromeContext);
+}
 
 export function TokenRow({
   values,
@@ -352,6 +371,8 @@ export function PracticeShell({
   eyebrow,
   headerExtra,
   focusBoard = false,
+  /** Put chrome toggle in children via usePracticeChromeOptional (no top bar). */
+  inlineChromeToggle = false,
   children,
 }: {
   title: string;
@@ -366,6 +387,7 @@ export function PracticeShell({
   headerExtra?: ReactNode;
   /** Collapse chrome and enlarge the board while a game is in progress. */
   focusBoard?: boolean;
+  inlineChromeToggle?: boolean;
   children: ReactNode;
 }) {
   const { locale, t } = useI18n();
@@ -388,6 +410,17 @@ export function PracticeShell({
       document.documentElement.removeAttribute('data-practice-focus');
     };
   }, [focusBoard]);
+
+  const chromeApi = useMemo<PracticeChromeApi>(
+    () => ({
+      chromeOpen,
+      toggleChrome: () => setChromeOpen((o) => !o),
+      collapsedLabel: !chromeOpen
+        ? `${title}${recordLine ? ` · ${recordLine}` : ''}`
+        : null,
+    }),
+    [chromeOpen, title, recordLine],
+  );
 
   const controls = (
     <div className="flex flex-wrap items-center gap-2">
@@ -453,24 +486,26 @@ export function PracticeShell({
   );
 
   if (focusBoard) {
-    return (
+    const board = (
       <div className="space-y-1.5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={() => setChromeOpen((o) => !o)}
-            aria-expanded={chromeOpen}
-            className="btn-outline text-sm"
-          >
-            {chromeOpen ? t('practiceHideChrome') : t('practiceShowChrome')}
-          </button>
-          {!chromeOpen && (
-            <p className="text-xs font-serif text-splendor-muted truncate min-w-0">
-              {title}
-              {recordLine ? ` · ${recordLine}` : ''}
-            </p>
-          )}
-        </div>
+        {!inlineChromeToggle && (
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setChromeOpen((o) => !o)}
+              aria-expanded={chromeOpen}
+              className="btn-outline text-sm"
+            >
+              {chromeOpen ? t('practiceHideChrome') : t('practiceShowChrome')}
+            </button>
+            {!chromeOpen && (
+              <p className="text-xs font-serif text-splendor-muted truncate min-w-0">
+                {title}
+                {recordLine ? ` · ${recordLine}` : ''}
+              </p>
+            )}
+          </div>
+        )}
         {chromeOpen && (
           <header className="panel-soft p-3 sm:p-4 space-y-3">
             {titleBlock}
@@ -480,6 +515,15 @@ export function PracticeShell({
         <div className="ledger-sheet p-1 sm:p-2 space-y-2">{children}</div>
       </div>
     );
+
+    if (inlineChromeToggle) {
+      return (
+        <PracticeChromeContext.Provider value={chromeApi}>
+          {board}
+        </PracticeChromeContext.Provider>
+      );
+    }
+    return board;
   }
 
   return (

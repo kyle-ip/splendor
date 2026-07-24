@@ -1,0 +1,1248 @@
+{
+  "_readme": [
+    "Authoritative Splendor Duel jewel + royal pool for duel practice.",
+    "Community-sourced (AubinVert/SplendorDuel cartes.json); review/adjust as needed.",
+    "Gem keys: green, white, blue, black, red, pearl.",
+    "bonus: green|white|blue|black|red|associate|null (null = prestige-only / no bonus).",
+    "ability: extraTurn|takeMatching|privilege|steal|null (associate placement uses bonus=associate).",
+    "Mapped in code: green->emerald, white->diamond, blue->sapphire, black->onyx, red->ruby."
+  ],
+  "level1": [
+    {
+      "id": "d1-1",
+      "level": 1,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "extraTurn",
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 0,
+        "black": 2,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_5.png"
+    },
+    {
+      "id": "d1-2",
+      "level": 1,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 1,
+        "white": 1,
+        "blue": 1,
+        "black": 1,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_6.png"
+    },
+    {
+      "id": "d1-3",
+      "level": 1,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 3,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_7.png"
+    },
+    {
+      "id": "d1-4",
+      "level": 1,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 3,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_8.png"
+    },
+    {
+      "id": "d1-5",
+      "level": 1,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "takeMatching",
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 2,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_9.png"
+    },
+    {
+      "id": "d1-6",
+      "level": 1,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 1,
+        "blue": 1,
+        "black": 1,
+        "red": 1,
+        "pearl": 0
+      },
+      "_source": "Carte_10.png"
+    },
+    {
+      "id": "d1-7",
+      "level": 1,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "extraTurn",
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 2,
+        "red": 2,
+        "pearl": 1
+      },
+      "_source": "Carte_11.png"
+    },
+    {
+      "id": "d1-8",
+      "level": 1,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 3,
+        "blue": 0,
+        "black": 2,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_12.png"
+    },
+    {
+      "id": "d1-9",
+      "level": 1,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "takeMatching",
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 2,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_13.png"
+    },
+    {
+      "id": "d1-10",
+      "level": 1,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 3,
+        "pearl": 0
+      },
+      "_source": "Carte_14.png"
+    },
+    {
+      "id": "d1-11",
+      "level": 1,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 1,
+        "white": 0,
+        "blue": 1,
+        "black": 1,
+        "red": 1,
+        "pearl": 0
+      },
+      "_source": "Carte_15.png"
+    },
+    {
+      "id": "d1-12",
+      "level": 1,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 3,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_16.png"
+    },
+    {
+      "id": "d1-13",
+      "level": 1,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 3,
+        "pearl": 0
+      },
+      "_source": "Carte_17.png"
+    },
+    {
+      "id": "d1-14",
+      "level": 1,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "takeMatching",
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 2,
+        "red": 2,
+        "pearl": 0
+      },
+      "_source": "Carte_18.png"
+    },
+    {
+      "id": "d1-15",
+      "level": 1,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "extraTurn",
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 2,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_19.png"
+    },
+    {
+      "id": "d1-16",
+      "level": 1,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 1,
+        "white": 1,
+        "blue": 1,
+        "black": 0,
+        "red": 1,
+        "pearl": 0
+      },
+      "_source": "Carte_20.png"
+    },
+    {
+      "id": "d1-17",
+      "level": 1,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "takeMatching",
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 2,
+        "pearl": 0
+      },
+      "_source": "Carte_21.png"
+    },
+    {
+      "id": "d1-18",
+      "level": 1,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 3,
+        "white": 0,
+        "blue": 2,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_22.png"
+    },
+    {
+      "id": "d1-19",
+      "level": 1,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 3,
+        "blue": 0,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_23.png"
+    },
+    {
+      "id": "d1-20",
+      "level": 1,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "extraTurn",
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 2,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_24.png"
+    },
+    {
+      "id": "d1-21",
+      "level": 1,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 3,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_25.png"
+    },
+    {
+      "id": "d1-22",
+      "level": 1,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 1,
+        "white": 1,
+        "blue": 0,
+        "black": 1,
+        "red": 1,
+        "pearl": 0
+      },
+      "_source": "Carte_26.png"
+    },
+    {
+      "id": "d1-23",
+      "level": 1,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "extraTurn",
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 2,
+        "pearl": 1
+      },
+      "_source": "Carte_27.png"
+    },
+    {
+      "id": "d1-24",
+      "level": 1,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 3,
+        "red": 2,
+        "pearl": 0
+      },
+      "_source": "Carte_28.png"
+    },
+    {
+      "id": "d1-25",
+      "level": 1,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 0,
+      "ability": "takeMatching",
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 0,
+        "black": 2,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_29.png"
+    },
+    {
+      "id": "d1-26",
+      "level": 1,
+      "bonus": "associate",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 2,
+        "black": 1,
+        "red": 2,
+        "pearl": 1
+      },
+      "_source": "Carte_30.png"
+    },
+    {
+      "id": "d1-27",
+      "level": 1,
+      "bonus": "associate",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 2,
+        "white": 2,
+        "blue": 0,
+        "black": 1,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_31.png"
+    },
+    {
+      "id": "d1-28",
+      "level": 1,
+      "bonus": "associate",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 4,
+        "blue": 0,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_32.png"
+    },
+    {
+      "id": "d1-29",
+      "level": 1,
+      "bonus": "associate",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 4,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_33.png"
+    },
+    {
+      "id": "d1-30",
+      "level": 1,
+      "bonus": null,
+      "bonusCount": 0,
+      "prestige": 3,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 4,
+        "pearl": 1
+      },
+      "_source": "Carte_34.png"
+    }
+  ],
+  "level2": [
+    {
+      "id": "d2-1",
+      "level": 2,
+      "bonus": null,
+      "bonusCount": 0,
+      "prestige": 5,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 6,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_58.png"
+    },
+    {
+      "id": "d2-2",
+      "level": 2,
+      "bonus": "blue",
+      "bonusCount": 2,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 5,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 2,
+        "pearl": 0
+      },
+      "_source": "Carte_35.png"
+    },
+    {
+      "id": "d2-3",
+      "level": 2,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 0,
+      "ability": "privilege",
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 4,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_36.png"
+    },
+    {
+      "id": "d2-4",
+      "level": 2,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": "steal",
+      "cost": {
+        "green": 4,
+        "white": 0,
+        "blue": 0,
+        "black": 3,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_37.png"
+    },
+    {
+      "id": "d2-5",
+      "level": 2,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 0,
+        "black": 2,
+        "red": 2,
+        "pearl": 1
+      },
+      "_source": "Carte_38.png"
+    },
+    {
+      "id": "d2-6",
+      "level": 2,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 2,
+        "black": 0,
+        "red": 2,
+        "pearl": 1
+      },
+      "_source": "Carte_39.png"
+    },
+    {
+      "id": "d2-7",
+      "level": 2,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 0,
+      "ability": "privilege",
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 4,
+        "red": 2,
+        "pearl": 1
+      },
+      "_source": "Carte_40.png"
+    },
+    {
+      "id": "d2-8",
+      "level": 2,
+      "bonus": "black",
+      "bonusCount": 2,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 5,
+        "blue": 2,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_41.png"
+    },
+    {
+      "id": "d2-9",
+      "level": 2,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": "steal",
+      "cost": {
+        "green": 3,
+        "white": 4,
+        "blue": 0,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_42.png"
+    },
+    {
+      "id": "d2-10",
+      "level": 2,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": "steal",
+      "cost": {
+        "green": 0,
+        "white": 3,
+        "blue": 0,
+        "black": 0,
+        "red": 4,
+        "pearl": 0
+      },
+      "_source": "Carte_43.png"
+    },
+    {
+      "id": "d2-11",
+      "level": 2,
+      "bonus": "green",
+      "bonusCount": 2,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 2,
+        "red": 5,
+        "pearl": 0
+      },
+      "_source": "Carte_46.png"
+    },
+    {
+      "id": "d2-12",
+      "level": 2,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 0,
+      "ability": "privilege",
+      "cost": {
+        "green": 4,
+        "white": 0,
+        "blue": 2,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_44.png"
+    },
+    {
+      "id": "d2-13",
+      "level": 2,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 2,
+        "black": 2,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_45.png"
+    },
+    {
+      "id": "d2-14",
+      "level": 2,
+      "bonus": "red",
+      "bonusCount": 2,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 0,
+        "black": 5,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_47.png"
+    },
+    {
+      "id": "d2-15",
+      "level": 2,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 2,
+        "white": 2,
+        "blue": 2,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_48.png"
+    },
+    {
+      "id": "d2-16",
+      "level": 2,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 0,
+      "ability": "privilege",
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 4,
+        "pearl": 1
+      },
+      "_source": "Carte_50.png"
+    },
+    {
+      "id": "d2-17",
+      "level": 2,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": "steal",
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 3,
+        "black": 4,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_49.png"
+    },
+    {
+      "id": "d2-18",
+      "level": 2,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": "steal",
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 4,
+        "black": 0,
+        "red": 3,
+        "pearl": 0
+      },
+      "_source": "Carte_51.png"
+    },
+    {
+      "id": "d2-19",
+      "level": 2,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 0,
+      "ability": "privilege",
+      "cost": {
+        "green": 0,
+        "white": 4,
+        "blue": 0,
+        "black": 2,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_52.png"
+    },
+    {
+      "id": "d2-20",
+      "level": 2,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 1,
+      "ability": null,
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 0,
+        "black": 2,
+        "red": 2,
+        "pearl": 1
+      },
+      "_source": "Carte_53.png"
+    },
+    {
+      "id": "d2-21",
+      "level": 2,
+      "bonus": "white",
+      "bonusCount": 2,
+      "prestige": 1,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 5,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_54.png"
+    },
+    {
+      "id": "d2-22",
+      "level": 2,
+      "bonus": "associate",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 2,
+      "ability": null,
+      "cost": {
+        "green": 6,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_55.png"
+    },
+    {
+      "id": "d2-23",
+      "level": 2,
+      "bonus": "associate",
+      "bonusCount": 1,
+      "prestige": 2,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 6,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_56.png"
+    },
+    {
+      "id": "d2-24",
+      "level": 2,
+      "bonus": "associate",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 2,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 6,
+        "black": 0,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_57.png"
+    }
+  ],
+  "level3": [
+    {
+      "id": "d3-1",
+      "level": 3,
+      "bonus": null,
+      "bonusCount": 0,
+      "prestige": 6,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 8,
+        "blue": 0,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_59.png"
+    },
+    {
+      "id": "d3-2",
+      "level": 3,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 3,
+      "crowns": 2,
+      "ability": null,
+      "cost": {
+        "green": 3,
+        "white": 3,
+        "blue": 0,
+        "black": 5,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_60.png"
+    },
+    {
+      "id": "d3-3",
+      "level": 3,
+      "bonus": "blue",
+      "bonusCount": 1,
+      "prestige": 4,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 2,
+        "white": 2,
+        "blue": 6,
+        "black": 0,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_61.png"
+    },
+    {
+      "id": "d3-4",
+      "level": 3,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 4,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 2,
+        "white": 0,
+        "blue": 0,
+        "black": 2,
+        "red": 6,
+        "pearl": 0
+      },
+      "_source": "Carte_62.png"
+    },
+    {
+      "id": "d3-5",
+      "level": 3,
+      "bonus": "red",
+      "bonusCount": 1,
+      "prestige": 3,
+      "crowns": 2,
+      "ability": null,
+      "cost": {
+        "green": 3,
+        "white": 0,
+        "blue": 5,
+        "black": 3,
+        "red": 0,
+        "pearl": 1
+      },
+      "_source": "Carte_63.png"
+    },
+    {
+      "id": "d3-6",
+      "level": 3,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 4,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 6,
+        "blue": 2,
+        "black": 2,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_64.png"
+    },
+    {
+      "id": "d3-7",
+      "level": 3,
+      "bonus": "white",
+      "bonusCount": 1,
+      "prestige": 3,
+      "crowns": 2,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 3,
+        "black": 3,
+        "red": 5,
+        "pearl": 1
+      },
+      "_source": "Carte_65.png"
+    },
+    {
+      "id": "d3-8",
+      "level": 3,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 3,
+      "crowns": 2,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 5,
+        "blue": 3,
+        "black": 0,
+        "red": 3,
+        "pearl": 1
+      },
+      "_source": "Carte_66.png"
+    },
+    {
+      "id": "d3-9",
+      "level": 3,
+      "bonus": "green",
+      "bonusCount": 1,
+      "prestige": 4,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 6,
+        "white": 0,
+        "blue": 2,
+        "black": 0,
+        "red": 2,
+        "pearl": 0
+      },
+      "_source": "Carte_67.png"
+    },
+    {
+      "id": "d3-10",
+      "level": 3,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 3,
+      "crowns": 2,
+      "ability": null,
+      "cost": {
+        "green": 5,
+        "white": 3,
+        "blue": 0,
+        "black": 0,
+        "red": 3,
+        "pearl": 1
+      },
+      "_source": "Carte_68.png"
+    },
+    {
+      "id": "d3-11",
+      "level": 3,
+      "bonus": "black",
+      "bonusCount": 1,
+      "prestige": 4,
+      "crowns": 0,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 2,
+        "blue": 0,
+        "black": 6,
+        "red": 2,
+        "pearl": 0
+      },
+      "_source": "Carte_69.png"
+    },
+    {
+      "id": "d3-12",
+      "level": 3,
+      "bonus": "associate",
+      "bonusCount": 1,
+      "prestige": 0,
+      "crowns": 3,
+      "ability": null,
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 8,
+        "red": 0,
+        "pearl": 0
+      },
+      "_source": "Carte_70.png"
+    },
+    {
+      "id": "d3-13",
+      "level": 3,
+      "bonus": "associate",
+      "bonusCount": 1,
+      "prestige": 3,
+      "crowns": 0,
+      "ability": "extraTurn",
+      "cost": {
+        "green": 0,
+        "white": 0,
+        "blue": 0,
+        "black": 0,
+        "red": 8,
+        "pearl": 0
+      },
+      "_source": "Carte_71.png"
+    }
+  ],
+  "royals": [
+    {
+      "id": "royal-1",
+      "prestige": 2,
+      "ability": "extraTurn",
+      "_source": "Carte_1.png"
+    },
+    {
+      "id": "royal-2",
+      "prestige": 3,
+      "ability": null,
+      "_source": "Carte_2.png"
+    },
+    {
+      "id": "royal-3",
+      "prestige": 2,
+      "ability": "privilege",
+      "_source": "Carte_3.png"
+    },
+    {
+      "id": "royal-4",
+      "prestige": 2,
+      "ability": "steal",
+      "_source": "Carte_4.png"
+    }
+  ]
+}

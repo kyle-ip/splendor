@@ -1693,6 +1693,24 @@ html[data-practice-focus] .solo-card-market {
   --solo-card-max-h: 13.5rem;
 }
 
+/* Duel pyramid rows — same 63×88 print ratio as standard practice cards */
+.duel-card-row {
+  --duel-card-gap: 0.375rem;
+  --duel-card-max-h: 6.5rem; 
+  display: grid;
+  grid-template-columns: repeat(
+    var(--duel-card-slots, 6),
+    minmax(0, calc(var(--duel-card-max-h) * 63 / 88))
+  );
+  gap: var(--duel-card-gap);
+  justify-content: center;
+  width: 100%;
+}
+
+html[data-practice-focus] .duel-card-row {
+  --duel-card-max-h: 10.8rem; /* 13.5rem × 0.8 */
+}
+
 /* Focus-visible — woodcut ink ring */
 .btn-gilt:focus-visible,
 .btn-velvet:focus-visible,

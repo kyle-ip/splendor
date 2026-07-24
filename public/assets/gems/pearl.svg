@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pearl">
+  <circle cx="32" cy="32" r="30" fill="#f3eef5" stroke="#2c241c" stroke-width="2"/>
+  <circle cx="32" cy="32" r="22" fill="#e8d5e0" stroke="#9a7a8c" stroke-width="1.5"/>
+  <circle cx="26" cy="26" r="6" fill="#ffffff" opacity="0.7"/>
+</svg>

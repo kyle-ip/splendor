@@ -17,6 +17,7 @@ export const gems = {
   diamond: `${assetBase}/gems/diamond.svg`,
   onyx: `${assetBase}/gems/onyx.svg`,
   gold: `${assetBase}/gems/gold.svg`,
+  pearl: `${assetBase}/gems/pearl.svg`,
 } as const;
 
 export const nobleSample = `${assetBase}/nobles/sample.jpg`;

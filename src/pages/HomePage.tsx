@@ -196,6 +196,11 @@ export function HomePage() {
                 label: t('navStandardPractice'),
                 desc: t('toolStandardDesc'),
               },
+              TOOL_VISIBILITY.duel && {
+                to: '/tools/duel',
+                label: t('navDuelPractice'),
+                desc: t('toolDuelDesc'),
+              },
             ] as (
               | { to: string; label: string; desc: string }
               | false
